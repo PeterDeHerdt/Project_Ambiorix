@@ -192,7 +192,7 @@ bool amx_lstack_is_empty(amx_lstack_t *lstack)
 
  @note
  When calling this function on an already initialized linked stack iterator, the linked stack iterator is reset
- and the stack the iterator was in is corrupted. Use @ref amx_lstack_pop to remove the iterator from the list
+ and the stack the iterator was in is corrupted. Use @ref amx_lstack_pop to remove the iterator from the stack
 
  @param it a pointer to the linked stack iterator structure.
 

@@ -6,6 +6,17 @@ extern "C"
 {
 #endif
 
+/**
+ @file
+ @brief
+ Ambiorix linked queue main header file
+*/
+
+/**
+@ingroup amx_containers
+@defgroup amx_lqueue Linked Queue
+*/
+
 #include <amx_containers/amx_lqueue_types.h>
 #include <amx_containers/amx_lqueue_inline.h>
 
