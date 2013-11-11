@@ -33,7 +33,7 @@ ifdef CONFIG_AMX_LOG_BUILD
 	make -C $(AMX_ROOT_DIR)/libraries/amx_log install
 endif
 
-amx_log_doc:
+amx_log_doc: amx_log
 ifdef CONFIG_AMX_LOG_BUILD
 	make -C $(AMX_ROOT_DIR)/libraries/amx_log doc
 endif
@@ -56,7 +56,7 @@ ifdef CONFIG_AMX_CONTAINERS_BUILD
 	make -C $(AMX_ROOT_DIR)/libraries/amx_containers install
 endif
 
-amx_containers_doc:
+amx_containers_doc: amx_containers
 ifdef CONFIG_AMX_CONTAINERS_BUILD
 	make -C $(AMX_ROOT_DIR)/libraries/amx_containers doc
 endif
@@ -70,7 +70,7 @@ amx_containers_clean:
 	make -C $(AMX_ROOT_DIR)/libraries/amx_containers clean
 				  	
 ifdef NO_DEPENDENCIES
-.PHONY: amx_log amx_log_doc amx_log_clean amx_containers amx_containers_doc amx_containers_clean
+.PHONY: amx_log amx_log_clean amx_containers amx_containers_clean
 else
-.PHONY: amx_log amx_log_doc amx_log_clean amx_containers_doc amx_containers_clean
+.PHONY: amx_log amx_log_clean amx_containers_clean
 endif
