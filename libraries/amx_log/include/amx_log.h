@@ -29,6 +29,10 @@
 #if !defined(__AMX_LOG_H__)
 #define __AMX_LOG_H__
 
+/**
+@defgroup amx_logging Logging
+*/
+
 #include <amx_log/amx_log_core.h>
 #include <amx_log/amx_log_zones.h>
 #include <amx_log/amx_log_macro.h>

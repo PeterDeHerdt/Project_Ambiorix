@@ -9,9 +9,14 @@ endif
 include $(AMX_BUILD_DIR)/amx_build.config
 include $(AMX_BUILD_DIR)/amx.config
 
+export AMX_VERSION=0.0.1
+export DOC_OUTPUT_DIR=$(AMX_OUTPUT_DIR)/documentation/amx/
+
 all: amx_log amx_containers
 
 doc: amx_log_doc amx_containers_doc
+	$(INSTALL) -d $(DOC_OUTPUT_DIR)
+	$(DOXYGEN) amx.doxy
 
 test: amx_log_test amx_containers_test
 	$(LCOV) $(addprefix -a , $(shell find output/coverage -type f -name "*.info")) --output-file amx.info

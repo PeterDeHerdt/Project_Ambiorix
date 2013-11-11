@@ -26,11 +26,12 @@ extern "C"
 */
 
 /**
-@defgroup amx_log_core Core
-@{
+ @ingroup amx_logging
+ @defgroup amx_log_core Log Core
 */
 
 /**
+ @ingroup amx_log_core
  @brief
  Different logging output methods.
  */
@@ -42,6 +43,7 @@ typedef enum _amx_log_type
 } amx_log_type_t;
 
 /**
+ @ingroup amx_log_core
  @brief
  Different logging levels.
  */
@@ -57,6 +59,7 @@ typedef enum _amx_log_level
 } amx_log_level_t;
 
 /**
+ @ingroup amx_log_core
  @brief
  Supported time formats.
 
@@ -70,6 +73,7 @@ typedef enum _amx_log_time
 } amx_log_time_t;
 
 /**
+ @ingroup amx_log_core
  @brief
  Opens logging.
 
@@ -91,6 +95,7 @@ typedef enum _amx_log_time
 void amx_log_open(const char *identifier, amx_log_type_t type);
 
 /**
+ @ingroup amx_log_core
  @brief
  Closes logging.
 
@@ -102,6 +107,7 @@ void amx_log_open(const char *identifier, amx_log_type_t type);
 void amx_log_close(void);
 
 /**
+ @ingroup amx_log_core
  @brief
  Checks that logging is opened.
 
@@ -111,6 +117,7 @@ void amx_log_close(void);
 bool amx_log_is_opened(void);
 
 /**
+ @ingroup amx_log_core
  @brief
  Sets the time format used in the output.
 
@@ -126,6 +133,7 @@ bool amx_log_is_opened(void);
 void amx_log_set_time_format(amx_log_time_t time_format);
 
 /**
+ @ingroup amx_log_core
  @brief
  Returns the current set time stamp format.
 
@@ -135,6 +143,7 @@ void amx_log_set_time_format(amx_log_time_t time_format);
 amx_log_time_t amx_log_get_time_format();
 
 /**
+ @ingroup amx_log_core
  @brief
  Changes the log level.
 
@@ -149,6 +158,7 @@ amx_log_time_t amx_log_get_time_format();
 void amx_log_set_level(amx_log_level_t log_level);
 
 /**
+ @ingroup amx_log_core
  @brief
  Get the current log level.
 
@@ -161,6 +171,7 @@ void amx_log_set_level(amx_log_level_t log_level);
 amx_log_level_t amx_log_get_level(void);
 
 /**
+ @ingroup amx_log_core
  @brief
  Get the log output type.
 
@@ -174,6 +185,7 @@ amx_log_level_t amx_log_get_level(void);
 amx_log_type_t amx_log_get_type(void);
 
 /**
+ @ingroup amx_log_core
  @brief
  Get the log identifier.
 
@@ -189,6 +201,7 @@ amx_log_type_t amx_log_get_type(void);
 const char *amx_log_get_identifier(void);
 
 /**
+ @ingroup amx_log_core
  @brief
  Prints a log message.
 
@@ -202,6 +215,7 @@ const char *amx_log_get_identifier(void);
 void amx_log_va(amx_log_level_t log_level, const char *format, va_list ap);
 
 /**
+ @ingroup amx_log_core
  @brief
  Prints a log message.
 
@@ -216,6 +230,7 @@ void amx_log_va(amx_log_level_t log_level, const char *format, va_list ap);
 void amx_log_zone_va(amx_log_level_t log_level, const char *zone_name, const char *format, va_list ap);
 
 /**
+ @ingroup amx_log_core
  @brief
  Prints a log message.
 
@@ -228,6 +243,7 @@ void amx_log_zone_va(amx_log_level_t log_level, const char *zone_name, const cha
 void amx_log(amx_log_level_t log_level, const char *format, ...) FORMAT_PRINTF(2, 3);
 
 /**
+ @ingroup amx_log_core
  @brief
  Prints a log message.
 
@@ -239,10 +255,6 @@ void amx_log(amx_log_level_t log_level, const char *format, ...) FORMAT_PRINTF(2
  @param format the format of the message (like printf)
 */
 void amx_log_zone(amx_log_level_t log_level, const char *zone_name, const char *format, ...)  FORMAT_PRINTF(3, 4);
-
-/**
-@}
-*/
 
 #ifdef __cplusplus
 }
