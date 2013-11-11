@@ -1,0 +1,6 @@
+define(`CONFIG_AMX_LOG_BUILD',`y')dnl
+define(`CONFIG_AMX_LOG_ENABLED',`y')dnl
+define(`CONFIG_AMX_LOG_DEFAULT_LEVEL',`500')dnl
+define(`CONFIG_AMX_LOG_COLORS',`y')dnl
+define(`CONFIG_AMX_LOG_COLORS_SIMPLE',`y')dnl
+define(`CONFIG_AMX_CONTAINERS_BUILD',`y')dnl
