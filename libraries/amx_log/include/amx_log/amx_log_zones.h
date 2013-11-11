@@ -16,17 +16,19 @@ extern "C"
 */
 
 /**
-@defgroup amx_log_zones Zones
-@{
+ @ingroup amx_logging
+ @defgroup amx_log_zones Log Zones
 */
 
 /**
+ @ingroup amx_log_zones
  @brief
  Opaque data stucture, containing the settings of a specific zone.
 */
 typedef struct _amx_log_zone amx_log_zone_t;
 
 /**
+ @ingroup amx_log_zones
  @brief
  Enables a zone.
 
@@ -44,6 +46,7 @@ typedef struct _amx_log_zone amx_log_zone_t;
 void amx_log_enable_zone(const char *zone_name, amx_log_level_t log_level);
 
 /**
+ @ingroup amx_log_zones
  @brief
  Disables a zone.
 
@@ -57,6 +60,7 @@ void amx_log_enable_zone(const char *zone_name, amx_log_level_t log_level);
 void amx_log_disable_zone(const char *zone_name);
 
 /**
+ @ingroup amx_log_zones
  @brief
  Disables all zones.
 
@@ -65,6 +69,7 @@ void amx_log_disable_zone(const char *zone_name);
 void amx_log_disable_all_zones(void);
 
 /**
+ @ingroup amx_log_zones
  @brief
  Checks that the zone is enabled
 
@@ -76,6 +81,7 @@ void amx_log_disable_all_zones(void);
 bool amx_log_zone_is_enabled(const char *zone_name);
 
 /**
+ @ingroup amx_log_zones
  @brief
  Gets the first enabled log zone
 
@@ -89,6 +95,7 @@ bool amx_log_zone_is_enabled(const char *zone_name);
 amx_log_zone_t *amx_log_first_zone(void);
 
 /**
+ @ingroup amx_log_zones
  @brief
  Gets the next enabled log zone
 
@@ -104,6 +111,7 @@ amx_log_zone_t *amx_log_first_zone(void);
 amx_log_zone_t *amx_log_next_zone(amx_log_zone_t *reference);
 
 /**
+ @ingroup amx_log_zones
  @brief
  Gets the pointer to amx_log_zone_t from a name.
 
@@ -119,6 +127,7 @@ amx_log_zone_t *amx_log_next_zone(amx_log_zone_t *reference);
 amx_log_zone_t *amx_log_get_zone(const char *zone_name);
 
 /**
+ @ingroup amx_log_zones
  @brief
  Gets zone name from a pointer to a amx_log_zone_t structure.
 
@@ -133,6 +142,7 @@ amx_log_zone_t *amx_log_get_zone(const char *zone_name);
 const char *amx_log_get_zone_name(amx_log_zone_t *zone);
 
 /**
+ @ingroup amx_log_zones
  @brief
  Get the log level of a zone.
 
@@ -144,6 +154,7 @@ const char *amx_log_get_zone_name(amx_log_zone_t *zone);
 amx_log_level_t amx_log_get_zone_level(amx_log_zone_t *zone);
 
 /**
+ @ingroup amx_log_zones
  @brief
  Sets the log level of a zone.
 
@@ -151,9 +162,6 @@ amx_log_level_t amx_log_get_zone_level(amx_log_zone_t *zone);
  @param log_level the log level
  */
 void amx_log_set_zone_level(amx_log_zone_t *zone, amx_log_level_t log_level);
-/**
-@}
-*/
 
 #ifdef __cplusplus
 }
