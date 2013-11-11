@@ -183,16 +183,27 @@ bool amx_lstack_is_empty(amx_lstack_t *lstack)
 	return amx_llist_is_empty(lstack);
 }
 
+/**
+ @ingroup amx_lstack
+ @brief
+ Initializes a linked stack.iterator
+
+ Initializes the linked stack iterator structure. All pointers are reset to NULL.
+
+ @note
+ When calling this function on an already initialized linked stack iterator, the linked stack iterator is reset
+ and the stack the iterator was in is corrupted. Use @ref amx_lstack_pop to remove the iterator from the list
+
+ @param it a pointer to the linked stack iterator structure.
+
+ @return
+ 0 on success.
+ -1 if a NULL pointer is given.
+*/
 AMX_INLINE
 int amx_init_lstack_it(amx_lstack_it_t *it)
 {
 	return amx_init_llist_it(it);
-}
-
-AMX_INLINE
-void amx_clean_lstack_it(amx_llist_it_t *it, amx_lstack_it_delete_t func)
-{
-	return amx_clean_llist_it(it, func);
 }
 
 #ifdef __cplusplus
