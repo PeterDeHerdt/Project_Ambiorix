@@ -39,7 +39,7 @@
  Ambiorix linked list iterator API implementation
 */
 
-int amx_init_llist_it(amx_llist_it_t *it)
+int amx_llist_it_init(amx_llist_it_t *it)
 {
 	int retval = -1;
 	if (!it)
@@ -57,7 +57,7 @@ exit:
 	return retval;
 }
 
-void amx_clean_llist_it(amx_llist_it_t *it, amx_llist_it_delete_t func)
+void amx_llist_it_clean(amx_llist_it_t *it, amx_llist_it_delete_t func)
 {
 	amx_llist_it_take(it);
 	if (it && func)

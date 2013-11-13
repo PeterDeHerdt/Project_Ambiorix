@@ -39,7 +39,7 @@
  Ambiorix linked list API implementation
 */
 
-int amx_new_llist(amx_llist_t **llist)
+int amx_llist_new(amx_llist_t **llist)
 {
 	int retval = -1;
 	if (!llist)
@@ -59,21 +59,21 @@ exit:
 	return retval;
 }
 
-void amx_delete_llist(amx_llist_t **llist, amx_llist_it_delete_t func)
+void amx_llist_delete(amx_llist_t **llist, amx_llist_it_delete_t func)
 {
 	if (!llist)
 	{
 		goto exit;
 	}
 
-	amx_clean_llist(*llist, func);
+	amx_llist_clean(*llist, func);
 	free(*llist);
 	*llist = NULL;
 exit:
 	return;
 }
 
-int amx_init_llist(amx_llist_t *llist)
+int amx_llist_init(amx_llist_t *llist)
 {
 	int retval = -1;
 
@@ -90,7 +90,7 @@ exit:
 	return retval;
 }
 
-void amx_clean_llist(amx_llist_t *llist, amx_llist_it_delete_t func)
+void amx_llist_clean(amx_llist_t *llist, amx_llist_it_delete_t func)
 {
 	amx_llist_it_t *it = amx_llist_get_first(llist);
 	while(it)

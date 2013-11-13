@@ -4,19 +4,19 @@
 START_TEST (amx_llist_new_delete_null_check)
 {
 	// passing NULL pointers should not lead to segfault
-	ck_assert_int_eq (amx_new_llist(NULL), -1);
-	amx_delete_llist(NULL, NULL);
+	ck_assert_int_eq (amx_llist_new(NULL), -1);
+	amx_llist_delete(NULL, NULL);
 }
 END_TEST
 
 START_TEST (amx_llist_new_delete_check)
 {
 	amx_llist_t *llist = NULL;
-	ck_assert_int_ne (amx_new_llist(&llist), -1);
+	ck_assert_int_ne (amx_llist_new(&llist), -1);
 	ck_assert_ptr_ne (llist, NULL);
 	ck_assert_ptr_eq (llist->head, NULL);
 	ck_assert_ptr_eq (llist->tail, NULL);
-	amx_delete_llist(&llist, NULL);
+	amx_llist_delete(&llist, NULL);
 	ck_assert_ptr_eq (llist, NULL);
 }
 END_TEST
@@ -24,8 +24,8 @@ END_TEST
 START_TEST (amx_llist_init_clean_null_check)
 {
 	// passing NULL pointers should not lead to segfault
-	ck_assert_int_eq (amx_init_llist(NULL), -1);
-	amx_clean_llist(NULL, NULL);
+	ck_assert_int_eq (amx_llist_init(NULL), -1);
+	amx_llist_clean(NULL, NULL);
 }
 END_TEST
 
@@ -33,10 +33,10 @@ START_TEST (amx_llist_init_clean_check)
 {
 	amx_llist_t llist;
 
-	ck_assert_int_eq (amx_init_llist(&llist), 0);
+	ck_assert_int_eq (amx_llist_init(&llist), 0);
 	ck_assert_ptr_eq (llist.head, NULL);
 	ck_assert_ptr_eq (llist.tail, NULL);
-	amx_clean_llist(&llist, NULL);
+	amx_llist_clean(&llist, NULL);
 }
 END_TEST
 
@@ -52,11 +52,11 @@ START_TEST (amx_llist_delete_func_check)
 	amx_llist_t *llist = NULL;
 
 	// create list
-	ck_assert_int_ne (amx_new_llist(&llist), -1);
-	ck_assert_int_eq (amx_init_llist_it(&s_it_func_check), 0);
+	ck_assert_int_ne (amx_llist_new(&llist), -1);
+	ck_assert_int_eq (amx_llist_it_init(&s_it_func_check), 0);
 	ck_assert_int_eq (amx_llist_append(llist, &s_it_func_check), 0);
 
-	amx_delete_llist(&llist, check_it_delete_func);
+	amx_llist_delete(&llist, check_it_delete_func);
 }
 END_TEST
 
@@ -65,13 +65,13 @@ START_TEST (amx_llist_clean_func_check)
 	amx_llist_t *llist = NULL;
 
 	// create list
-	ck_assert_int_ne (amx_new_llist(&llist), -1);
-	ck_assert_int_eq (amx_init_llist_it(&s_it_func_check), 0);
+	ck_assert_int_ne (amx_llist_new(&llist), -1);
+	ck_assert_int_eq (amx_llist_it_init(&s_it_func_check), 0);
 	ck_assert_int_eq (amx_llist_append(llist, &s_it_func_check), 0);
 
-	amx_clean_llist(llist, check_it_delete_func);
+	amx_llist_clean(llist, check_it_delete_func);
 
-	amx_delete_llist(&llist, check_it_delete_func);
+	amx_llist_delete(&llist, check_it_delete_func);
 }
 END_TEST
 
@@ -80,10 +80,10 @@ START_TEST (amx_llist_delete_cb_check)
 	amx_llist_t *llist = NULL;
 
 	// create list
-	ck_assert_int_ne (amx_new_llist(&llist), -1);
-	ck_assert_int_eq (amx_init_llist_it(&s_it_func_check), 0);
+	ck_assert_int_ne (amx_llist_new(&llist), -1);
+	ck_assert_int_eq (amx_llist_it_init(&s_it_func_check), 0);
 	ck_assert_int_eq (amx_llist_append(llist, &s_it_func_check), 0);
-	amx_delete_llist(&llist, NULL);
+	amx_llist_delete(&llist, NULL);
 	ck_assert_ptr_eq (s_it_func_check.next, NULL);
 	ck_assert_ptr_eq (s_it_func_check.prev, NULL);
 	ck_assert_ptr_eq (s_it_func_check.llist, NULL);
@@ -95,14 +95,14 @@ START_TEST (amx_llist_clean_cb_check)
 	amx_llist_t *llist = NULL;
 
 	// create list
-	ck_assert_int_ne (amx_new_llist(&llist), -1);
-	ck_assert_int_eq (amx_init_llist_it(&s_it_func_check), 0);
+	ck_assert_int_ne (amx_llist_new(&llist), -1);
+	ck_assert_int_eq (amx_llist_it_init(&s_it_func_check), 0);
 	ck_assert_int_eq (amx_llist_append(llist, &s_it_func_check), 0);
-	amx_clean_llist(llist, NULL);
+	amx_llist_clean(llist, NULL);
 	ck_assert_ptr_eq (s_it_func_check.next, NULL);
 	ck_assert_ptr_eq (s_it_func_check.prev, NULL);
 	ck_assert_ptr_eq (s_it_func_check.llist, NULL);
-	amx_delete_llist(&llist, NULL);
+	amx_llist_delete(&llist, NULL);
 }
 END_TEST
 
@@ -111,15 +111,15 @@ START_TEST(amx_llist_append_null_check)
 	amx_llist_t *llist = NULL;
 	amx_llist_it_t it1;
 
-	ck_assert_int_eq (amx_new_llist(&llist), 0);
-	ck_assert_int_eq (amx_init_llist_it(&it1), 0);
+	ck_assert_int_eq (amx_llist_new(&llist), 0);
+	ck_assert_int_eq (amx_llist_it_init(&it1), 0);
 
 	// passing NULL pointers should not lead to segfault
 	ck_assert_int_ne (amx_llist_append(NULL, NULL), 0);
 	ck_assert_int_ne (amx_llist_append(llist, NULL), 0);
 	ck_assert_int_ne (amx_llist_append(NULL, &it1), 0);
 
-	amx_delete_llist(&llist, NULL);
+	amx_llist_delete(&llist, NULL);
 }
 END_TEST
 
@@ -129,9 +129,9 @@ START_TEST(amx_llist_append_check)
 	amx_llist_it_t it1;
 	amx_llist_it_t it2;
 
-	ck_assert_int_eq (amx_new_llist(&llist), 0);
-	ck_assert_int_eq (amx_init_llist_it(&it1), 0);
-	ck_assert_int_eq (amx_init_llist_it(&it2), 0);
+	ck_assert_int_eq (amx_llist_new(&llist), 0);
+	ck_assert_int_eq (amx_llist_it_init(&it1), 0);
+	ck_assert_int_eq (amx_llist_it_init(&it2), 0);
 
 	// append iterator 1
 	ck_assert_int_eq (amx_llist_append(llist, &it1), 0);
@@ -151,7 +151,7 @@ START_TEST(amx_llist_append_check)
 	ck_assert_ptr_eq (it2.next, NULL);
 	ck_assert_ptr_eq (it2.llist, llist);
 
-	amx_delete_llist(&llist, NULL);
+	amx_llist_delete(&llist, NULL);
 }
 END_TEST
 
@@ -161,15 +161,15 @@ START_TEST(amx_llist_prepend_null_check)
 	amx_llist_t *llist = NULL;
 	amx_llist_it_t it1;
 
-	ck_assert_int_eq (amx_new_llist(&llist), 0);
-	ck_assert_int_eq (amx_init_llist_it(&it1), 0);
+	ck_assert_int_eq (amx_llist_new(&llist), 0);
+	ck_assert_int_eq (amx_llist_it_init(&it1), 0);
 
 	// passing NULL pointers should not lead to segfault
 	ck_assert_int_ne (amx_llist_prepend(NULL, NULL), 0);
 	ck_assert_int_ne (amx_llist_prepend(llist, NULL), 0);
 	ck_assert_int_ne (amx_llist_prepend(NULL, &it1), 0);
 
-	amx_delete_llist(&llist, NULL);
+	amx_llist_delete(&llist, NULL);
 }
 END_TEST
 
@@ -179,9 +179,9 @@ START_TEST(amx_llist_prepend_check)
 	amx_llist_it_t it1;
 	amx_llist_it_t it2;
 
-	ck_assert_int_eq (amx_new_llist(&llist), 0);
-	ck_assert_int_eq (amx_init_llist_it(&it1), 0);
-	ck_assert_int_eq (amx_init_llist_it(&it2), 0);
+	ck_assert_int_eq (amx_llist_new(&llist), 0);
+	ck_assert_int_eq (amx_llist_it_init(&it1), 0);
+	ck_assert_int_eq (amx_llist_it_init(&it2), 0);
 
 	// prepend iterator 1
 	ck_assert_int_eq (amx_llist_prepend(llist, &it1), 0);
@@ -201,7 +201,7 @@ START_TEST(amx_llist_prepend_check)
 	ck_assert_ptr_eq (it1.next, NULL);
 	ck_assert_ptr_eq (it2.llist, llist);
 
-	amx_delete_llist(&llist, NULL);
+	amx_llist_delete(&llist, NULL);
 }
 END_TEST
 
@@ -213,11 +213,11 @@ static amx_llist_it_t it3;
 
 static void amx_llist_setup(void)
 {
-	ck_assert_int_eq (amx_new_llist(&llist1), 0);
-	ck_assert_int_eq (amx_new_llist(&llist2), 0);
-	ck_assert_int_eq (amx_init_llist_it(&it1), 0);
-	ck_assert_int_eq (amx_init_llist_it(&it2), 0);
-	ck_assert_int_eq (amx_init_llist_it(&it3), 0);
+	ck_assert_int_eq (amx_llist_new(&llist1), 0);
+	ck_assert_int_eq (amx_llist_new(&llist2), 0);
+	ck_assert_int_eq (amx_llist_it_init(&it1), 0);
+	ck_assert_int_eq (amx_llist_it_init(&it2), 0);
+	ck_assert_int_eq (amx_llist_it_init(&it3), 0);
 	ck_assert_int_eq (amx_llist_append(llist1, &it1), 0);
 	ck_assert_int_eq (amx_llist_append(llist1, &it2), 0);
 	ck_assert_int_eq (amx_llist_append(llist1, &it3), 0);
@@ -225,8 +225,8 @@ static void amx_llist_setup(void)
 
 static void amx_llist_teardown(void)
 {
-	amx_delete_llist(&llist1, NULL);
-	amx_delete_llist(&llist2, NULL);
+	amx_llist_delete(&llist1, NULL);
+	amx_llist_delete(&llist2, NULL);
 }
 
 START_TEST(amx_llist_append_move_same_list_check)
@@ -297,14 +297,14 @@ START_TEST(amx_llist_is_empty_check)
 	amx_llist_t *llist = NULL;
 	amx_llist_it_t it1;
 
-	ck_assert_int_eq (amx_new_llist(&llist), 0);
-	ck_assert_int_eq (amx_init_llist_it(&it1), 0);
+	ck_assert_int_eq (amx_llist_new(&llist), 0);
+	ck_assert_int_eq (amx_llist_it_init(&it1), 0);
 
 	ck_assert_int_eq (amx_llist_is_empty(llist), true);
 	ck_assert_int_eq (amx_llist_append(llist, &it1), 0);
 	ck_assert_int_eq (amx_llist_is_empty(llist), false);
 
-	amx_delete_llist(&llist, NULL);
+	amx_llist_delete(&llist, NULL);
 }
 END_TEST
 
@@ -321,9 +321,9 @@ START_TEST(amx_llist_size_check)
 	amx_llist_it_t it1;
 	amx_llist_it_t it2;
 
-	ck_assert_int_eq (amx_new_llist(&llist), 0);
-	ck_assert_int_eq (amx_init_llist_it(&it1), 0);
-	ck_assert_int_eq (amx_init_llist_it(&it2), 0);
+	ck_assert_int_eq (amx_llist_new(&llist), 0);
+	ck_assert_int_eq (amx_llist_it_init(&it1), 0);
+	ck_assert_int_eq (amx_llist_it_init(&it2), 0);
 
 	ck_assert_int_eq (amx_llist_size(llist), 0);
 	ck_assert_int_eq (amx_llist_append(llist, &it1), 0);
@@ -331,10 +331,10 @@ START_TEST(amx_llist_size_check)
 	ck_assert_int_eq (amx_llist_append(llist, &it2), 0);
 	ck_assert_int_eq (amx_llist_size(llist), 2);
 
-	amx_clean_llist(llist, NULL);
+	amx_llist_clean(llist, NULL);
 	ck_assert_int_eq (amx_llist_size(llist), 0);
 
-	amx_delete_llist(&llist, NULL);
+	amx_llist_delete(&llist, NULL);
 }
 END_TEST
 
@@ -350,7 +350,7 @@ END_TEST
 START_TEST(amx_llist_set_at_check)
 {
 	amx_llist_it_t it;
-	ck_assert_int_eq (amx_init_llist_it(&it), 0);
+	ck_assert_int_eq (amx_llist_it_init(&it), 0);
 
 	ck_assert_int_eq (amx_llist_set_at(llist1, 0, &it), 0);
 	ck_assert_ptr_eq (it.next, &it1);
