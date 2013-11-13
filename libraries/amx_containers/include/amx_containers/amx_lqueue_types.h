@@ -33,7 +33,7 @@ typedef amx_llist_it_t amx_lqueue_it_t;
  @brief
  Definition of the item delete function.
 
- A pointer to a delete function is used in the following functions @ref amx_delete_lqueue, @ref amx_clean_lqueue
+ A pointer to a delete function is used in the following functions @ref amx_lqueue_delete, @ref amx_lqueue_clean
  */
 typedef amx_llist_it_delete_t amx_lqueue_it_delete_t;
 

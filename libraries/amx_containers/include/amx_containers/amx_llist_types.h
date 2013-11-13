@@ -46,8 +46,8 @@ typedef struct _amx_llist
  @brief
  Definition of the item delete function.
 
- A pointer to a delete function is used in the following functions @ref amx_delete_llist, @ref amx_clean_llist,
- @ref amx_clean_llist_it.
+ A pointer to a delete function is used in the following functions @ref amx_llist_delete, @ref amx_llist_clean,
+ @ref amx_llist_it_clean.
  */
 typedef void (* amx_llist_it_delete_t) (amx_llist_it_t *it);
 

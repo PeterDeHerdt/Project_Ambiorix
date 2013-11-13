@@ -31,10 +31,10 @@ extern "C"
 
  Allocates and initializes memory to store a linked stack.
  This function allocates memory from the heap, if a linked stack is on the stack, it can be initialized using
- function @ref amx_init_lstack
+ function @ref amx_lstack_init
 
  @note
- The allocated memory must be freed when not used anymore, use @ref amx_delete_lstack to free the memory
+ The allocated memory must be freed when not used anymore, use @ref amx_lstack_delete to free the memory
 
  @param lstack a pointer to the location where the pointer to the new linked stack can be stored
 
@@ -58,7 +58,7 @@ int amx_lstack_new(amx_lstack_t **lstack)
  Frees the allocated memory and sets the pointer to NULL.
 
  @note
- Only call this function for linked stacks that are allocated on the heap using @ref amx_new_lstack
+ Only call this function for linked stacks that are allocated on the heap using @ref amx_lstack_new
 
  @param lstack a pointer to the location where the pointer to the linked stack is be stored
  @param func pointer to a function that is called to free each item in the linked stack
@@ -76,11 +76,11 @@ void amx_lstack_delete(amx_lstack_t **lstack, amx_lstack_it_delete_t func)
 
  Initializes the linked stack structure. All pointers are reset to NULL.
  This function is typically called for linked stacks that are on the stack.
- Allocating and initializing a linked stack on the heap can be done using @ref amx_new_lstack
+ Allocating and initializing a linked stack on the heap can be done using @ref amx_lstack_new
 
  @note
  When calling this function on an already initialized linked stack, that contains items, the linked stack is reset
- and all items in the stack are lost. Use @ref amx_clean_lstack to remove all items from the stack.
+ and all items in the stack are lost. Use @ref amx_lstack_clean to remove all items from the stack.
 
  @param lstack a pointer to the linked stack structure.
 
@@ -120,7 +120,7 @@ void amx_lstack_clean(amx_lstack_t *lstack, amx_lstack_it_delete_t func)
 
  @note
  Make sure that the iterator of the item is at least initialized when it is first used. Initializing an iterator can be
- done useing @ref amx_init_lstack_it.
+ done useing @ref amx_lstack_it_init.
  An iterator that is already used in a linked stack is considered initialized.
 
  @param lstack a pointer to the linked stack structure
