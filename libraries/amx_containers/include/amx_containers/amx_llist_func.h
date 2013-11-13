@@ -31,7 +31,7 @@ extern "C"
  @return
  -1 if an error occured. 0 on success
 */
-int amx_new_llist(amx_llist_t **llist);
+int amx_llist_new(amx_llist_t **llist);
 
 /**
  @ingroup amx_llist
@@ -49,7 +49,7 @@ int amx_new_llist(amx_llist_t **llist);
  @param llist a pointer to the location where the pointer to the linked stack is be stored
  @param func pointer to a function that is called to free each item in the linked list
 */
-void amx_delete_llist(amx_llist_t **llist, amx_llist_it_delete_t func);
+void amx_llist_delete(amx_llist_t **llist, amx_llist_it_delete_t func);
 
 /**
  @ingroup amx_llist
@@ -70,7 +70,7 @@ void amx_delete_llist(amx_llist_t **llist, amx_llist_it_delete_t func);
  0 on success.
  -1 if a NULL pointer is given.
 */
-int amx_init_llist(amx_llist_t *llist);
+int amx_llist_init(amx_llist_t *llist);
 
 /**
  @ingroup amx_llist
@@ -83,7 +83,7 @@ int amx_init_llist(amx_llist_t *llist);
  @param llist a pointer to the linked list structure
  @param func pointer to a function that is called to free each item in the linked list
 */
-void amx_clean_llist(amx_llist_t *llist, amx_llist_it_delete_t func);
+void amx_llist_clean(amx_llist_t *llist, amx_llist_it_delete_t func);
 
 /**
  @ingroup amx_llist

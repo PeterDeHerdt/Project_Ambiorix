@@ -17,6 +17,13 @@ extern "C"
 /**
  @ingroup amx_llist
  @brief
+ Gets the data pointer from an linked list iterator
+ */
+#define amx_llist_it_get_data(it, type, member) ((type *)(((void *)it) - offsetof(type,member)))
+
+/**
+ @ingroup amx_llist
+ @brief
  Initializes a linked list.iterator
 
  Initializes the linked list iterator structure. All pointers are reset to NULL.
@@ -32,7 +39,7 @@ extern "C"
  0 on success.
  -1 if a NULL pointer is given.
 */
-int amx_init_llist_it(amx_llist_it_t *it);
+int amx_llist_it_init(amx_llist_it_t *it);
 
 /**
  @ingroup amx_llist
@@ -48,7 +55,7 @@ int amx_init_llist_it(amx_llist_it_t *it);
  @param it a pointer to the linked list iterator structure
  @param func pointer to a function that is called to free the linked list item
 */
-void amx_clean_llist_it(amx_llist_it_t *it, amx_llist_it_delete_t func);
+void amx_llist_it_clean(amx_llist_it_t *it, amx_llist_it_delete_t func);
 
 /**
  @ingroup amx_llist

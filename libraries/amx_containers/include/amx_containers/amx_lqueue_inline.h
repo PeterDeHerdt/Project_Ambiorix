@@ -42,9 +42,9 @@ extern "C"
  -1 if an error occured. 0 on success
 */
 AMX_INLINE
-int amx_new_lqueue(amx_lqueue_t **lqueue)
+int amx_lqueue_new(amx_lqueue_t **lqueue)
 {
-	return amx_new_llist(lqueue);
+	return amx_llist_new(lqueue);
 }
 
 /**
@@ -64,9 +64,9 @@ int amx_new_lqueue(amx_lqueue_t **lqueue)
  @param func pointer to a function that is called to free each item in the linked queue
 */
 AMX_INLINE
-void amx_delete_lqueue(amx_lqueue_t **lqueue, amx_lqueue_it_delete_t func)
+void amx_lqueue_delete(amx_lqueue_t **lqueue, amx_lqueue_it_delete_t func)
 {
-	amx_delete_llist(lqueue, func);
+	amx_llist_delete(lqueue, func);
 }
 
 /**
@@ -89,9 +89,9 @@ void amx_delete_lqueue(amx_lqueue_t **lqueue, amx_lqueue_it_delete_t func)
  -1 if a NULL pointer is given.
 */
 AMX_INLINE
-int amx_init_lqueue(amx_lqueue_t *lqueue)
+int amx_lqueue_init(amx_lqueue_t *lqueue)
 {
-	return amx_init_llist(lqueue);
+	return amx_llist_init(lqueue);
 }
 
 /**
@@ -106,9 +106,9 @@ int amx_init_lqueue(amx_lqueue_t *lqueue)
  @param func pointer to a function that is called to free each item in the linked queue
 */
 AMX_INLINE
-void amx_clean_lqueue(amx_lqueue_t *lqueue, amx_lqueue_it_delete_t func)
+void amx_lqueue_clean(amx_lqueue_t *lqueue, amx_lqueue_it_delete_t func)
 {
-	amx_clean_llist(lqueue, func);
+	amx_llist_clean(lqueue, func);
 }
 
 /**
@@ -201,9 +201,9 @@ size_t amx_lqueue_is_empty(amx_lqueue_t *lqueue)
  -1 if a NULL pointer is given.
 */
 AMX_INLINE
-int amx_init_lqueue_it(amx_lqueue_it_t *it)
+int amx_lqueue_it_init(amx_lqueue_it_t *it)
 {
-	return amx_init_llist_it(it);
+	return amx_llist_it_init(it);
 }
 
 #ifdef __cplusplus

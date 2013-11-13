@@ -42,9 +42,9 @@ extern "C"
  -1 if an error occured. 0 on success
 */
 AMX_INLINE
-int amx_new_lstack(amx_lstack_t **lstack)
+int amx_lstack_new(amx_lstack_t **lstack)
 {
-	return amx_new_llist(lstack);
+	return amx_llist_new(lstack);
 }
 
 /**
@@ -64,9 +64,9 @@ int amx_new_lstack(amx_lstack_t **lstack)
  @param func pointer to a function that is called to free each item in the linked stack
 */
 AMX_INLINE
-void amx_delete_lstack(amx_lstack_t **lstack, amx_lstack_it_delete_t func)
+void amx_lstack_delete(amx_lstack_t **lstack, amx_lstack_it_delete_t func)
 {
-	amx_delete_llist(lstack, func);
+	amx_llist_delete(lstack, func);
 }
 
 /**
@@ -89,9 +89,9 @@ void amx_delete_lstack(amx_lstack_t **lstack, amx_lstack_it_delete_t func)
  -1 if a NULL pointer is given.
 */
 AMX_INLINE
-int amx_init_lstack(amx_lstack_t *lstack)
+int amx_lstack_init(amx_lstack_t *lstack)
 {
-	return amx_init_llist(lstack);
+	return amx_llist_init(lstack);
 }
 
 /**
@@ -106,9 +106,9 @@ int amx_init_lstack(amx_lstack_t *lstack)
  @param func pointer to a function that is called to free each item in the linked stack
 */
 AMX_INLINE
-void amx_clean_lstack(amx_lstack_t *lstack, amx_lstack_it_delete_t func)
+void amx_lstack_clean(amx_lstack_t *lstack, amx_lstack_it_delete_t func)
 {
-	amx_clean_llist(lstack, func);
+	amx_llist_clean(lstack, func);
 }
 
 /**
@@ -201,9 +201,9 @@ bool amx_lstack_is_empty(amx_lstack_t *lstack)
  -1 if a NULL pointer is given.
 */
 AMX_INLINE
-int amx_init_lstack_it(amx_lstack_it_t *it)
+int amx_lstack_it_init(amx_lstack_it_t *it)
 {
-	return amx_init_llist_it(it);
+	return amx_llist_it_init(it);
 }
 
 #ifdef __cplusplus
