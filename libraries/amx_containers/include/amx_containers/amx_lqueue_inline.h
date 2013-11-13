@@ -31,10 +31,10 @@ extern "C"
 
  Allocates and initializes memory to store a linked queue.
  This function allocates memory from the heap, if a linked queue is on the stack, it can be initialized using
- function @ref amx_init_lqueue
+ function @ref amx_lqueue_init
 
  @note
- The allocated memory must be freed when not used anymore, use @ref amx_delete_lqueue to free the memory
+ The allocated memory must be freed when not used anymore, use @ref amx_lqueue_delete to free the memory
 
  @param lqueue a pointer to the location where the pointer to the new linked queue can be stored
 
@@ -58,7 +58,7 @@ int amx_lqueue_new(amx_lqueue_t **lqueue)
  Frees the allocated memory and sets the pointer to NULL.
 
  @note
- Only call this function for linked queues that are allocated on the heap using @ref amx_new_lqueue
+ Only call this function for linked queues that are allocated on the heap using @ref amx_lqueue_new
 
  @param lqueue a pointer to the location where the pointer to the linked queue is be stored
  @param func pointer to a function that is called to free each item in the linked queue
@@ -76,11 +76,11 @@ void amx_lqueue_delete(amx_lqueue_t **lqueue, amx_lqueue_it_delete_t func)
 
  Initializes the linked queue structure. All pointers are reset to NULL.
  This function is typically called for linked queues that are on the stack.
- Allocating and initializing a linked queue on the heap can be done using @ref amx_new_lqueue
+ Allocating and initializing a linked queue on the heap can be done using @ref amx_lqueue_new
 
  @note
  When calling this function on an already initialized linked queue, that contains items, the linked queue is reset
- and all items in the queue are lost. Use @ref amx_clean_lqueue to remove all items from the queue.
+ and all items in the queue are lost. Use @ref amx_lqueue_clean to remove all items from the queue.
 
  @param lqueue a pointer to the linked queue structure.
 
@@ -120,7 +120,7 @@ void amx_lqueue_clean(amx_lqueue_t *lqueue, amx_lqueue_it_delete_t func)
 
  @note
  Make sure that the iterator of the item is at least initialized when it is first used. Initializing an iterator can be
- done useing @ref amx_init_lqueue_it.
+ done useing @ref amx_lqueue_it_init.
  An iterator that is already used in a linked queue is considered initialized.
 
  @param lqueue a pointer to the linked queue structure

@@ -31,7 +31,7 @@ extern "C"
  @note
  When calling this function on an already initialized linked list iterator, the linked list iterator is reset
  and the list the iterator was in is corrupted. Use @ref amx_llist_it_take to remove the iterator from the list or
- @ref amx_clean_llist_it to remove it from the list and clean up the iterator
+ @ref amx_llist_it_clean to remove it from the list and clean up the iterator
 
  @param it a pointer to the linked list iterator structure.
 

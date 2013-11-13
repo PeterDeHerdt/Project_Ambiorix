@@ -21,10 +21,10 @@ extern "C"
 
  Allocates and initializes memory to store a linked list.
  This function allocates memory from the heap, if a linked list is on the stack, it can be initialized using
- function @ref amx_init_llist
+ function @ref amx_llist_init
 
  @note
- The allocated memory must be freed when not used anymore, use @ref amx_delete_llist to free the memory
+ The allocated memory must be freed when not used anymore, use @ref amx_llist_delete to free the memory
 
  @param llist a pointer to the location where the pointer to the new linked list can be stored
 
@@ -44,7 +44,7 @@ int amx_llist_new(amx_llist_t **llist);
  Frees the allocated memory and sets the pointer to NULL.
 
  @note
- Only call this function for linked lists that are allocated on the heap using @ref amx_new_llist
+ Only call this function for linked lists that are allocated on the heap using @ref amx_llist_new
 
  @param llist a pointer to the location where the pointer to the linked stack is be stored
  @param func pointer to a function that is called to free each item in the linked list
@@ -58,11 +58,11 @@ void amx_llist_delete(amx_llist_t **llist, amx_llist_it_delete_t func);
 
  Initializes the linked list structure. All pointers are reset to NULL.
  This function is typically called for linked lists that are on the stack.
- Allocating and initializing a linked list on the heap can be done using @ref amx_new_llist
+ Allocating and initializing a linked list on the heap can be done using @ref amx_llist_new
 
  @note
  When calling this function on an already initialized linked list, that contains items, the linked list is reset
- and all items in the list are lost. Use @ref amx_clean_llist to remove all items from the list.
+ and all items in the list are lost. Use @ref amx_llist_clean to remove all items from the list.
 
  @param llist a pointer to the linked list structure.
 
@@ -124,7 +124,7 @@ size_t amx_llist_size(const amx_llist_t *llist);
 
  @note
  Make sure that the iterator of the item is at least initialized when it is first used. Initializing an iterator can be
- done useing @ref amx_init_llist_it.
+ done useing @ref amx_llist_it_init.
  An iterator that is already used in a linked list is considered initialized.
 
  @param llist a pointer to the linked list structure
@@ -144,7 +144,7 @@ int amx_llist_append(amx_llist_t *llist, amx_llist_it_t *it);
 
  @note
  Make sure that the iterator of the item is at least initialized when it is first used. Initializing an iterator can be
- done useing @ref amx_init_llist_it.
+ done useing @ref amx_llist_it_init.
  An iterator that is already used in a linked list is considered initialized.
 
  @param llist a pointer to the linked list structure
