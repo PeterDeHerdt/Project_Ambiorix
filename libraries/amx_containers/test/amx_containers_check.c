@@ -9,6 +9,7 @@ int main (void)
 	srunner_add_suite(sr, amx_llist_it_suite());
 	srunner_add_suite(sr, amx_lstack_suite());
 	srunner_add_suite(sr, amx_lqueue_suite());
+	srunner_add_suite(sr, amx_array_suite());
 
 	srunner_run_all (sr, CK_VERBOSE);
 	number_failed = srunner_ntests_failed (sr);

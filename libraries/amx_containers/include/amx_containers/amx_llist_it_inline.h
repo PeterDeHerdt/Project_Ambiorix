@@ -21,7 +21,7 @@ extern "C"
 /**
  @file
  @brief
- Ambiorix linked list API header file - inline functions
+ Ambiorix linked list iterator API header file - inline functions
 */
 
 /**
@@ -39,7 +39,7 @@ extern "C"
 AMX_INLINE
 amx_llist_it_t *amx_llist_it_get_next(const amx_llist_it_t *reference)
 {
-    return reference?reference->next:NULL;
+	return reference?reference->next:NULL;
 }
 
 /**
@@ -57,7 +57,7 @@ amx_llist_it_t *amx_llist_it_get_next(const amx_llist_it_t *reference)
 AMX_INLINE
 amx_llist_it_t *amx_llist_it_get_previous(const amx_llist_it_t *reference)
 {
-    return reference?reference->prev:NULL;
+	return reference?reference->prev:NULL;
 }
 
 /**
@@ -73,7 +73,7 @@ amx_llist_it_t *amx_llist_it_get_previous(const amx_llist_it_t *reference)
 AMX_INLINE
 bool amx_llist_it_is_in_list(amx_llist_it_t *it)
 {
-    return (it && it->llist)?true:false;
+	return (it && it->llist)?true:false;
 }
 
 #ifdef __cplusplus

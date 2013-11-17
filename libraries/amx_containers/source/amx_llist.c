@@ -28,10 +28,7 @@
 
 #include <stdlib.h>
 
-#include <amx_log.h>
 #include <amx_containers/amx_llist.h>
-
-#define ME "amx_llist"
 
 /**
  @file

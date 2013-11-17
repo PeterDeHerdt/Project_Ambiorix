@@ -11,7 +11,7 @@ extern "C"
 /**
  @file
  @brief
- Ambiorix linked list API header file
+ Ambiorix linked list iterator API header file
 */
 
 /**
