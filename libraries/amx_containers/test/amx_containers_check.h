@@ -13,6 +13,7 @@ Suite *amx_llist_suite(void);
 Suite *amx_llist_it_suite(void);
 Suite *amx_lstack_suite(void);
 Suite *amx_lqueue_suite(void);
+Suite *amx_array_suite(void);
 
 #ifdef __cplusplus
 }

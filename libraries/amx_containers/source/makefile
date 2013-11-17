@@ -6,7 +6,9 @@ include $(AMX_BUILD_DIR)/amx_build.config
 include $(AMX_BUILD_DIR)/amx.config
 
 OBJECTS =	amx_llist.o \
-			amx_llist_it.o
+			amx_llist_it.o \
+			amx_array.o \
+			amx_array_it.o \
 
 TARGET = libamx_containers
 
