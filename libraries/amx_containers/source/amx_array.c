@@ -297,7 +297,7 @@ exit:
 
 amx_array_it_t *amx_array_get_first(const amx_array_t *array)
 {
-	const amx_array_it_t *it = NULL;
+	amx_array_it_t *it = NULL;
 	if (!array)
 	{
 		goto exit;
@@ -320,7 +320,7 @@ exit:
 
 amx_array_it_t *amx_array_get_last(const amx_array_t *array)
 {
-	const amx_array_it_t *it = NULL;
+	amx_array_it_t *it = NULL;
 	if (!array)
 	{
 		goto exit;
@@ -332,7 +332,7 @@ amx_array_it_t *amx_array_get_last(const amx_array_t *array)
 		pos--;
 	}
 
-	if (pos >= 0 && array->buffer[pos].data)
+	if (array->buffer[pos].data)
 	{
 		it = &array->buffer[pos];
 	}
