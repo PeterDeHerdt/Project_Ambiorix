@@ -38,7 +38,7 @@
 
 amx_array_it_t *amx_array_it_get_next(const amx_array_it_t *reference)
 {
-	const amx_array_it_t *it = NULL;
+	amx_array_it_t *it = NULL;
 	if (!reference)
 	{
 		goto exit;
@@ -63,7 +63,7 @@ exit:
 
 amx_array_it_t *amx_array_it_get_previous(const amx_array_it_t *reference)
 {
-	const amx_array_it_t *it = NULL;
+	amx_array_it_t *it = NULL;
 	if (!reference)
 	{
 		goto exit;
@@ -77,7 +77,7 @@ amx_array_it_t *amx_array_it_get_previous(const amx_array_it_t *reference)
 		pos--;
 	}
 
-	if (pos >= 0 && array->buffer[pos].data)
+	if (array->buffer[pos].data)
 	{
 		it = &array->buffer[pos];
 	}
