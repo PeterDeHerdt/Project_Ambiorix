@@ -37,22 +37,72 @@
  Ambiorix array API implementation
 */
 
-static void amx_array_initialize(amx_array_t *array, unsigned int start_pos)
+static void amx_array_initialize_items(amx_array_t *array, unsigned int start_pos)
 {
 	amx_array_it_t *it = NULL;
-	size_t size = sizeof(amx_array_it_t) + array->item_size;
 
 	for (unsigned int index = start_pos; index < array->items; index++)
 	{
-		it = (amx_array_it_t *)(array->buffer + (size * index));
+		it = &(array->buffer[index]);
 		it->array = array;
+		it->data = NULL;
 	}
 }
 
-int amx_array_new(amx_array_t **array, const size_t items, const size_t item_size)
+static void amx_array_clean_items(amx_array_t *array, unsigned int start_pos, amx_array_it_delete_t func)
+{
+	if (!func)
+	{
+		goto exit;
+	}
+
+	amx_array_it_t *it = NULL;
+	for (unsigned int index = start_pos; index < array->items; index++)
+	{
+		it = &(array->buffer[index]);
+		if (it->data)
+		{
+			func(it);
+		}
+		it->data = NULL;
+	}
+	
+exit:
+	return;
+}
+
+static int amx_array_realloc(amx_array_t *array, size_t items)
 {
 	int retval = -1;
-	if (!array || !item_size)
+	amx_array_it_t *buffer = realloc(array->buffer, sizeof(amx_array_it_t) * items);
+	if (!buffer)
+	{
+		goto exit;
+	}
+
+	array->buffer = buffer;
+	array->items = items;
+	retval = 0;
+
+exit:
+	return retval;
+}
+
+static size_t amx_array_calculate_last_used(amx_array_t *array)
+{
+	size_t index =array->items - 1;
+	while(index > 0 && !array->buffer[index].data)
+	{
+		index--;
+	}
+
+	return index;
+}
+
+int amx_array_new(amx_array_t **array, const size_t items)
+{
+	int retval = -1;
+	if (!array)
 	{
 		goto exit;
 	}
@@ -64,9 +114,9 @@ int amx_array_new(amx_array_t **array, const size_t items, const size_t item_siz
 		goto exit;
 	}
 
-	/* set the item size and number of items in the array */
+	/* set the number of items in the array */
 	(*array)->items = items;
-	(*array)->item_size = item_size;
+	(*array)->last_used = 0;
 
 	/* if no items need to be pre-allocated, leave */
 	if (!items)
@@ -75,18 +125,15 @@ int amx_array_new(amx_array_t **array, const size_t items, const size_t item_siz
 		goto exit;
 	}
 
-	/* calculate the size of the array buffer 
-	   and allocate the buffer
-	*/
-	size_t size = sizeof(amx_array_it_t) + item_size;
-	(*array)->buffer = calloc(items, size);
+	/* allocate the buffer */
+	(*array)->buffer = calloc(items, sizeof(amx_array_it_t));
 	if (!(*array)->buffer)
 	{
 		free(*array);
 		*array = NULL;
 		goto exit;
 	}
-	amx_array_initialize(*array, 0);
+	amx_array_initialize_items(*array, 0);
 
 	retval = 0;
 
@@ -94,12 +141,14 @@ exit:
 	return retval;
 }
 
-void amx_array_delete(amx_array_t **array)
+void amx_array_delete(amx_array_t **array, amx_array_it_delete_t func)
 {
 	if (!array)
 	{
 		goto exit;
 	}
+
+	amx_array_clean_items(*array, 0, func);
 
 	free((*array)->buffer);
 	free(*array);
@@ -109,17 +158,17 @@ exit:
 	return;
 }
 
-int amx_array_init(amx_array_t *array, const size_t items, const size_t item_size)
+int amx_array_init(amx_array_t *array, const size_t items)
 {
 	int retval = -1;
-	if (!array || item_size == 0)
+	if (!array)
 	{
 		goto exit;
 	}
 
 	array->buffer = NULL;
 	array->items = items;
-	array->item_size = item_size;
+	array->last_used = 0;
 
 	/* if no items need to be pre-allocated, leave */
 	if (!items)
@@ -128,13 +177,13 @@ int amx_array_init(amx_array_t *array, const size_t items, const size_t item_siz
 		goto exit;
 	}
 
-	size_t size = sizeof(amx_array_it_t) + item_size;
-	array->buffer = calloc(items, size);
+	array->buffer = calloc(items, sizeof(amx_array_it_t));
 	if (!array->buffer)
 	{
 		goto exit;
 	}
-	amx_array_initialize(array, 0);
+
+	amx_array_initialize_items(array, 0);
 
 	retval = 0;
 
@@ -142,16 +191,18 @@ exit:
 	return retval;
 }
 
-void amx_array_clean(amx_array_t *array)
+void amx_array_clean(amx_array_t *array, amx_array_it_delete_t func)
 {
 	if (!array)
 	{
 		goto exit;
 	}
 
+	amx_array_clean_items(array, 0, func);
+
 	free(array->buffer);
+	array->buffer = NULL;
 	array->items = 0;
-	array->item_size = 0;
 
 exit:
 	return;
@@ -171,18 +222,9 @@ int amx_array_grow(amx_array_t *array, size_t items)
 		goto exit;
 	}
 
-	size_t size = sizeof(amx_array_it_t) + array->item_size;
-	size_t old_size = array->items;
-	items += old_size;
-	char *buffer = realloc(array->buffer, size * items);
-	if (!buffer)
-	{
-		goto exit;
-	}
-
-	array->buffer = buffer;
-	array->items = items;
-	amx_array_initialize(array, old_size);
+	size_t old_items = array->items;
+	retval = amx_array_realloc(array, array->items + items);
+	amx_array_initialize_items(array, old_items);
 
 	retval = 0;
 
@@ -190,7 +232,7 @@ exit:
 	return retval;
 }
 
-int amx_array_shrink(amx_array_t *array, size_t items)
+int amx_array_shrink(amx_array_t *array, size_t items, amx_array_it_delete_t func)
 {
 	int retval = -1;
 	if (!array)
@@ -206,46 +248,96 @@ int amx_array_shrink(amx_array_t *array, size_t items)
 
 	if (items == array->items)
 	{
-		/* free the buffer, no items needed anymore */
-		free(array->buffer);
-		array->buffer = 0;
-		array->items = 0;
+		amx_array_clean(array, func);
 		retval = 0;
 		goto exit;
 	}
 
-	size_t size = sizeof(amx_array_it_t) + array->item_size;
-	size_t old_size = array->items;
-	items = old_size - items;
-	char *buffer = realloc(array->buffer, size * items);
-	if (!buffer)
-	{
-		goto exit;
-	}
-
-	array->buffer = buffer;
-	array->items = items;
-
-	retval = 0;
+	amx_array_clean_items(array, array->items - items, func);
+	retval = amx_array_realloc(array, array->items - items);
+	array->last_used = amx_array_calculate_last_used(array);
 
 exit:
 	return retval;
 }
 
-const amx_array_it_t *amx_array_get_at(const amx_array_t *array, unsigned int index)
+amx_array_it_t *amx_array_set_data_at(amx_array_t *array, unsigned int index, void *data)
 {
-	const amx_array_it_t *it = NULL;
+	amx_array_it_t *it = amx_array_get_at(array, index);
+	if (!it)
+	{
+		goto exit;
+	}
+
+	it->data = data;
+	array->last_used = (array->last_used < index)?index:array->last_used;
+
+exit:
+	return it;
+}
+
+amx_array_it_t *amx_array_get_at(const amx_array_t *array, unsigned int index)
+{
+	amx_array_it_t *it = NULL;
 	if (!array || !array->buffer)
 	{
 		goto exit;
 	}
 
-	size_t size = sizeof(amx_array_it_t) + array->item_size;
-	if (index < array->items)
+	if (index >= array->items)
 	{
-		it = (const amx_array_it_t *)(array->buffer + (size * index));
+		goto exit;
+	}
+
+	it = &array->buffer[index];
+
+exit:
+	return it;
+}
+
+amx_array_it_t *amx_array_get_first(const amx_array_t *array)
+{
+	const amx_array_it_t *it = NULL;
+	if (!array)
+	{
+		goto exit;
+	}
+
+	size_t pos = 0;
+	while(pos < array->items && !array->buffer[pos].data)
+	{
+		pos++;
+	}
+
+	if (pos < array->items && array->buffer[pos].data)
+	{
+		it = &array->buffer[pos];
 	}
 
 exit:
 	return it;
 }
+
+amx_array_it_t *amx_array_get_last(const amx_array_t *array)
+{
+	const amx_array_it_t *it = NULL;
+	if (!array)
+	{
+		goto exit;
+	}
+
+	size_t pos = array->items - 1;
+	while(pos > 0 && !array->buffer[pos].data)
+	{
+		pos--;
+	}
+
+	if (pos >= 0 && array->buffer[pos].data)
+	{
+		it = &array->buffer[pos];
+	}
+
+exit:
+	return it;
+}
+

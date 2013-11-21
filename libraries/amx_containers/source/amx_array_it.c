@@ -36,7 +36,7 @@
  Ambiorix array iterator API implementation
 */
 
-const amx_array_it_t *amx_array_it_get_next(const amx_array_it_t *reference)
+amx_array_it_t *amx_array_it_get_next(const amx_array_it_t *reference)
 {
 	const amx_array_it_t *it = NULL;
 	if (!reference)
@@ -45,16 +45,23 @@ const amx_array_it_t *amx_array_it_get_next(const amx_array_it_t *reference)
 	}
 
 	amx_array_t *array = reference->array;
-	size_t size = sizeof(amx_array_it_t) + array->item_size;
-	size_t pos = ((char *)reference - array->buffer) / size;
-	
-	it = amx_array_get_at(array, pos + 1);
+	size_t pos = (reference - array->buffer);
+	pos++;
+	while(pos < array->items && !array->buffer[pos].data)
+	{
+		pos++;
+	}
+
+	if (pos < array->items && array->buffer[pos].data)
+	{
+		it = &array->buffer[pos];
+	}
 
 exit:
 	return it;
 }
 
-const amx_array_it_t *amx_array_it_get_previous(const amx_array_it_t *reference)
+amx_array_it_t *amx_array_it_get_previous(const amx_array_it_t *reference)
 {
 	const amx_array_it_t *it = NULL;
 	if (!reference)
@@ -63,10 +70,17 @@ const amx_array_it_t *amx_array_it_get_previous(const amx_array_it_t *reference)
 	}
 
 	amx_array_t *array = reference->array;
-	size_t size = sizeof(amx_array_it_t) + array->item_size;
-	size_t pos = ((char *)reference - array->buffer) / size;
-	
-	it = amx_array_get_at(array, pos - 1);
+	size_t pos = (reference - array->buffer);
+	pos--;
+	while(pos > 0 && !array->buffer[pos].data)
+	{
+		pos--;
+	}
+
+	if (pos >= 0 && array->buffer[pos].data)
+	{
+		it = &array->buffer[pos];
+	}
 
 exit:
 	return it;
