@@ -9,7 +9,7 @@ OBJECTS = amx_log_check.o
 
 TARGET = amx_log_check
 
-CFLAGS  += -O2 -std=c99 -g -Wall -W -Werror -fPIC -I. -I../include -I$(AMX_INCLUDE_DIR) \
+CFLAGS  += -O2 -std=c99 -g -Wall -W -Werror -I. -I../include -I$(AMX_INCLUDE_DIR) \
 		   $(shell pkg-config --cflags check amx_log)
 LDFLAGS += -L$(AMX_LIB_DIR) \
 		   $(shell pkg-config --libs check amx_log)
@@ -33,7 +33,7 @@ else
 endif
 
 $(TARGET): $(OBJECTS)
-	$(CC) -fPIC $(LDFLAGS) -o $(@) $(OBJECTS)
+	$(CC) -o $(@) $(OBJECTS) $(LDFLAGS)
 
 -include $(OBJECTS:.o=.d)
 

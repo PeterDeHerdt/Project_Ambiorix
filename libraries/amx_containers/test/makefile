@@ -14,7 +14,7 @@ OBJECTS =	amx_containers_check.o \
 
 TARGET = amx_containers_check
 
-CFLAGS  += -std=c99 -g -Wall -W -Werror -fPIC -I. -I../include -I$(AMX_INCLUDE_DIR) \
+CFLAGS  += -std=c99 -g -Wall -W -Werror -I. -I../include -I$(AMX_INCLUDE_DIR) \
 			$(shell pkg-config --cflags check amx_containers)
 LDFLAGS += -L$(AMX_LIB_DIR) \
 			$(shell pkg-config --libs check amx_containers)
@@ -42,7 +42,7 @@ else
 endif
 
 $(TARGET): $(OBJECTS)
-	$(CC) -fPIC $(LDFLAGS) -o $(@) $(OBJECTS)
+	$(CC) -o $(@) $(OBJECTS) $(LDFLAGS)
 
 -include $(OBJECTS:.o=.d)
 
