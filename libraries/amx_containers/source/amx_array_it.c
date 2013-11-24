@@ -52,7 +52,7 @@ amx_array_it_t *amx_array_it_get_next(const amx_array_it_t *reference)
 		pos++;
 	}
 
-	if (pos < array->items && array->buffer[pos].data)
+	if (pos < array->items)
 	{
 		it = &array->buffer[pos];
 	}
@@ -84,4 +84,18 @@ amx_array_it_t *amx_array_it_get_previous(const amx_array_it_t *reference)
 
 exit:
 	return it;
+}
+
+size_t amx_array_it_index(const amx_array_it_t *it)
+{
+	size_t index = 0;
+	if (!it)
+	{
+		goto exit;
+	}
+
+	index = it - it->array->buffer;
+
+exit:
+	return index;
 }
