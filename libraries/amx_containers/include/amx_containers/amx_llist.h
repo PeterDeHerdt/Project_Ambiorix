@@ -59,7 +59,14 @@ typedef struct _amx_llist
 /**
  @ingroup amx_llist
  @brief
- Definition of the item delete function.
+ Gets the data pointer from an linked list iterator
+ */
+#define amx_llist_it_get_data(it, type, member) ((type *)(((void *)it) - offsetof(type,member)))
+
+/**
+ @ingroup amx_llist
+ @brief
+ Definition of the linked list item delete function.
 
  A pointer to a delete function is used in the following functions @ref amx_llist_delete, @ref amx_llist_clean,
  @ref amx_llist_it_clean.
@@ -98,7 +105,7 @@ int amx_llist_new(amx_llist_t **llist);
  @note
  Only call this function for linked lists that are allocated on the heap using @ref amx_llist_new
 
- @param llist a pointer to the location where the pointer to the linked stack is be stored
+ @param llist a pointer to the location where the pointer to the linked list is be stored
  @param func pointer to a function that is called to free each item in the linked list
 */
 void amx_llist_delete(amx_llist_t **llist, amx_llist_it_delete_t func);
@@ -163,7 +170,7 @@ bool amx_llist_is_empty(const amx_llist_t *llist);
  @param llist a pointer to the linked list structure
 
  @return
- returns true when the linked list contains no items, false when there is at least one item in the list.
+ returns the number of items in linked list
 */
 size_t amx_llist_size(const amx_llist_t *llist);
 
@@ -253,13 +260,6 @@ int amx_llist_set_at(amx_llist_t *llist, size_t index, amx_llist_it_t *it);
 /**
  @ingroup amx_llist
  @brief
- Gets the data pointer from an linked list iterator
- */
-#define amx_llist_it_get_data(it, type, member) ((type *)(((void *)it) - offsetof(type,member)))
-
-/**
- @ingroup amx_llist
- @brief
  Initializes a linked list.iterator
 
  Initializes the linked list iterator structure. All pointers are reset to NULL.
@@ -345,58 +345,6 @@ int amx_llist_it_insert_after(amx_llist_it_t *reference, amx_llist_it_t *it);
  The index of the iterator or AMX_LLIST_RANGE if the iterator is not in a list.
 */
 size_t amx_llist_it_index_of(amx_llist_it_t *it);
-
-/**
- @ingroup amx_llist
- @brief
- Gets the next iterator in the list
-
- This function does not remove the item from the linked list.
-
- @param reference a pointer to the linked list structure used as reference
-
- @return
- Returns the next iterator of the linked list, or NULL when there is not more item in the linked list.
-*/
-AMX_INLINE
-amx_llist_it_t *amx_llist_it_get_next(const amx_llist_it_t *reference)
-{
-	return reference?reference->next:NULL;
-}
-
-/**
- @ingroup amx_llist
- @brief
- Gets the previous iterator in the list
-
- This function does not remove the item from the linked list.
-
- @param reference a pointer to the linked list structure used as reference
-
- @return
- Returns the previous iterator of the linked list, or NULL when there is not more item in the linked list.
-*/
-AMX_INLINE
-amx_llist_it_t *amx_llist_it_get_previous(const amx_llist_it_t *reference)
-{
-	return reference?reference->prev:NULL;
-}
-
-/**
- @ingroup amx_llist
- @brief
- Checks that an iterator is in a list
-
- @param it a pointer to the linked list structure.
-
- @return
- true when the iterator is in the list, or false if it is not in a list
-*/
-AMX_INLINE
-bool amx_llist_it_is_in_list(amx_llist_it_t *it)
-{
-	return (it && it->llist)?true:false;
-}
 
 /**
  @ingroup amx_llist
@@ -501,6 +449,58 @@ amx_llist_it_t *amx_llist_take_at(amx_llist_t *llist, unsigned int index)
 	amx_llist_it_t *it = amx_llist_get_at(llist, index);
 	amx_llist_it_take(it);
 	return it;
+}
+
+/**
+ @ingroup amx_llist
+ @brief
+ Gets the next iterator in the list
+
+ This function does not remove the item from the linked list.
+
+ @param reference a pointer to the linked list structure used as reference
+
+ @return
+ Returns the next iterator of the linked list, or NULL when there is not more item in the linked list.
+*/
+AMX_INLINE
+amx_llist_it_t *amx_llist_it_get_next(const amx_llist_it_t *reference)
+{
+	return reference?reference->next:NULL;
+}
+
+/**
+ @ingroup amx_llist
+ @brief
+ Gets the previous iterator in the list
+
+ This function does not remove the item from the linked list.
+
+ @param reference a pointer to the linked list structure used as reference
+
+ @return
+ Returns the previous iterator of the linked list, or NULL when there is not more item in the linked list.
+*/
+AMX_INLINE
+amx_llist_it_t *amx_llist_it_get_previous(const amx_llist_it_t *reference)
+{
+	return reference?reference->prev:NULL;
+}
+
+/**
+ @ingroup amx_llist
+ @brief
+ Checks that an iterator is in a list
+
+ @param it a pointer to the linked list structure.
+
+ @return
+ true when the iterator is in the list, or false if it is not in a list
+*/
+AMX_INLINE
+bool amx_llist_it_is_in_list(amx_llist_it_t *it)
+{
+	return (it && it->llist)?true:false;
 }
 
 #ifdef __cplusplus
