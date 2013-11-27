@@ -17,9 +17,12 @@ extern "C"
 */
 
 #include <amx_containers/amx_llist.h>
-#include <amx_containers/amx_llist_it.h>
 #include <amx_containers/amx_lqueue.h>
 #include <amx_containers/amx_lstack.h>
+#include <amx_containers/amx_array.h>
+#include <amx_containers/amx_aqueue.h>
+#include <amx_containers/amx_astack.h>
+
 
 #ifdef __cplusplus
 }
