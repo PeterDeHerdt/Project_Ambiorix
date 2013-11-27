@@ -120,7 +120,7 @@ Suite *amx_lqueue_suite(void)
 	tcase_add_test (tc, amx_lqueue_init_clean_check);
 	suite_add_tcase (s, tc);
 
-	tc = tcase_create ("amx_lqueue_add_pop");
+	tc = tcase_create ("amx_lqueue_add_remove");
 	tcase_add_test (tc, amx_lqueue_add_check);
 	tcase_add_test (tc, amx_lqueue_remove_check);
 	suite_add_tcase (s, tc);

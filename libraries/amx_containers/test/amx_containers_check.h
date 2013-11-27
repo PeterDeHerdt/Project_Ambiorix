@@ -14,6 +14,8 @@ Suite *amx_llist_it_suite(void);
 Suite *amx_lstack_suite(void);
 Suite *amx_lqueue_suite(void);
 Suite *amx_array_suite(void);
+Suite *amx_aqueue_suite(void);
+Suite *amx_astack_suite(void);
 
 #ifdef __cplusplus
 }
