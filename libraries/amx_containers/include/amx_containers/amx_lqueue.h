@@ -238,4 +238,4 @@ int amx_lqueue_it_init(amx_lqueue_it_t *it)
 }
 #endif
 
-#endif // __AMX_LSTACK_H__
+#endif // __AMX_LQUEUE_H__
