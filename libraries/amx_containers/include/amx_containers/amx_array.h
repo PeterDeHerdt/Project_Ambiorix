@@ -90,7 +90,7 @@ typedef void (* amx_array_it_delete_t) (amx_array_it_t *it);
  @return
  -1 if an error occured. 0 on success
 */
-int amx_array_new(amx_array_t **array, const size_t items);
+int amx_array_new(amx_array_t **array, size_t items);
 
 /**
  @ingroup amx_array
@@ -131,7 +131,7 @@ void amx_array_delete(amx_array_t **array, amx_array_it_delete_t func);
  0 on success.
  -1 if a NULL pointer is given.
 */
-int amx_array_init(amx_array_t *array, const size_t items);
+int amx_array_init(amx_array_t *array, size_t items);
 
 /**
  @ingroup amx_array
@@ -413,7 +413,7 @@ amx_array_it_t *amx_array_it_get_previous(const amx_array_it_t *reference);
  @return
  returns the index of the iterator.
 */
-size_t amx_array_it_index(const amx_array_it_t *it);
+unsigned int amx_array_it_index(const amx_array_it_t *it);
 
 /**
  @ingroup amx_array

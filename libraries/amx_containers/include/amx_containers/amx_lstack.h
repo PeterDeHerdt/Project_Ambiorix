@@ -190,7 +190,7 @@ amx_lstack_it_t *amx_lstack_pop(amx_lstack_t *lstack)
  The number of items on the linked stack.
 */
 AMX_INLINE
-size_t amx_lstack_size(amx_lstack_t *lstack)
+size_t amx_lstack_size(const amx_lstack_t *lstack)
 {
 	return amx_llist_size(lstack);
 }
@@ -206,7 +206,7 @@ size_t amx_lstack_size(amx_lstack_t *lstack)
  returns true when the linked stack contains no items, false when there is at least one item on the stack.
 */
 AMX_INLINE
-bool amx_lstack_is_empty(amx_lstack_t *lstack)
+bool amx_lstack_is_empty(const amx_lstack_t *lstack)
 {
 	return amx_llist_is_empty(lstack);
 }

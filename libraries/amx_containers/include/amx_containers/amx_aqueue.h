@@ -181,7 +181,7 @@ void *amx_aqueue_remove(amx_aqueue_t *aqueue)
  The number of items in the array queue.
 */
 AMX_INLINE
-size_t amx_aqueue_size(amx_aqueue_t *aqueue)
+size_t amx_aqueue_size(const amx_aqueue_t *aqueue)
 {
 	return amx_array_size(aqueue);
 }
@@ -197,7 +197,7 @@ size_t amx_aqueue_size(amx_aqueue_t *aqueue)
  returns true when the array queue contains no items, false when there is at least one item in the queue.
 */
 AMX_INLINE
-size_t amx_aqueue_is_empty(amx_aqueue_t *aqueue)
+size_t amx_aqueue_is_empty(const amx_aqueue_t *aqueue)
 {
 	return amx_array_is_empty(aqueue);
 }

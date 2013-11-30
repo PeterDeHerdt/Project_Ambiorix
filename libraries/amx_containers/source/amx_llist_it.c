@@ -147,7 +147,7 @@ exit:
 	return retval;
 }
 
-size_t amx_llist_it_index_of(amx_llist_it_t *it)
+unsigned int amx_llist_it_index_of(const amx_llist_it_t *it)
 {
 	size_t index = 0;
 	if (!it || !it->llist)

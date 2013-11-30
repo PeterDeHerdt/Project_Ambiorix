@@ -183,7 +183,7 @@ void *amx_astack_pop(amx_astack_t *astack)
  The number of items on the array stack.
 */
 AMX_INLINE
-size_t amx_astack_size(amx_astack_t *astack)
+size_t amx_astack_size(const amx_astack_t *astack)
 {
 	return amx_array_size(astack);
 }
@@ -199,7 +199,7 @@ size_t amx_astack_size(amx_astack_t *astack)
  returns true when the array stack contains no items, false when there is at least one item on the stack.
 */
 AMX_INLINE
-bool amx_astack_is_empty(amx_astack_t *astack)
+bool amx_astack_is_empty(const amx_astack_t *astack)
 {
 	return amx_array_is_empty(astack);
 }

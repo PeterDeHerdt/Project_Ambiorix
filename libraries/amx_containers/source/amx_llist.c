@@ -205,7 +205,7 @@ amx_llist_it_t *amx_llist_get_at(amx_llist_t *llist, unsigned int index)
 	return it;
 }
 
-int amx_llist_set_at(amx_llist_t *llist, size_t index, amx_llist_it_t *it)
+int amx_llist_set_at(amx_llist_t *llist, unsigned int index, amx_llist_it_t *it)
 {
 	int retval = -1;
 	amx_llist_it_t* reference = NULL;

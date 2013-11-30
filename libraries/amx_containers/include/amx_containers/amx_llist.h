@@ -255,7 +255,7 @@ amx_llist_it_t *amx_llist_get_at(amx_llist_t *llist, unsigned int index);
  @return
  returns 0 when the item is added, -1 when there was an error
 */
-int amx_llist_set_at(amx_llist_t *llist, size_t index, amx_llist_it_t *it);
+int amx_llist_set_at(amx_llist_t *llist, unsigned int index, amx_llist_it_t *it);
 
 /**
  @ingroup amx_llist
@@ -344,7 +344,7 @@ int amx_llist_it_insert_after(amx_llist_it_t *reference, amx_llist_it_t *it);
  @return
  The index of the iterator or AMX_LLIST_RANGE if the iterator is not in a list.
 */
-size_t amx_llist_it_index_of(amx_llist_it_t *it);
+unsigned int amx_llist_it_index_of(const amx_llist_it_t *it);
 
 /**
  @ingroup amx_llist

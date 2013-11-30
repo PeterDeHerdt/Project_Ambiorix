@@ -86,7 +86,7 @@ exit:
 	return it;
 }
 
-size_t amx_array_it_index(const amx_array_it_t *it)
+unsigned int amx_array_it_index(const amx_array_it_t *it)
 {
 	size_t index = 0;
 	if (!it)

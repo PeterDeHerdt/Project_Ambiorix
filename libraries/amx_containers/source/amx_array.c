@@ -116,7 +116,7 @@ static size_t amx_array_calculate_first_used(amx_array_t *array, size_t start)
 	return (index == array->items)?0:index;
 }
 
-int amx_array_new(amx_array_t **array, const size_t items)
+int amx_array_new(amx_array_t **array, size_t items)
 {
 	int retval = -1;
 	if (!array)
@@ -179,7 +179,7 @@ exit:
 	return;
 }
 
-int amx_array_init(amx_array_t *array, const size_t items)
+int amx_array_init(amx_array_t *array, size_t items)
 {
 	int retval = -1;
 	if (!array)
