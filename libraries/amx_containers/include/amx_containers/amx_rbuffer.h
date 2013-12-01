@@ -49,9 +49,9 @@ int amx_rbuffer_shrink(amx_rbuffer_t *rb, size_t size);
 ssize_t amx_rbuffer_read(amx_rbuffer_t *rb, void *buf, size_t count);
 ssize_t amx_rbuffer_write(amx_rbuffer_t *rb, const void *buf, size_t count);
 
-bool amx_rbuffer_is_empty(const amx_rbuffer_t *rb);
-size_t amx_rbuffer_capacity(const amx_rbuffer_t *rb);
 size_t amx_rbuffer_size(const amx_rbuffer_t *rb);
+size_t amx_rbuffer_capacity(const amx_rbuffer_t *rb);
+bool amx_rbuffer_is_empty(const amx_rbuffer_t *rb);
 
 #ifdef __cplusplus
 }
