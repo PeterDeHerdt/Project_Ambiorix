@@ -190,7 +190,7 @@ amx_lqueue_it_t *amx_lqueue_remove(amx_lqueue_t *lqueue)
  The number of items on the linked queue.
 */
 AMX_INLINE
-size_t amx_lqueue_size(amx_lqueue_t *lqueue)
+size_t amx_lqueue_size(const amx_lqueue_t *lqueue)
 {
 	return amx_llist_size(lqueue);
 }
@@ -206,7 +206,7 @@ size_t amx_lqueue_size(amx_lqueue_t *lqueue)
  returns true when the linked queue contains no items, false when there is at least one item on the queue.
 */
 AMX_INLINE
-size_t amx_lqueue_is_empty(amx_lqueue_t *lqueue)
+bool amx_lqueue_is_empty(const amx_lqueue_t *lqueue)
 {
 	return amx_llist_is_empty(lqueue);
 }

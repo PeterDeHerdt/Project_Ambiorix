@@ -12,7 +12,8 @@ OBJECTS =	amx_containers_check.o \
 			amx_lqueue_check.o \
 			amx_array_check.o \
 			amx_aqueue_check.o \
-			amx_astack_check.o 
+			amx_astack_check.o \
+			amx_rbuffer_check.o
 
 TARGET = amx_containers_check
 
