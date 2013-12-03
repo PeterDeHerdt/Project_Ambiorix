@@ -340,6 +340,7 @@ END_TEST
 
 START_TEST(amx_llist_get_at_check)
 {
+	ck_assert_ptr_eq (amx_llist_get_at(NULL, 10), NULL);
 	ck_assert_ptr_eq (amx_llist_get_at(llist1, 0), &it1);
 	ck_assert_ptr_eq (amx_llist_get_at(llist1, 1), &it2);
 	ck_assert_ptr_eq (amx_llist_get_at(llist1, 2), &it3);
@@ -350,6 +351,8 @@ END_TEST
 START_TEST(amx_llist_set_at_check)
 {
 	amx_llist_it_t it;
+	ck_assert_int_eq (amx_llist_set_at(NULL, 10, &it1), -1);
+
 	ck_assert_int_eq (amx_llist_it_init(&it), 0);
 
 	ck_assert_int_eq (amx_llist_set_at(llist1, 0, &it), 0);

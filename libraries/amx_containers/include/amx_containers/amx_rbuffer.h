@@ -217,7 +217,11 @@ size_t amx_rbuffer_size(const amx_rbuffer_t *rb);
  @return
  The number of bytes that can be stored in the ring buffer
 */
-size_t amx_rbuffer_capacity(const amx_rbuffer_t *rb);
+AMX_INLINE
+size_t amx_rbuffer_capacity(const amx_rbuffer_t *rb)
+{
+	return rb?rb->buffer_end - rb->buffer_start:0;
+}
 
 /**
  @ingroup amx_rbuffer
@@ -229,7 +233,11 @@ size_t amx_rbuffer_capacity(const amx_rbuffer_t *rb);
  @return
  true when there is no data in the ring buffer, or false when there is at least 1 byte of data stored in the ring buffer
 */
-bool amx_rbuffer_is_empty(const amx_rbuffer_t *rb);
+AMX_INLINE
+bool amx_rbuffer_is_empty(const amx_rbuffer_t *rb)
+{
+	return rb?(rb->read_pos == rb->write_pos):true;
+}
 
 #ifdef __cplusplus
 }

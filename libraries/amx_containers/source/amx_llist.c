@@ -89,7 +89,7 @@ exit:
 
 void amx_llist_clean(amx_llist_t *llist, amx_llist_it_delete_t func)
 {
-	amx_llist_it_t *it = amx_llist_get_first(llist);
+	amx_llist_it_t *it = llist?llist->head:NULL;
 	while(it)
 	{
 		amx_llist_it_take(it);
@@ -97,7 +97,7 @@ void amx_llist_clean(amx_llist_t *llist, amx_llist_it_delete_t func)
 		{
 			func(it);
 		}
-		it = amx_llist_get_first(llist);
+		it = llist->head;
 	}
 }
 
@@ -106,7 +106,7 @@ size_t amx_llist_size(const amx_llist_t *llist) {
 
 	// no check on null pointer is needed here.
 	// amx_llist_first will return null anyway.
-	for(amx_llist_it_t *it = amx_llist_get_first(llist); it; it = amx_llist_it_get_next(it))
+	for(amx_llist_it_t *it = llist?llist->head:NULL; it; it = it->next)
 	{
 		count++;
 	}
@@ -191,9 +191,7 @@ amx_llist_it_t *amx_llist_get_at(amx_llist_t *llist, unsigned int index)
 	amx_llist_it_t* it = NULL;
 	size_t count = 0;
 
-	// no check on null pointer is needed here.
-	// amx_llist_first will return null anyway.
-	for(it = amx_llist_get_first(llist); it; it = amx_llist_it_get_next(it))
+	for(it = llist?llist->head:NULL; it; it = it->next)
 	{
 		if (count == index)
 		{
@@ -212,9 +210,7 @@ int amx_llist_set_at(amx_llist_t *llist, unsigned int index, amx_llist_it_t *it)
 
 	size_t count = 0;
 
-	// no check on null pointer is needed here.
-	// amx_llist_first will return null anyway.
-	for(reference = amx_llist_get_first(llist); reference; reference = amx_llist_it_get_next(reference))
+	for(reference = llist?llist->head:NULL; reference; reference = reference->next)
 	{
 		if (count == index)
 		{
