@@ -177,6 +177,8 @@ int amx_rbuffer_grow(amx_rbuffer_t *rb, size_t size)
 		rb->read_pos += size;
 	}
 
+	// NOTE:
+	// The extra allocated memory is not initialized to 0, reading from it could return random data
 	retval = 0;
 
 exit:
