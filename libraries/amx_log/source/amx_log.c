@@ -170,9 +170,10 @@ static void amx_log_load_zones(void) {
 	amx_log_zones_from_env();
 }
 
-void amx_log_open(const char *identifier, amx_log_type_t type)
+int amx_log_open(const char *identifier, amx_log_type_t type)
 {
 	int flags = 0;
+	int retval = 0;
 
 	if (!s_amx_log.log_opened)
 	{
@@ -187,11 +188,18 @@ void amx_log_open(const char *identifier, amx_log_type_t type)
 		case amx_log_stderr:
 			break;
 		default:
+			retval = -1;
+			goto exit;
 			break;
 		}
 		s_amx_log.log_opened = true;
 		amx_log_load_zones();
+	} else {
+		retval = -1;
 	}
+
+exit:
+	return retval;
 }
 
 void amx_log_close(void)
@@ -398,12 +406,8 @@ void amx_log(amx_log_level_t log_level, const char *format, ...)
 
 void amx_log_zone(amx_log_level_t log_level, const char *zone_name, const char *format, ...)
 {
-	amx_log_zone_t *zone = amx_log_get_zone(zone_name);
-	if (zone)
-	{
-		va_list args;
-		va_start(args,format);
-		amx_log_zone_va(log_level, zone_name, format, args);
-		va_end(args);
-	}
+	va_list args;
+	va_start(args,format);
+	amx_log_zone_va(log_level, zone_name, format, args);
+	va_end(args);
 }

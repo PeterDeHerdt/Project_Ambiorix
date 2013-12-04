@@ -22,6 +22,7 @@ extern "C"
 #include <amx_containers/amx_array.h>
 #include <amx_containers/amx_aqueue.h>
 #include <amx_containers/amx_astack.h>
+#include <amx_containers/amx_rbuffer.h>
 
 
 #ifdef __cplusplus

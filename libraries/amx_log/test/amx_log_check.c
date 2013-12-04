@@ -7,7 +7,7 @@
 START_TEST (log_open_syslog)
 {
 	// open syslog
-	amx_log_open("identifier", amx_log_syslog);
+	ck_assert_int_eq( amx_log_open("identifier", amx_log_syslog), 0);
 	ck_assert_int_ne ((int)amx_log_is_opened(), 0);
 	ck_assert_int_eq (amx_log_get_type(), amx_log_syslog);
 	ck_assert_str_eq (amx_log_get_identifier(), "identifier");
@@ -20,7 +20,7 @@ END_TEST
 START_TEST (log_open_stdout)
 {
 	// open stdout
-	amx_log_open("test", amx_log_stdout);
+	ck_assert_int_eq (amx_log_open("test", amx_log_stdout), 0);
 	ck_assert_int_ne ((int)amx_log_is_opened(), 0);
 	ck_assert_int_eq (amx_log_get_type(), amx_log_stdout);
 	ck_assert_str_eq (amx_log_get_identifier(), "test");
@@ -33,7 +33,7 @@ END_TEST
 START_TEST (log_open_stderr)
 {
 	// open stderr
-	amx_log_open("id", amx_log_stderr);
+	ck_assert_int_eq (amx_log_open("id", amx_log_stderr), 0);
 	ck_assert_int_ne ((int)amx_log_is_opened(), 0);
 	ck_assert_int_eq (amx_log_get_type(), amx_log_stderr);
 	ck_assert_str_eq (amx_log_get_identifier(), "id");
@@ -43,19 +43,36 @@ START_TEST (log_open_stderr)
 }
 END_TEST
 
+START_TEST (log_open_unknown)
+{
+	// open stderr
+	ck_assert_int_eq (amx_log_open("id", 0xffff), -1);
+	ck_assert_int_eq ((int)amx_log_is_opened(), 0);
+	amx_log_close();
+}
+END_TEST
+
 START_TEST (log_open_double)
 {
-	amx_log_open("double", amx_log_stdout);
+	ck_assert_int_eq (amx_log_open("double", amx_log_stdout), 0);
 	amx_log_set_level(amx_log_stack);
 
-	// openining a second time should not have any effect
-	amx_log_open("double_second", amx_log_stderr);
+	// openining a second time should not have any effect, the second open must fail
+	ck_assert_int_eq (amx_log_open("double_second", amx_log_stderr), -1);
 	ck_assert_int_ne ((int)amx_log_is_opened(), 0);
 	ck_assert_int_eq (amx_log_get_type(), amx_log_stdout);
 	ck_assert_str_eq (amx_log_get_identifier(), "double");
 	ck_assert_int_eq (amx_log_get_level(), amx_log_stack);
 
 	amx_log_close();
+}
+END_TEST
+
+START_TEST (log_close_not_opened)
+{
+	amx_log_close();
+
+	ck_assert_int_eq ((int)amx_log_is_opened(), 0);
 }
 END_TEST
 
@@ -144,6 +161,10 @@ START_TEST (log_zone_disable)
 	ck_assert_int_eq ((int)amx_log_zone_is_enabled("zone2"), 0);
 	ck_assert_int_ne ((int)amx_log_zone_is_enabled("zone3"), 0);
 	amx_log_disable_zone("zone3");
+	ck_assert_int_eq ((int)amx_log_zone_is_enabled("zone1"), 0);
+	ck_assert_int_eq ((int)amx_log_zone_is_enabled("zone2"), 0);
+	ck_assert_int_eq ((int)amx_log_zone_is_enabled("zone3"), 0);
+	amx_log_disable_zone("unknown");
 	ck_assert_int_eq ((int)amx_log_zone_is_enabled("zone1"), 0);
 	ck_assert_int_eq ((int)amx_log_zone_is_enabled("zone2"), 0);
 	ck_assert_int_eq ((int)amx_log_zone_is_enabled("zone3"), 0);
@@ -326,7 +347,9 @@ Suite *amx_log_suite(void)
 	tcase_add_test (tc, log_open_syslog);
 	tcase_add_test (tc, log_open_stdout);
 	tcase_add_test (tc, log_open_stderr);
+	tcase_add_test (tc, log_open_unknown);
 	tcase_add_test (tc, log_open_double);
+	tcase_add_test (tc, log_close_not_opened);
 	suite_add_tcase (s, tc);
 
 	tc = tcase_create ("amx_log_get_set");

@@ -91,8 +91,11 @@ typedef enum _amx_log_time
 
  @param identifier an identifier, can be any arbitrary string.
  @param type the output type, see @ref amx_log_type_t
+ 
+ @return
+ 0 when the logging facility is opened or -1 when opening failed
 */
-void amx_log_open(const char *identifier, amx_log_type_t type);
+int amx_log_open(const char *identifier, amx_log_type_t type);
 
 /**
  @ingroup amx_log_core

@@ -177,6 +177,8 @@ int amx_rbuffer_grow(amx_rbuffer_t *rb, size_t size)
 		rb->read_pos += size;
 	}
 
+	// NOTE:
+	// The extra allocated memory is not initialized to 0, reading from it could return random data
 	retval = 0;
 
 exit:
@@ -307,7 +309,7 @@ ssize_t amx_rbuffer_write(amx_rbuffer_t *rb, const void *buf, size_t count)
 	}
 
 	// check space, grow if needed
-	size_t free_space = amx_rbuffer_capacity(rb) - amx_rbuffer_size(rb);
+	size_t free_space = (rb->buffer_end - rb->buffer_start) - amx_rbuffer_size(rb);
 	if (free_space < count)
 	{
 		if (amx_rbuffer_grow(rb, count * 2) == -1)
@@ -367,14 +369,4 @@ size_t amx_rbuffer_size(const amx_rbuffer_t *rb)
 
 exit:
 	return retval;
-}
-
-size_t amx_rbuffer_capacity(const amx_rbuffer_t *rb)
-{
-	return rb?rb->buffer_end - rb->buffer_start:0;
-}
-
-bool amx_rbuffer_is_empty(const amx_rbuffer_t *rb)
-{
-	return rb?(rb->read_pos == rb->write_pos):true;
 }
