@@ -9,6 +9,16 @@ extern "C"
 #include <stdbool.h>
 #include <amx_log/amx_log_core.h>
 
+#if !defined(NO_DOXYGEN)
+#define AMX_INLINE static inline
+#else
+/**
+ @brief
+ Helper macro for inlining functions
+ */
+#define AMX_INLINE
+#endif
+
 /**
  @file
  @brief
