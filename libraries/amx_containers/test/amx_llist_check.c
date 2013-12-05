@@ -1,6 +1,8 @@
 #include "amx_containers_check.h"
 #include <amx_containers/amx_llist.h>
 
+#include "mock_malloc.h"
+
 START_TEST (amx_llist_new_delete_null_check)
 {
 	// passing NULL pointers should not lead to segfault
@@ -8,6 +10,24 @@ START_TEST (amx_llist_new_delete_null_check)
 	amx_llist_delete(NULL, NULL);
 }
 END_TEST
+
+#ifdef MOCK_MALLOC
+START_TEST (amx_llist_new_no_memory_check)
+{
+	amx_llist_t *llist = NULL;
+
+	ck_mock_reset(malloc);
+	Expectation_malloc *exp = ck_mock_add_expectation(malloc);
+	exp->fail = true;
+
+	int retval = amx_llist_new(&llist);
+	ck_mock_reset(malloc);
+
+	ck_assert_int_eq (retval, -1);
+	ck_assert_ptr_eq (llist, NULL);
+}
+END_TEST
+#endif
 
 START_TEST (amx_llist_new_delete_check)
 {
@@ -389,6 +409,9 @@ Suite *amx_llist_suite(void)
 
 	tc = tcase_create ("amx_llist_new_init_delete_clean");
 	tcase_add_test (tc, amx_llist_new_delete_null_check);
+#ifdef MOCK_MALLOC
+	tcase_add_test (tc, amx_llist_new_no_memory_check);
+#endif
 	tcase_add_test (tc, amx_llist_new_delete_check);
 	tcase_add_test (tc, amx_llist_init_clean_null_check);
 	tcase_add_test (tc, amx_llist_init_clean_check);

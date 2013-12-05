@@ -13,14 +13,20 @@ OBJECTS =	amx_containers_check.o \
 			amx_array_check.o \
 			amx_aqueue_check.o \
 			amx_astack_check.o \
-			amx_rbuffer_check.o
+			amx_rbuffer_check.o \
+			mock_malloc.o
 
 TARGET = amx_containers_check
 
 CFLAGS  += -std=c99 -g -Wall -W -Werror -I. -I../include -I$(AMX_INCLUDE_DIR) \
 			$(shell pkg-config --cflags check amx_containers)
 LDFLAGS += -L$(AMX_LIB_DIR) \
-			$(shell pkg-config --libs check amx_containers)
+			$(shell pkg-config --libs check amx_containers) -ldl
+
+ifdef CONFIG_GLIBC_MALLOC_BUILD
+LIBS+=$(AMX_OUTPUT_DIR)/lib/libglibcmalloc.a
+CFLAGS+=-DMOCK_MALLOC
+endif
 
 ifdef AMX_TEST_COVERAGE
 CFLAGS += -fprofile-arcs -ftest-coverage
@@ -45,7 +51,7 @@ else
 endif
 
 $(TARGET): $(OBJECTS)
-	$(CC) -o $(@) $(OBJECTS) $(LDFLAGS)
+	$(CC) -o $(@) $(OBJECTS) $(LIBS) $(LDFLAGS)
 
 -include $(OBJECTS:.o=.d)
 

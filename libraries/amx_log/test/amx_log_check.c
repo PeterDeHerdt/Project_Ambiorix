@@ -4,12 +4,7 @@
 #include <check.h>
 #include <amx_log.h>
 
-#include "mock.h"
 #include "mock_malloc.h"
-
-#ifndef MOCK_MALLOC
-ck_mock_declare(malloc,50)
-#endif
 
 START_TEST (log_open_syslog)
 {

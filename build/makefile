@@ -12,7 +12,7 @@ include $(AMX_BUILD_DIR)/amx.config
 export AMX_VERSION=0.0.1
 export DOC_OUTPUT_DIR=$(AMX_OUTPUT_DIR)/documentation/amx/
 
-all: amx_log amx_containers
+all: amx_log amx_containers glibcmalloc
 
 doc: amx_log_doc amx_containers_doc
 	$(INSTALL) -d $(DOC_OUTPUT_DIR)
@@ -25,7 +25,7 @@ ifdef AMX_TEST_COVERAGE_SHOW
 	$(BROWSER) ./output/coverage/report/index.html
 endif
 
-clean: amx_log_clean amx_containers_clean
+clean: amx_log_clean amx_containers_clean glibcmalloc
 
 amx_log:
 ifdef CONFIG_AMX_LOG_BUILD

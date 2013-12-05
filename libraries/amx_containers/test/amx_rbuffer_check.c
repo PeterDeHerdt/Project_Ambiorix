@@ -4,6 +4,8 @@
 #include "amx_containers_check.h"
 #include <amx_containers/amx_rbuffer.h>
 
+#include "mock_malloc.h"
+
 START_TEST (amx_rbuffer_new_delete_null_check)
 {
 	// passing NULL pointers should not lead to segfault
@@ -11,6 +13,32 @@ START_TEST (amx_rbuffer_new_delete_null_check)
 	amx_rbuffer_delete(NULL);
 }
 END_TEST
+
+#ifdef MOCK_MALLOC
+START_TEST (amx_rbuffer_new_no_memory_check)
+{
+	amx_rbuffer_t *rbuffer = NULL;
+
+	// second malloc fails
+	Expectation_malloc *exp = ck_mock_add_expectation(malloc);
+	exp->fail = false;
+	exp = ck_mock_add_expectation(malloc);
+	exp->fail = true;
+	int retval = amx_rbuffer_new(&rbuffer, 30);
+	ck_mock_reset(malloc);
+	ck_assert_int_eq (retval, -1);
+	ck_assert_ptr_eq (rbuffer, NULL);
+
+	// first malloc fails
+	exp = ck_mock_add_expectation(malloc);
+	exp->fail = true;
+	retval = amx_rbuffer_new(&rbuffer, 30);
+	ck_mock_reset(malloc);
+	ck_assert_int_eq (retval, -1);
+	ck_assert_ptr_eq (rbuffer, NULL);
+}
+END_TEST
+#endif
 
 START_TEST (amx_rbuffer_new_delete_check)
 {
@@ -71,6 +99,29 @@ START_TEST (amx_rbuffer_grow_shrink_null_check)
 	ck_assert_int_eq (amx_rbuffer_shrink(NULL, 0), -1);
 }
 END_TEST
+
+#ifdef MOCK_MALLOC
+START_TEST (amx_rbuffer_grow_no_memory_check)
+{
+	amx_rbuffer_t *rbuffer = NULL;
+
+	ck_assert_int_eq (amx_rbuffer_new(&rbuffer, 30), 0);
+
+	// realloc fails
+	Expectation_malloc *exp = ck_mock_add_expectation(malloc);
+	exp->fail = true;
+	int retval =amx_rbuffer_grow(rbuffer, 10);
+	ck_mock_reset(malloc);
+	ck_assert_int_eq (retval, -1);
+	ck_assert_ptr_ne (rbuffer->buffer_start, NULL);
+	ck_assert_ptr_eq (rbuffer->buffer_end, rbuffer->buffer_start + 30);
+	ck_assert_ptr_eq (rbuffer->read_pos, rbuffer->buffer_start);
+	ck_assert_ptr_eq (rbuffer->write_pos, rbuffer->buffer_start);
+
+	amx_rbuffer_delete(&rbuffer);
+}
+END_TEST
+#endif
 
 START_TEST (amx_rbuffer_grow_check)
 {
@@ -330,6 +381,31 @@ START_TEST (amx_rbuffer_write_null_check)
 }
 END_TEST
 
+#ifdef MOCK_MALLOC
+START_TEST (amx_rbuffer_write_no_memory_check)
+{
+	amx_rbuffer_t *rbuffer = NULL;
+	const char *data = "0123456789";
+
+	ck_assert_int_eq (amx_rbuffer_new(&rbuffer, 8), 0);
+
+	// realloc fails
+	Expectation_malloc *exp = ck_mock_add_expectation(malloc);
+	exp->fail = true;
+	ssize_t retval = amx_rbuffer_write(rbuffer, data, 10);
+	ck_mock_reset(malloc);
+
+	ck_assert_int_eq (retval, -1);
+	ck_assert_ptr_ne (rbuffer->buffer_start, NULL);
+	ck_assert_ptr_eq (rbuffer->buffer_end, rbuffer->buffer_start + 8);
+	ck_assert_ptr_eq (rbuffer->read_pos, rbuffer->buffer_start);
+	ck_assert_ptr_eq (rbuffer->write_pos, rbuffer->buffer_start);
+
+	amx_rbuffer_delete(&rbuffer);
+}
+END_TEST
+#endif
+
 START_TEST (amx_rbuffer_write_buffer_empty_check)
 {
 	amx_rbuffer_t *rbuffer = NULL;
@@ -524,6 +600,9 @@ Suite *amx_rbuffer_suite(void)
 
 	tc = tcase_create ("amx_rbuffer_new_init_delete_clean");
 	tcase_add_test (tc, amx_rbuffer_new_delete_null_check);
+#ifdef MOCK_MALLOC
+	tcase_add_test (tc, amx_rbuffer_new_no_memory_check);
+#endif
 	tcase_add_test (tc, amx_rbuffer_new_delete_check);
 	tcase_add_test (tc, amx_rbuffer_init_clean_null_check);
 	tcase_add_test (tc, amx_rbuffer_init_clean_check);
@@ -532,6 +611,9 @@ Suite *amx_rbuffer_suite(void)
 	tc = tcase_create ("amx_rbuffer_grow_shrink");
 	tcase_add_test (tc, amx_rbuffer_grow_shrink_null_check);
 	tcase_add_test (tc, amx_rbuffer_grow_check);
+#ifdef MOCK_MALLOC
+	tcase_add_test (tc, amx_rbuffer_grow_no_memory_check);
+#endif
 	tcase_add_test (tc, amx_rbuffer_grow_read_before_write_check);
 	tcase_add_test (tc, amx_rbuffer_grow_write_before_read_check);
 	tcase_add_test (tc, amx_rbuffer_shrink_check);
@@ -556,6 +638,9 @@ Suite *amx_rbuffer_suite(void)
 
 	tc = tcase_create ("amx_rbuffer_write");
 	tcase_add_test (tc, amx_rbuffer_write_null_check);
+#ifdef MOCK_MALLOC
+	tcase_add_test (tc, amx_rbuffer_write_no_memory_check);
+#endif
 	tcase_add_test (tc, amx_rbuffer_write_buffer_empty_check);
 	tcase_add_test (tc, amx_rbuffer_write_buffer_wrap_buffer_check);
 	tcase_add_test (tc, amx_rbuffer_write_buffer_need_to_grow_check);
