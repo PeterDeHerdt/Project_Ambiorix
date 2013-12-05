@@ -68,7 +68,16 @@ endif
 
 amx_containers_clean:
 	make -C $(AMX_ROOT_DIR)/libraries/amx_containers clean
-				  	
+
+glibcmalloc:
+ifdef CONFIG_GLIBC_MALLOC_BUILD
+	make -C $(AMX_ROOT_DIR)/libraries/glibcmalloc
+	make -C $(AMX_ROOT_DIR)/libraries/glibcmalloc install
+endif
+
+glibcmalloc_clean:
+	make -C $(AMX_ROOT_DIR)/libraries/glibcmalloc clean
+
 ifdef NO_DEPENDENCIES
 .PHONY: amx_log amx_log_clean amx_containers amx_containers_clean
 else

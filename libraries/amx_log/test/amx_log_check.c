@@ -4,6 +4,9 @@
 #include <check.h>
 #include <amx_log.h>
 
+#include "mock.h"
+#include "mock_malloc.h"
+
 START_TEST (log_open_syslog)
 {
 	// open syslog
@@ -122,6 +125,21 @@ START_TEST (log_set_level)
 	amx_log_close();
 	// after closing the log level is reset to the default
 	ck_assert_int_eq (amx_log_get_level(), amx_log_fatal_error);
+}
+END_TEST
+
+START_TEST (log_zone_enable_no_memory)
+{
+	amx_log_open("test", amx_log_syslog);
+
+	Expectation_malloc *exp = ck_mock_add_expectation(malloc);
+	exp->fail = true;
+	amx_log_enable_zone("zone1", amx_log_stack);
+	ck_mock_reset(malloc);
+
+	ck_assert_int_eq ((int)amx_log_zone_is_enabled("zone1"), 0);
+	amx_log_close();
+
 }
 END_TEST
 
@@ -358,6 +376,7 @@ Suite *amx_log_suite(void)
 	suite_add_tcase (s, tc);
 
 	tc = tcase_create ("amx_log_zones");
+	tcase_add_test (tc, log_zone_enable_no_memory);
 	tcase_add_test (tc, log_zone_enable);
 	tcase_add_test (tc, log_zone_disable);
 	tcase_add_test (tc, log_zone_disable_all);
