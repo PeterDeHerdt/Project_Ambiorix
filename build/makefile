@@ -38,7 +38,11 @@ ifdef CONFIG_AMX_LOG_BUILD
 	make -C $(AMX_ROOT_DIR)/libraries/amx_log doc
 endif
 
+ifdef CONFIG_GLIBC_MALLOC_BUILD
+amx_log_test: amx_log glibcmalloc
+else
 amx_log_test: amx_log
+endif
 ifdef CONFIG_AMX_LOG_BUILD
 	make -C $(AMX_ROOT_DIR)/libraries/amx_log test
 endif
@@ -61,7 +65,11 @@ ifdef CONFIG_AMX_CONTAINERS_BUILD
 	make -C $(AMX_ROOT_DIR)/libraries/amx_containers doc
 endif
 
+ifdef CONFIG_GLIBC_MALLOC_BUILD
+amx_containers_test: amx_containers glibcmalloc
+else
 amx_containers_test: amx_containers
+endif
 ifdef CONFIG_AMX_CONTAINERS_BUILD
 	make -C $(AMX_ROOT_DIR)/libraries/amx_containers test
 endif

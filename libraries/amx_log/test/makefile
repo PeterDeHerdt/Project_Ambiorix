@@ -5,8 +5,7 @@ endif
 include $(AMX_BUILD_DIR)/amx_build.config
 include $(AMX_BUILD_DIR)/amx.config
 
-OBJECTS = amx_log_check.o\
-          mock_malloc.o
+OBJECTS = amx_log_check.o
 
 TARGET = amx_log_check
 
@@ -14,6 +13,12 @@ CFLAGS  += -O2 -std=c99 -g -Wall -W -Werror -I. -I../include -I$(AMX_INCLUDE_DIR
 		   $(shell pkg-config --cflags check amx_log)
 LDFLAGS += -L$(AMX_LIB_DIR) \
 		   $(shell pkg-config --libs check amx_log) -ldl
+
+ifdef CONFIG_GLIBC_MALLOC_BUILD
+LIBS+=$(AMX_OUTPUT_DIR)/lib/libglibcmalloc.a
+OBJECTS+=mock_malloc.o
+CFLAGS+=-DMOCK_MALLOC
+endif
 
 ifdef AMX_TEST_COVERAGE
 CFLAGS += -fprofile-arcs -ftest-coverage
@@ -34,7 +39,7 @@ else
 endif
 
 $(TARGET): $(OBJECTS)
-	$(CC) -o $(@) $(OBJECTS) $(AMX_OUTPUT_DIR)/lib/libglibcmalloc.a $(LDFLAGS)
+	$(CC) -o $(@) $(OBJECTS) $(LIBS) $(LDFLAGS)
 
 -include $(OBJECTS:.o=.d)
 
@@ -47,4 +52,3 @@ clean:
 	rm -rf ./coverage
 
 .PHONY: clean
-
