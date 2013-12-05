@@ -156,7 +156,7 @@ unsigned int amx_llist_it_index_of(const amx_llist_it_t *it)
 		goto exit;
 	}
 
-	amx_llist_it_t *pos = it;
+	const amx_llist_it_t *pos = it;
 	while(pos->prev) {
 		index++;
 		pos = pos->prev;

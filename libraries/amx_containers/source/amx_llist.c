@@ -27,6 +27,7 @@
 ****************************************************************************/
 
 #include <stdlib.h>
+#include <stdio.h>
 
 #include <amx_containers/amx_llist.h>
 
@@ -45,12 +46,10 @@ int amx_llist_new(amx_llist_t **llist)
 	}
 
 	*llist = calloc(1, sizeof(amx_llist_t));
-	if (!*llist)
+	if ((*llist))
 	{
-		goto exit;
+		retval = 0;
 	}
-
-	retval = 0;
 
 exit:
 	return retval;

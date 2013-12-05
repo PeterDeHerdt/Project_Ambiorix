@@ -44,7 +44,6 @@ static char *amx_rbuffer_alloc(amx_rbuffer_t *rb, size_t size)
 		buffer = realloc(rb->buffer_start, size);
 	}
 
-exit:
 	return buffer;
 }
 

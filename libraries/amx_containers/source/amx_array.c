@@ -90,7 +90,6 @@ static int amx_array_realloc(amx_array_t *array, size_t items)
 		retval = 0;
 	}
 
-exit:
 	return retval;
 }
 
@@ -252,8 +251,6 @@ int amx_array_grow(amx_array_t *array, size_t items)
 	size_t old_items = array->items;
 	retval = amx_array_realloc(array, array->items + items);
 	amx_array_initialize_items(array, old_items);
-
-	retval = 0;
 
 exit:
 	return retval;

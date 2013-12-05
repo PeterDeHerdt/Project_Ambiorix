@@ -3,6 +3,8 @@
 #include "amx_containers_check.h"
 #include <amx_containers/amx_array.h>
 
+#include "mock_malloc.h"
+
 static int counter = 0;
 
 static amx_array_t *array1 = NULL;
@@ -49,6 +51,32 @@ START_TEST (amx_array_new_delete_null_check)
 	amx_array_delete(NULL, NULL);
 }
 END_TEST
+
+#ifdef MOCK_MALLOC
+START_TEST (amx_array_new_no_memory_check)
+{
+	amx_array_t *array = NULL;
+
+	// second malloc fails
+	Expectation_malloc *exp = ck_mock_add_expectation(malloc);
+	exp->fail = false;
+	exp = ck_mock_add_expectation(malloc);
+	exp->fail = true;
+	int retval = amx_array_new(&array, 10);
+	ck_mock_reset(malloc);
+	ck_assert_int_eq (retval, -1);
+	ck_assert_ptr_eq (array, NULL);
+
+	// first malloc fails
+	exp = ck_mock_add_expectation(malloc);
+	exp->fail = true;
+	retval = amx_array_new(&array, 10);
+	ck_mock_reset(malloc);
+	ck_assert_int_eq (retval, -1);
+	ck_assert_ptr_eq (array, NULL);
+}
+END_TEST
+#endif
 
 START_TEST (amx_array_new_delete_check)
 {
@@ -112,6 +140,21 @@ START_TEST (amx_array_init_clean_null_check)
 	amx_array_clean(NULL, NULL);
 }
 END_TEST
+
+#ifdef MOCK_MALLOC
+START_TEST (amx_array_init_no_memory_check)
+{
+	amx_array_t array;
+
+	// first malloc fails
+	Expectation_malloc *exp = ck_mock_add_expectation(malloc);
+	exp->fail = true;
+	int retval = amx_array_init(&array, 10);
+	ck_mock_reset(malloc);
+	ck_assert_int_eq (retval, -1);
+}
+END_TEST
+#endif
 
 START_TEST (amx_array_init_clean_check)
 {
@@ -396,6 +439,20 @@ START_TEST (amx_array_grow_null_check)
 }
 END_TEST
 
+#ifdef MOCK_MALLOC
+START_TEST (amx_array_grow_no_memory_check)
+{
+	Expectation_malloc *exp = ck_mock_add_expectation(malloc);
+	exp->fail = true;
+	int retval = amx_array_grow(array1, 10);
+	ck_mock_reset(malloc);
+
+	ck_assert_int_eq(retval, -1);
+	ck_assert_int_eq (amx_array_capacity(array1), 10);
+}
+END_TEST
+#endif
+
 START_TEST (amx_array_grow_check)
 {
 	ck_assert_int_eq (amx_array_grow(array1, 10), 0);
@@ -598,6 +655,34 @@ START_TEST (amx_array_append_data_null_check)
 }
 END_TEST
 
+#ifdef MOCK_MALLOC
+START_TEST (amx_array_append_data_no_memory_check)
+{
+	amx_array_t *array = NULL;
+	ck_assert_int_ne (amx_array_new(&array, 2), -1);
+
+	amx_array_it_t *it = amx_array_append_data(array, &data[0]);
+	ck_assert_ptr_ne(it, NULL);
+	ck_assert_int_eq(amx_array_it_index(it), 0);
+	it = amx_array_append_data(array, &data[1]);
+	ck_assert_ptr_ne(it, NULL);
+	ck_assert_int_eq(amx_array_it_index(it), 1);
+	ck_assert_int_eq(array->last_used, 1);
+	ck_assert_int_eq(array->items, 2);
+
+	Expectation_malloc *exp = ck_mock_add_expectation(malloc);
+	exp->fail = true;
+	it = amx_array_append_data(array, &data[2]);
+	ck_mock_reset(malloc);
+
+	ck_assert_ptr_eq(it, NULL);
+	ck_assert_int_eq (amx_array_capacity(array), 2);
+	ck_assert_int_eq (amx_array_size(array), 2);
+	amx_array_delete(&array, NULL);
+}
+END_TEST
+#endif
+
 START_TEST (amx_array_append_data_check)
 {
 	amx_array_it_t *it = amx_array_append_data(array1, NULL);
@@ -642,6 +727,33 @@ START_TEST (amx_array_prepend_data_null_check)
 	ck_assert_ptr_eq(amx_array_prepend_data(NULL, NULL), NULL);
 }
 END_TEST
+
+#ifdef MOCK_MALLOC
+START_TEST (amx_array_prepend_data_no_memory_check)
+{
+	amx_array_t *array = NULL;
+	ck_assert_int_ne (amx_array_new(&array, 2), -1);
+
+	amx_array_it_t *it = amx_array_prepend_data(array, &data[0]);
+	ck_assert_ptr_ne(it, NULL);
+	ck_assert_int_eq(amx_array_it_index(it), 0);
+	ck_assert_int_eq(array->first_used, 0);
+	ck_assert_int_eq(array->items, 2);
+
+	Expectation_malloc *exp = ck_mock_add_expectation(malloc);
+	exp->fail = true;
+	it = amx_array_prepend_data(array, &data[2]);
+	ck_mock_reset(malloc);
+
+	ck_assert_ptr_eq(it, NULL);
+	ck_assert_int_eq (amx_array_capacity(array), 2);
+	ck_assert_int_eq (amx_array_size(array), 1);
+	ck_assert_int_eq(array->first_used, 0);
+	ck_assert_int_eq(array->items, 2);
+	amx_array_delete(&array, NULL);
+}
+END_TEST
+#endif
 
 START_TEST (amx_array_prepend_data_check)
 {
@@ -761,9 +873,15 @@ Suite *amx_array_suite(void)
 
 	tc = tcase_create ("amx_array_new_init_delete_clean");
 	tcase_add_test (tc, amx_array_new_delete_null_check);
+#ifdef MOCK_MALLOC
+	tcase_add_test (tc, amx_array_new_no_memory_check);
+#endif
 	tcase_add_test (tc, amx_array_new_delete_check);
 	tcase_add_test (tc, amx_array_delete_cb_check);
 	tcase_add_test (tc, amx_array_init_clean_null_check);
+#ifdef MOCK_MALLOC
+	tcase_add_test (tc, amx_array_init_no_memory_check);
+#endif
 	tcase_add_test (tc, amx_array_init_clean_check);
 	tcase_add_test (tc, amx_array_clean_cb_check);
 	suite_add_tcase (s, tc);
@@ -803,6 +921,9 @@ Suite *amx_array_suite(void)
 	tc = tcase_create ("amx_array_grow_shrink");
 	tcase_add_checked_fixture (tc, amx_array_setup, amx_array_teardown);
 	tcase_add_test (tc, amx_array_grow_null_check);
+#ifdef MOCK_MALLOC
+	tcase_add_test (tc, amx_array_grow_no_memory_check);
+#endif
 	tcase_add_test (tc, amx_array_grow_check);
 	tcase_add_test (tc, amx_array_shrink_null_check);
 	tcase_add_test (tc, amx_array_shrink_check);
@@ -826,8 +947,14 @@ Suite *amx_array_suite(void)
 	tc = tcase_create ("amx_append_prepend");
 	tcase_add_checked_fixture (tc, amx_array_setup, amx_array_teardown);
 	tcase_add_test (tc, amx_array_append_data_null_check);
+#ifdef MOCK_MALLOC
+	tcase_add_test (tc, amx_array_append_data_no_memory_check);
+#endif
 	tcase_add_test (tc, amx_array_append_data_check);
 	tcase_add_test (tc, amx_array_prepend_data_null_check);
+#ifdef MOCK_MALLOC
+	tcase_add_test (tc, amx_array_prepend_data_no_memory_check);
+#endif
 	tcase_add_test (tc, amx_array_prepend_data_check);
 	suite_add_tcase (s, tc);
 

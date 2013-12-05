@@ -4,7 +4,6 @@
 #include <check.h>
 #include <amx_log.h>
 
-#include "mock.h"
 #include "mock_malloc.h"
 
 START_TEST (log_open_syslog)
@@ -128,6 +127,7 @@ START_TEST (log_set_level)
 }
 END_TEST
 
+#ifdef MOCK_MALLOC
 START_TEST (log_zone_enable_no_memory)
 {
 	amx_log_open("test", amx_log_syslog);
@@ -142,6 +142,7 @@ START_TEST (log_zone_enable_no_memory)
 
 }
 END_TEST
+#endif
 
 START_TEST (log_zone_enable)
 {
@@ -376,7 +377,9 @@ Suite *amx_log_suite(void)
 	suite_add_tcase (s, tc);
 
 	tc = tcase_create ("amx_log_zones");
+#ifdef MOCK_MALLOC
 	tcase_add_test (tc, log_zone_enable_no_memory);
+#endif
 	tcase_add_test (tc, log_zone_enable);
 	tcase_add_test (tc, log_zone_disable);
 	tcase_add_test (tc, log_zone_disable_all);
