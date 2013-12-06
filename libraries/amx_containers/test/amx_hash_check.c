@@ -24,17 +24,17 @@ START_TEST(amx_hash_generation_check)
 	for(int i = 0; key[i]; i++) 
 	{
 		printf("Key:                         %s\n", key[i]);
-		printf(" 1. RS-Hash Function Value:   %u\n",RSHash( key[i],strlen( key[i])));
-		printf(" 2. JS-Hash Function Value:   %u\n",JSHash( key[i],strlen( key[i])));
-		printf(" 3. PJW-Hash Function Value:  %u\n",PJWHash( key[i],strlen( key[i])));
-		printf(" 4. ELF-Hash Function Value:  %u\n",ELFHash( key[i],strlen( key[i])));
-		printf(" 5. BKDR-Hash Function Value: %u\n",BKDRHash( key[i],strlen( key[i])));
-		printf(" 6. SDBM-Hash Function Value: %u\n",SDBMHash( key[i],strlen( key[i])));
-		printf(" 7. DJB-Hash Function Value:  %u\n",DJBHash( key[i],strlen( key[i])));
-		printf(" 8. DEK-Hash Function Value:  %u\n",DEKHash( key[i],strlen( key[i])));
-		printf(" 9. BP-Hash Function Value:   %u\n",BPHash( key[i],strlen( key[i])));
-		printf("10. FNV-Hash Function Value:  %u\n",FNVHash( key[i],strlen( key[i])));
-		printf("11. AP-Hash Function Value:   %u\n",APHash( key[i],strlen( key[i])));
+		printf(" 1. RS-Hash Function Value:   %u\n",amx_RS_hash( key[i],strlen( key[i])));
+		printf(" 2. JS-Hash Function Value:   %u\n",amx_JS_hash( key[i],strlen( key[i])));
+		printf(" 3. PJW-Hash Function Value:  %u\n",amx_PJW_hash( key[i],strlen( key[i])));
+		printf(" 4. ELF-Hash Function Value:  %u\n",amx_ELF_hash( key[i],strlen( key[i])));
+		printf(" 5. BKDR-Hash Function Value: %u\n",amx_BKDR_hash( key[i],strlen( key[i])));
+		printf(" 6. SDBM-Hash Function Value: %u\n",amx_SDBM_hash( key[i],strlen( key[i])));
+		printf(" 7. DJB-Hash Function Value:  %u\n",amx_DJB_hash( key[i],strlen( key[i])));
+		printf(" 8. DEK-Hash Function Value:  %u\n",amx_DEK_hash( key[i],strlen( key[i])));
+		printf(" 9. BP-Hash Function Value:   %u\n",amx_BP_hash( key[i],strlen( key[i])));
+		printf("10. FNV-Hash Function Value:  %u\n",amx_FNV_hash( key[i],strlen( key[i])));
+		printf("11. AP-Hash Function Value:   %u\n",amx_AP_hash( key[i],strlen( key[i])));
 	}
 }
 END_TEST
