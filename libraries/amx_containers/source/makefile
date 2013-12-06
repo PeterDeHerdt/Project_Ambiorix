@@ -9,7 +9,8 @@ OBJECTS =	amx_llist.o \
 			amx_llist_it.o \
 			amx_array.o \
 			amx_array_it.o \
-			amx_rbuffer.o
+			amx_rbuffer.o \
+			amx_hash_func.o
 
 TARGET = libamx_containers
 
