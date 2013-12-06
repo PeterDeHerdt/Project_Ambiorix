@@ -14,6 +14,7 @@ OBJECTS =	amx_containers_check.o \
 			amx_aqueue_check.o \
 			amx_astack_check.o \
 			amx_rbuffer_check.o \
+			amx_hash_check.o \
 			mock_malloc.o
 
 TARGET = amx_containers_check
