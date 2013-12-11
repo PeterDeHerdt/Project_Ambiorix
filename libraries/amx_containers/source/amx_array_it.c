@@ -99,3 +99,79 @@ unsigned int amx_array_it_index(const amx_array_it_t *it)
 exit:
 	return index;
 }
+
+int amx_array_it_set_data(amx_array_it_t *it, void *data)
+{
+	int retval = -1;
+	if (!it || !data)
+	{
+		goto exit;
+	}
+
+	// set data pointer
+	it->data = data;
+
+	// update counters
+	unsigned int index = amx_array_it_index(it);
+	amx_array_t *array = it->array;
+	if (index < array->first_used || (array->first_used == 0 && array->buffer[0].data == NULL))
+	{
+		array->first_used = index;
+	}
+	if (index > array->last_used)
+	{
+		array->last_used = index;
+	}
+
+	retval = 0;
+
+exit:
+	return retval;
+}
+
+void *amx_array_it_take_data(amx_array_it_t *it)
+{
+	void *data = NULL;
+	if (!it)
+	{
+		goto exit;
+	}
+	
+	if (!it->data)
+	{
+		goto exit;
+	}
+
+	data = it->data;
+	it->data = NULL;
+	unsigned int index = amx_array_it_index(it);
+	amx_array_t *array = it->array;
+
+	if (index == array->first_used)
+	{
+		it = amx_array_it_get_next(it);
+		if (!it)
+		{
+			array->first_used = 0;
+		}
+		else
+		{
+			array->first_used = amx_array_it_index(it);
+		}
+	}
+	if (index == array->last_used)
+	{
+		it = amx_array_it_get_previous(it);
+		if (!it)
+		{
+			array->last_used = 0;
+		}
+		else
+		{
+			array->last_used = amx_array_it_index(it);
+		}
+	}
+
+exit:
+	return data;
+}

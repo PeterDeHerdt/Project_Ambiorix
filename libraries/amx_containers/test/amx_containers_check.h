@@ -18,6 +18,7 @@ Suite *amx_aqueue_suite(void);
 Suite *amx_astack_suite(void);
 Suite *amx_rbuffer_suite(void);
 Suite *amx_hash_suite(void);
+Suite *amx_htable_suite(void);
 
 #ifdef __cplusplus
 }
