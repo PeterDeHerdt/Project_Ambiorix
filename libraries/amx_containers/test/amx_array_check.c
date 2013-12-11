@@ -34,7 +34,6 @@ static void amx_array_teardown(void)
 	amx_array_delete(&array1, NULL);
 }
 
-
 static void amx_check_array_it_delete(amx_array_it_t *it)
 {
 	counter++;
@@ -649,6 +648,42 @@ START_TEST (amx_array_set_at_check)
 }
 END_TEST
 
+START_TEST (amx_array_it_set_data_null_check)
+{
+	ck_assert_int_eq (amx_array_it_set_data(NULL, NULL), -1);
+	amx_array_it_t *it = amx_array_get_at(array1, 2);
+	ck_assert_int_eq (amx_array_it_set_data(it, NULL), -1);
+	ck_assert_int_eq (array1->first_used, 3);
+	ck_assert_int_eq (amx_array_grow(array1, 10), 0);
+	it = amx_array_get_at(array1, 15);
+	ck_assert_int_eq (amx_array_it_set_data(it, NULL), -1);
+	ck_assert_int_eq (array1->last_used, 9);
+}
+END_TEST
+
+START_TEST (amx_array_it_set_data_check)
+{
+	amx_array_it_t *it = NULL;
+
+	amx_array_clean(array1, NULL);
+	amx_array_init(array1, 9);
+
+	it = amx_array_get_at(array1, 0);
+	ck_assert_int_eq (amx_array_it_set_data(it, &data[0]), 0);
+	ck_assert_int_eq (array1->first_used, 0);
+
+	it = amx_array_get_at(array1, 2);
+	ck_assert_int_eq (amx_array_it_set_data(it, &data[2]), 0);
+	ck_assert_int_eq (array1->first_used, 0);
+	ck_assert_int_eq (array1->last_used, 2);
+
+	ck_assert_int_eq (amx_array_grow(array1, 10), 0);
+	it = amx_array_get_at(array1, 15);
+	ck_assert_int_eq (amx_array_it_set_data(it, &data[5]), 0);
+	ck_assert_int_eq (array1->last_used, 15);
+}
+END_TEST
+
 START_TEST (amx_array_append_data_null_check)
 {
 	ck_assert_ptr_eq(amx_array_append_data(NULL, NULL), NULL);
@@ -850,6 +885,40 @@ START_TEST (amx_array_take_last_data_check)
 }
 END_TEST
 
+START_TEST (amx_array_it_take_data_null_check)
+{
+
+	ck_assert_int_eq(amx_array_it_index(NULL), 0);
+}
+END_TEST
+
+START_TEST (amx_array_it_take_data_check)
+{
+	ck_assert_ptr_eq(amx_array_it_take_data(NULL), NULL);
+	amx_array_it_t *it = amx_array_get_at(array1, 3);
+	ck_assert_ptr_eq(amx_array_it_take_data(it), &data[3]);
+	ck_assert_int_eq (array1->first_used, 6);
+	ck_assert_int_eq (array1->last_used, 9);
+
+	it = amx_array_get_at(array1, 4);
+	ck_assert_ptr_eq(amx_array_it_take_data(it), NULL);
+	ck_assert_int_eq (array1->first_used, 6);
+	ck_assert_int_eq (array1->last_used, 9);
+
+	it = amx_array_get_at(array1, 9);
+	ck_assert_ptr_eq(amx_array_it_take_data(it), &data[9]);
+	ck_assert_int_eq (array1->first_used, 6);
+	ck_assert_int_eq (array1->last_used, 6);
+
+	it = amx_array_get_at(array1, 6);
+	ck_assert_ptr_eq(amx_array_it_take_data(it), &data[6]);
+	ck_assert_int_eq (array1->first_used, 0);
+	ck_assert_int_eq (array1->last_used, 0);
+
+	ck_assert_int_eq (amx_array_is_empty(array1), true);
+}
+END_TEST
+
 START_TEST (amx_array_it_index_null_check)
 {
 	ck_assert_int_eq(amx_array_it_index(NULL), 0);
@@ -942,6 +1011,8 @@ Suite *amx_array_suite(void)
 	tcase_add_checked_fixture (tc, amx_array_setup, amx_array_teardown);
 	tcase_add_test (tc, amx_array_set_at_null_check);
 	tcase_add_test (tc, amx_array_set_at_check);
+	tcase_add_test (tc, amx_array_it_set_data_null_check);
+	tcase_add_test (tc, amx_array_it_set_data_check);
 	suite_add_tcase (s, tc);
 
 	tc = tcase_create ("amx_append_prepend");
@@ -958,12 +1029,14 @@ Suite *amx_array_suite(void)
 	tcase_add_test (tc, amx_array_prepend_data_check);
 	suite_add_tcase (s, tc);
 
-	tc = tcase_create ("amx_take_first_last");
+	tc = tcase_create ("amx_take_first_last_it");
 	tcase_add_checked_fixture (tc, amx_array_setup, amx_array_teardown);
 	tcase_add_test (tc, amx_array_take_first_data_null_check);
 	tcase_add_test (tc, amx_array_take_first_data_check);
 	tcase_add_test (tc, amx_array_take_last_data_null_check);
 	tcase_add_test (tc, amx_array_take_last_data_check);
+	tcase_add_test (tc, amx_array_it_take_data_null_check);
+	tcase_add_test (tc, amx_array_it_take_data_check);
 	suite_add_tcase (s, tc);
 
 	tc = tcase_create ("amx_it_index");

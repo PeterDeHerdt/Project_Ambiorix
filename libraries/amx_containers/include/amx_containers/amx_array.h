@@ -39,9 +39,9 @@ extern "C"
  */
 typedef struct _amx_array
 {
-	size_t items;            /**< Number of items in the array */
-	size_t first_used;       /**< First used index */
-	size_t last_used;        /**< Highest used index */
+	size_t items;                  /**< Number of items in the array */
+	size_t first_used;             /**< First used index */
+	size_t last_used;              /**< Highest used index */
 	struct _amx_array_it *buffer;  /**< The array buffer */
 } amx_array_t;
 
@@ -52,8 +52,8 @@ typedef struct _amx_array
  */
 typedef struct _amx_array_it
 {
-	amx_array_t *array; /**< Pointer to the array */
-	void *data;               /**< Pointer to the data */
+	amx_array_t *array;            /**< Pointer to the array */
+	void *data;                    /**< Pointer to the data */
 } amx_array_it_t;
 
 /**
@@ -480,14 +480,7 @@ void *amx_array_it_get_data(const amx_array_it_t *it)
  @param it pointer to the item iterator
  @param data pointer to the data
 */
-AMX_INLINE
-void amx_array_it_set_data(amx_array_it_t *it, void *data)
-{
-	if (it)
-	{
-		it->data = data;
-	}
-}
+int amx_array_it_set_data(amx_array_it_t *it, void *data);
 
 /**
  @ingroup amx_array
@@ -501,18 +494,7 @@ void amx_array_it_set_data(amx_array_it_t *it, void *data)
  @return
  The data pointer of the iterator.
 */
-AMX_INLINE
-void *amx_array_it_take_data(amx_array_it_t *it)
-{
-	void *data = NULL;
-	if (it)
-	{
-		data = it->data;
-		it->data = NULL;
-	}
-	
-	return data;
-}
+void *amx_array_it_take_data(amx_array_it_t *it);
 
 #ifdef __cplusplus
 }
