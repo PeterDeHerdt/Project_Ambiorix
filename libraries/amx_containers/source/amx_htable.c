@@ -227,22 +227,6 @@ exit:
 	return hash;
 }
 
-
-bool amx_htable_is_empty(const amx_htable_t *htable)
-{
-	return htable?(htable->items == 0):true;
-}
-
-size_t amx_htable_size(const amx_htable_t *htable)
-{
-	return htable?htable->items:0;
-}
-
-size_t amx_htable_capacity(const amx_htable_t *htable)
-{
-	return htable?htable->table.items:0;
-}
-
 int amx_htable_insert(amx_htable_t *htable, const char *key, amx_htable_it_t *it)
 {
 	int retval = -1;
@@ -340,16 +324,4 @@ amx_htable_it_t *amx_htable_get_first(const amx_htable_t *htable)
 
 exit:
 	return it;
-}
-
-amx_htable_it_t *amx_htable_take_first(const amx_htable_t *htable)
-{
-	amx_htable_it_t *it = amx_htable_get_first(htable);
-	amx_htable_it_take(it);
-	return it;
-}
-
-bool amx_htable_contains(const amx_htable_t *htable, const char *key)
-{
-	return amx_htable_get(htable, key)?true:false;
 }

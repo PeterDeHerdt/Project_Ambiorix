@@ -479,6 +479,9 @@ void *amx_array_it_get_data(const amx_array_it_t *it)
 
  @param it pointer to the item iterator
  @param data pointer to the data
+ 
+ @return
+ 0 when the data is set, -1 otherwise.
 */
 int amx_array_it_set_data(amx_array_it_t *it, void *data);
 

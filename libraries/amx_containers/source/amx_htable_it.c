@@ -58,7 +58,7 @@ exit:
 	return retval;
 }
 
-void amx_htable_it_clean(amx_htable_it_t *it)
+void amx_htable_it_clean(amx_htable_it_t *it, amx_htable_it_delete_t func)
 {
 	if (!it)
 	{
@@ -67,8 +67,14 @@ void amx_htable_it_clean(amx_htable_it_t *it)
 
 	// remove from htable if it is in one
 	amx_htable_it_take(it);
-	free(it->key);
+	char *key = it->key;
 	it->key = NULL;
+	if (func)
+	{
+		func(key, it);
+	}
+
+	free(key);
 
 exit:
 	return;
@@ -153,9 +159,4 @@ void amx_htable_it_take(amx_htable_it_t *it)
 
 exit:
 	return;
-}
-
-const char *amx_htable_it_get_key(const amx_htable_it_t *it)
-{
-	return it?it->key:NULL;
 }

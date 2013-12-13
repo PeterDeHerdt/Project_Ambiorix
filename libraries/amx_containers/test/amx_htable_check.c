@@ -508,11 +508,11 @@ START_TEST (amx_htable_take_check)
 	ck_assert_ptr_eq (it[4].ait, NULL);
 	ck_assert_int_eq (htable->items, 0);
 
-	amx_htable_it_clean(&it[0]);
-	amx_htable_it_clean(&it[1]);
-	amx_htable_it_clean(&it[2]);
-	amx_htable_it_clean(&it[3]);
-	amx_htable_it_clean(&it[4]);
+	amx_htable_it_clean(&it[0], NULL);
+	amx_htable_it_clean(&it[1], NULL);
+	amx_htable_it_clean(&it[2], NULL);
+	amx_htable_it_clean(&it[3], NULL);
+	amx_htable_it_clean(&it[4], NULL);
 }
 END_TEST
 
@@ -534,8 +534,8 @@ START_TEST (amx_htable_take_chained_check)
 
 	ck_assert_ptr_eq (amx_htable_take(htable, "Dummy"), NULL);
 
-	amx_htable_it_clean(&it[0]);
-	amx_htable_it_clean(&it[1]);
+	amx_htable_it_clean(&it[0], NULL);
+	amx_htable_it_clean(&it[1], NULL);
 }
 END_TEST
 
@@ -555,7 +555,7 @@ START_TEST (amx_htable_take_first_check)
 	ck_assert_str_eq (it[0].key, "Key1");
 	ck_assert_ptr_eq (it[0].ait, NULL);
 
-	amx_htable_it_clean(&it[0]);
+	amx_htable_it_clean(&it[0], NULL);
 
 	// clean the table
 	amx_htable_clean(htable, NULL);
@@ -717,8 +717,8 @@ START_TEST (amx_htable_it_take_check)
 	ck_assert_ptr_eq (it[4].ait, NULL);
 	ck_assert_ptr_eq (it[4].next, NULL);
 
-	amx_htable_it_clean(&it[3]);
-	amx_htable_it_clean(&it[4]);
+	amx_htable_it_clean(&it[3], NULL);
+	amx_htable_it_clean(&it[4], NULL);
 }
 END_TEST
 
@@ -748,9 +748,9 @@ START_TEST (amx_htable_it_take_chained_check)
 	ck_assert_ptr_eq (it[4].ait, NULL);
 	ck_assert_ptr_eq (it[4].next, NULL);
 
-	amx_htable_it_clean(&it[0]);
-	amx_htable_it_clean(&it[2]);
-	amx_htable_it_clean(&it[4]);
+	amx_htable_it_clean(&it[0], NULL);
+	amx_htable_it_clean(&it[2], NULL);
+	amx_htable_it_clean(&it[4], NULL);
 }
 END_TEST
 
@@ -764,7 +764,7 @@ START_TEST (amx_htable_it_get_key_check)
 	amx_htable_take(htable, "SomeKey");
 	ck_assert_str_eq (amx_htable_it_get_key(&it[0]), "SomeKey");
 
-	amx_htable_it_clean(&it[0]);
+	amx_htable_it_clean(&it[0], NULL);
 }
 END_TEST
 
@@ -776,7 +776,17 @@ END_TEST
 
 START_TEST (amx_htable_it_clean_null_check)
 {
-	amx_htable_it_clean(NULL);
+	amx_htable_it_clean(NULL, NULL);
+}
+END_TEST
+
+START_TEST (amx_htable_it_clean_func_check)
+{
+	deletes = 0;
+	amx_htable_insert(htable, "SomeKey", &it[0]);
+	ck_assert_str_eq(it[0].key, "SomeKey");
+	amx_htable_it_clean(&it[0], amx_delete_it_func);
+	ck_assert_int_eq (deletes, 1);
 }
 END_TEST
 
@@ -884,8 +894,10 @@ Suite *amx_htable_suite(void)
 	suite_add_tcase (s, tc);
 
 	tc = tcase_create ("amx_htable_it_init_clean");
+	tcase_add_checked_fixture (tc, amx_htable_setup, amx_htable_teardown);
 	tcase_add_test (tc, amx_htable_it_init_null_check);
 	tcase_add_test (tc, amx_htable_it_clean_null_check);
+	tcase_add_test (tc, amx_htable_it_clean_func_check);
 	suite_add_tcase (s, tc);
 
 	return s;
