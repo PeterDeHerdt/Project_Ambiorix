@@ -82,7 +82,7 @@ typedef struct _amx_var
 	} data;                    /**< Variant data */
 } amx_var_t;
 
-typedef int (* amx_var_copy_fn_t) (amx_var_t *dst, amx_var_t *src);
+typedef int (* amx_var_copy_fn_t) (amx_var_t *dst, const amx_var_t *src);
 typedef int (* amx_var_convert_fn_t) (amx_var_t *dest, const amx_var_t *src);
 typedef int (* amx_var_compare_fn_t) (amx_var_t *var1, amx_var_t *var2);
 typedef void (* amx_var_free_fn_t) (amx_var_t *var);
@@ -145,16 +145,16 @@ amx_htable_t *amx_var_get_htable_da(const amx_var_t *var);
 int amx_var_get_fd(const amx_var_t *var);
 void *amx_var_get_data_da(const amx_var_t *var);
 
-int amx_var_copy(amx_var_t *dest, const amx_var_t *src);
-int amx_var_convert(amx_var_t *dest, const amx_var_t *src, int type_id);
-int amx_var_compare(const amx_var_t *var1, const amx_var_t *var2);
-
 amx_var_t *amx_var_from_llist_it(const amx_llist_it_t *it);
 amx_var_t *amx_var_from_htable_it(const amx_htable_it_t *it);
 amx_var_t *amx_var_from_array_it(const amx_array_it_t *it);
 
 amx_llist_it_t *amx_var_get_llist_it(const amx_var_t *var);
 amx_htable_it_t *amx_var_get_htable_it(const amx_var_t *var);
+
+int amx_var_copy(amx_var_t *dest, const amx_var_t *src);
+int amx_var_convert(amx_var_t *dest, const amx_var_t *src, int type_id);
+int amx_var_compare(const amx_var_t *var1, const amx_var_t *var2);
 
 int amx_var_get_type_id(const amx_var_t *var);
 const char *amx_var_get_type_name(const amx_var_t *var);

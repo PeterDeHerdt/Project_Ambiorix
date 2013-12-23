@@ -5,6 +5,7 @@
 #include <amx_containers/amx_htable.h>
 
 #include "mock_malloc.h"
+#include "mock_strdup.h"
 
 static unsigned int deletes = 0;
 static amx_htable_t *htable = NULL;
@@ -315,6 +316,27 @@ START_TEST (amx_htable_insert_grow_no_memory_check)
 
 	ck_mock_reset(malloc);
 	Expectation_malloc *exp = ck_mock_add_expectation(malloc);
+	exp->fail = true;
+	int retval = amx_htable_insert(htable, "key5", &it[5]);
+
+	ck_assert_int_eq (retval, -1);
+}
+END_TEST
+#endif
+
+#ifdef MOCK_MALLOC
+START_TEST (amx_htable_insert_no_memory_check)
+{
+	amx_htable_delete(&htable, NULL);
+	ck_assert_int_eq (amx_htable_new(&htable, 8), 0);
+	ck_assert_int_eq (amx_htable_insert(htable, "key0", &it[0]), 0);
+	ck_assert_int_eq (amx_htable_insert(htable, "key1", &it[1]), 0);
+	ck_assert_int_eq (amx_htable_insert(htable, "key2", &it[2]), 0);
+	ck_assert_int_eq (amx_htable_insert(htable, "key3", &it[3]), 0);
+	ck_assert_int_eq (amx_htable_insert(htable, "key4", &it[4]), 0);
+
+	ck_mock_reset(malloc);
+	Expectation_strdup *exp = ck_mock_add_expectation(strdup);
 	exp->fail = true;
 	int retval = amx_htable_insert(htable, "key5", &it[5]);
 
@@ -827,6 +849,7 @@ Suite *amx_htable_suite(void)
 	tcase_add_test (tc, amx_htable_insert_grow_check);
 #ifdef MOCK_MALLOC
 	tcase_add_test (tc, amx_htable_insert_grow_no_memory_check);
+	tcase_add_test (tc, amx_htable_insert_no_memory_check);
 #endif
 	suite_add_tcase (s, tc);
 

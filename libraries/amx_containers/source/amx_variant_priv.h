@@ -14,4 +14,6 @@ int AMX_PRIVATE amx_var_remove_type(amx_var_type_t *type);
 
 amx_array_t AMX_PRIVATE *amx_variant_get_types_array();
 
+amx_var_type_t AMX_PRIVATE *amx_var_get_type(unsigned int type_id);
+
 #endif // AMX_VARIANT_PRIV_H

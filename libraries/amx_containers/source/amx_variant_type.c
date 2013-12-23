@@ -193,6 +193,21 @@ amx_array_t *amx_variant_get_types_array()
 	return &amx_array_types;
 }
 
+amx_var_type_t *amx_var_get_type(unsigned int type_id)
+{
+	amx_var_type_t *type = NULL;
+	amx_array_it_t *ait = amx_array_get_at(&amx_array_types, type_id);
+	if (!ait)
+	{
+		goto exit;
+	}
+
+	type = ait->data;
+
+exit:
+	return type;
+}
+
 __attribute__((constructor)) static void amx_var_types_init() {
 	// add the basic types
 	amx_var_add_type(&amx_var_void, AMX_VAR_TYPE_ID_VOID);
@@ -236,4 +251,41 @@ int amx_var_unregister_type(amx_var_type_t *type)
 
 exit:
 	return retval;
+}
+
+const char *amx_var_get_type_name_from_id(int type_id)
+{
+	const char *name = NULL;
+	amx_array_it_t *ait = amx_array_get_at(&amx_array_types, type_id);
+	if (!ait || !ait->data)
+	{
+		goto exit;
+	}
+
+	amx_var_type_t *type = ait->data;
+	name = type->name;
+
+exit:
+	return name;
+}
+
+int amx_var_get_type_id_from_name(const char *name)
+{
+	int type_id = -1;
+	if (!name || !(*name))
+	{
+		goto exit;
+	}
+
+	amx_htable_it_t *hit = amx_htable_get(&amx_variant_types, name);
+	if (!hit)
+	{
+		goto exit;
+	}
+
+	amx_var_type_t *type = amx_htable_it_get_data(hit, amx_var_type_t, hit);
+	type_id = type->type_id;
+
+exit:
+	return type_id;
 }

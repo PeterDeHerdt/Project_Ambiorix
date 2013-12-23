@@ -107,14 +107,46 @@ START_TEST (amx_var_new_delete_custom_type_check)
 	ck_assert_int_eq (amx_var_new(&var), 0);
 
 	free_count = 0;
-	// set type id of test type1
-	var->type_id = retval;
+
+	char *data = "1234";
+	amx_var_set_data_move(var, data, retval);
 	amx_var_delete(&var);
 	ck_assert_ptr_eq (var, NULL);
 	ck_assert_int_eq (free_count, 1);
 
 	amx_var_unregister_type(&amx_var_test_type1);
+}
+END_TEST
 
+START_TEST (amx_var_get_type_id_null_check)
+{
+	ck_assert_int_eq (amx_var_get_type_id(NULL), -1);
+}
+END_TEST
+
+START_TEST (amx_var_get_type_id_check)
+{
+	amx_var_t *var = NULL;
+	ck_assert_int_eq (amx_var_new(&var), 0);
+	var->type_id = 1;
+	ck_assert_int_eq (amx_var_get_type_id(var), 1);
+	amx_var_delete(&var);
+}
+END_TEST
+
+START_TEST (amx_var_get_type_name_null_check)
+{
+	ck_assert_ptr_eq ((char *)amx_var_get_type_name(NULL), NULL);
+}
+END_TEST
+
+START_TEST (amx_var_get_type_name_check)
+{
+	amx_var_t *var = NULL;
+	ck_assert_int_eq (amx_var_new(&var), 0);
+	var->type_id = 1;
+	ck_assert_str_eq (amx_var_get_type_name(var), AMX_VAR_TYPE_NAME_STRING);
+	amx_var_delete(&var);
 }
 END_TEST
 
@@ -132,6 +164,16 @@ Suite *amx_var_suite(void)
 #endif
 	tcase_add_test (tc, amx_var_new_delete_invalid_type_check);
 	tcase_add_test (tc, amx_var_new_delete_custom_type_check);
+	suite_add_tcase (s, tc);
+
+	tc = tcase_create ("amx_var_get_type_id");
+	tcase_add_test (tc, amx_var_get_type_id_null_check);
+	tcase_add_test (tc, amx_var_get_type_id_check);
+	suite_add_tcase (s, tc);
+
+	tc = tcase_create ("amx_var_get_type_name");
+	tcase_add_test (tc, amx_var_get_type_name_null_check);
+	tcase_add_test (tc, amx_var_get_type_name_check);
 	suite_add_tcase (s, tc);
 
 	return s;

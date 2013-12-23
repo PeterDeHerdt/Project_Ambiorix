@@ -18,7 +18,8 @@ OBJECTS =	amx_containers_check.o \
 			amx_htable_check.o \
 			amx_variant_check.o \
 			amx_variant_types_check.o \
-			mock_malloc.o
+			mock_malloc.o \
+			mock_strdup.o
 
 TARGET = amx_containers_check
 

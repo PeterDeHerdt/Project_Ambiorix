@@ -246,7 +246,6 @@ int amx_htable_insert(amx_htable_t *htable, const char *key, amx_htable_it_t *it
 	if (((htable->items + 1) * 100) / htable->table.items >= 75)
 	{
 		// time to grow the table
-		printf("Grow now\n");
 		if (amx_htable_grow(htable) == -1)
 		{
 			goto exit;
@@ -257,6 +256,10 @@ int amx_htable_insert(amx_htable_t *htable, const char *key, amx_htable_it_t *it
 	if (!it->key)
 	{
 		it->key = strdup(key);
+		if (!it->key)
+		{
+			goto exit;
+		}
 	}
 
 	unsigned int index = amx_htable_key2index(htable, key);
