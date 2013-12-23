@@ -15,6 +15,8 @@ int main (void)
 	srunner_add_suite(sr, amx_rbuffer_suite());
 	srunner_add_suite(sr, amx_hash_suite());
 	srunner_add_suite(sr, amx_htable_suite());
+	srunner_add_suite(sr, amx_var_type_suite());
+	srunner_add_suite(sr, amx_var_suite());
 
 	srunner_run_all (sr, CK_VERBOSE);
 	number_failed = srunner_ntests_failed (sr);

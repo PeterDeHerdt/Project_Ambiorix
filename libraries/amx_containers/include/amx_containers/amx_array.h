@@ -339,6 +339,18 @@ amx_array_it_t *amx_array_get_first(const amx_array_t *array);
 /**
  @ingroup amx_array
  @brief
+ Gets the first free position in the array.
+
+ @param array a pointer to the array structure
+
+ @return
+ returns the array iterator for the first free item in the array or NULL if there is no free item in the array.
+*/
+amx_array_it_t *amx_array_get_first_free(const amx_array_t *array);
+
+/**
+ @ingroup amx_array
+ @brief
  Gets the item iterator of the last used item in the array.
 
  @param array a pointer to the array structure
@@ -347,6 +359,18 @@ amx_array_it_t *amx_array_get_first(const amx_array_t *array);
  returns the array iterator for the last used item in the array or NULL if there is no used item in the array.
 */
 amx_array_it_t *amx_array_get_last(const amx_array_t *array);
+
+/**
+ @ingroup amx_array
+ @brief
+ Gets the last free position in the array.
+
+ @param array a pointer to the array structure
+
+ @return
+ returns the array iterator for the last free item in the array or NULL if there is no free item in the array.
+*/
+amx_array_it_t *amx_array_get_last_free(const amx_array_t *array);
 
 /**
  @ingroup amx_array
@@ -390,6 +414,21 @@ amx_array_it_t *amx_array_it_get_next(const amx_array_it_t *reference);
 /**
  @ingroup amx_array
  @brief
+ Gets the next free item in the array, starting from the provided array iterator.
+
+ This function iterates forwards over all items starting from the reference iterator and searches the next free item.
+ 
+ @param reference array iterator used as starting point.
+
+ @return
+ returns the iterator of the next free item in the array starting from the reference iterator, or NULL if there 
+ are no more free items. 
+*/
+amx_array_it_t *amx_array_it_get_next_free(const amx_array_it_t *reference);
+
+/**
+ @ingroup amx_array
+ @brief
  Gets the previous used item in the array, starting from the provided array iterator.
 
  This function iterates backwards over all items starting from the reference iterator and searches the previous
@@ -402,6 +441,22 @@ amx_array_it_t *amx_array_it_get_next(const amx_array_it_t *reference);
  are no more used items. 
 */
 amx_array_it_t *amx_array_it_get_previous(const amx_array_it_t *reference);
+
+/**
+ @ingroup amx_array
+ @brief
+ Gets the previous free item in the array, starting from the provided array iterator.
+
+ This function iterates backwards over all items starting from the reference iterator and searches the previous free 
+ item.
+ 
+ @param reference array iterator used as starting point.
+
+ @return
+ returns the iterator of the previous free item in the array starting from the reference iterator, or NULL if there 
+ are no more free items. 
+*/
+amx_array_it_t *amx_array_it_get_previous_free(const amx_array_it_t *reference);
 
 /**
  @ingroup amx_array

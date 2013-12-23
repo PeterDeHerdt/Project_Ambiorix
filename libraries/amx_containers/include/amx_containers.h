@@ -25,6 +25,7 @@ extern "C"
 #include <amx_containers/amx_rbuffer.h>
 #include <amx_containers/amx_hash.h>
 #include <amx_containers/amx_htable.h>
+#include <amx_containers/amx_variant.h>
 
 #ifdef __cplusplus
 }

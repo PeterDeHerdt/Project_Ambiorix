@@ -543,6 +543,29 @@ exit:
 	return it;
 }
 
+amx_array_it_t *amx_array_get_first_free(const amx_array_t *array)
+{
+	amx_array_it_t *it = NULL;
+	if (!array)
+	{
+		goto exit;
+	}
+
+	size_t index = 0;
+	while(index < array->items && array->buffer[index].data != NULL)
+	{
+		index++;
+	}
+
+	if (index < array->items)
+	{
+		it = &array->buffer[index];
+	}
+
+exit:
+	return it;
+}
+
 amx_array_it_t *amx_array_get_last(const amx_array_t *array)
 {
 	amx_array_it_t *it = NULL;
@@ -554,6 +577,29 @@ amx_array_it_t *amx_array_get_last(const amx_array_t *array)
 	if (!amx_array_is_empty(array))
 	{
 		it = &array->buffer[array->last_used];
+	}
+
+exit:
+	return it;
+}
+
+amx_array_it_t *amx_array_get_last_free(const amx_array_t *array)
+{
+	amx_array_it_t *it = NULL;
+	if (!array)
+	{
+		goto exit;
+	}
+
+	size_t index = array->items;
+	while(index > 0 && array->buffer[index - 1].data != NULL)
+	{
+		index--;
+	}
+
+	if (index > 0)
+	{
+		it = &array->buffer[index - 1];
 	}
 
 exit:

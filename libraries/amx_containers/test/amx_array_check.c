@@ -282,6 +282,36 @@ START_TEST (amx_array_get_first_empty_check)
 }
 END_TEST
 
+START_TEST (amx_array_get_first_free_null_check)
+{
+	amx_array_it_t *it = NULL;
+	it = amx_array_get_first_free(NULL);
+	ck_assert_ptr_eq(it, NULL);
+}
+END_TEST
+
+START_TEST (amx_array_get_first_free_check)
+{
+	amx_array_it_t *it = NULL;
+	it = amx_array_get_first_free(array1);
+	ck_assert_ptr_eq(it, &array1->buffer[0]);
+	ck_assert_ptr_eq(it->array, array1);
+	ck_assert_ptr_eq(it->data, NULL);
+}
+END_TEST
+
+START_TEST (amx_array_get_first_free_full_check)
+{
+	for(int i =0; i < 10; i++)
+	{
+		amx_array_set_data_at(array1, i, &data[i]);
+	}
+
+	amx_array_it_t *it = amx_array_get_first_free(array1);
+	ck_assert_ptr_eq(it, NULL);
+}
+END_TEST
+
 START_TEST (amx_array_get_last_null_check)
 {
 	amx_array_it_t *it = NULL;
@@ -315,6 +345,36 @@ START_TEST (amx_array_get_last_empty_check)
 }
 END_TEST
 
+START_TEST (amx_array_get_last_free_null_check)
+{
+	amx_array_it_t *it = NULL;
+	it = amx_array_get_last_free(NULL);
+	ck_assert_ptr_eq(it, NULL);
+}
+END_TEST
+
+START_TEST (amx_array_get_last_free_check)
+{
+	amx_array_it_t *it = NULL;
+	it = amx_array_get_last_free(array1);
+	ck_assert_ptr_eq(it, &array1->buffer[8]);
+	ck_assert_ptr_eq(it->array, array1);
+	ck_assert_ptr_eq(it->data, NULL);
+}
+END_TEST
+
+START_TEST (amx_array_get_last_free_full_check)
+{
+	for(int i =0; i < 10; i++)
+	{
+		amx_array_set_data_at(array1, i, &data[i]);
+	}
+
+	amx_array_it_t *it = amx_array_get_last_free(array1);
+	ck_assert_ptr_eq(it, NULL);
+}
+END_TEST
+
 START_TEST (amx_array_it_get_next_null_check)
 {
 	amx_array_it_t *it = NULL;
@@ -343,6 +403,44 @@ START_TEST (amx_array_it_get_next_check)
 }
 END_TEST
 
+START_TEST (amx_array_it_get_next_free_null_check)
+{
+	amx_array_it_t *it = NULL;
+	it = amx_array_it_get_next_free(NULL);
+	ck_assert_ptr_eq(it, NULL);
+}
+END_TEST
+
+START_TEST (amx_array_it_get_next_free_check)
+{
+	amx_array_it_t *it = NULL;
+	it = amx_array_get_first(array1);
+
+	it = amx_array_it_get_next_free(it);
+	ck_assert_ptr_eq(it, &array1->buffer[4]);
+	ck_assert_ptr_eq(it->array, array1);
+	ck_assert_ptr_eq(it->data, NULL);
+
+	it = amx_array_it_get_next_free(it);
+	ck_assert_ptr_eq(it, &array1->buffer[5]);
+	ck_assert_ptr_eq(it->array, array1);
+	ck_assert_ptr_eq(it->data, NULL);
+
+	it = amx_array_it_get_next_free(it);
+	ck_assert_ptr_eq(it, &array1->buffer[7]);
+	ck_assert_ptr_eq(it->array, array1);
+	ck_assert_ptr_eq(it->data, NULL);
+
+	it = amx_array_it_get_next_free(it);
+	ck_assert_ptr_eq(it, &array1->buffer[8]);
+	ck_assert_ptr_eq(it->array, array1);
+	ck_assert_ptr_eq(it->data, NULL);
+
+	it = amx_array_it_get_next_free(it);
+	ck_assert_ptr_eq(it, NULL);
+}
+END_TEST
+
 START_TEST (amx_array_it_get_previous_null_check)
 {
 	amx_array_it_t *it = NULL;
@@ -354,6 +452,8 @@ END_TEST
 START_TEST (amx_array_it_get_previous_check)
 {
 	amx_array_it_t *it = NULL;
+	amx_array_set_data_at(array1, 1, &data[1]);
+
 	it = amx_array_get_last(array1);
 
 	it = amx_array_it_get_previous(it);
@@ -367,6 +467,64 @@ START_TEST (amx_array_it_get_previous_check)
 	ck_assert_ptr_eq(it->data, &data[3]);
 
 	it = amx_array_it_get_previous(it);
+	ck_assert_ptr_eq(it, &array1->buffer[1]);
+	ck_assert_ptr_eq(it->array, array1);
+	ck_assert_ptr_eq(it->data, &data[1]);
+
+	it = amx_array_it_get_previous(it);
+	ck_assert_ptr_eq(it, NULL);
+}
+END_TEST
+
+START_TEST (amx_array_it_get_previous_free_null_check)
+{
+	amx_array_it_t *it = NULL;
+	it = amx_array_it_get_previous_free(NULL);
+	ck_assert_ptr_eq(it, NULL);
+}
+END_TEST
+
+START_TEST (amx_array_it_get_previous_free_check)
+{
+	amx_array_it_t *it = NULL;
+	it = amx_array_get_last(array1);
+
+	it = amx_array_it_get_previous_free(it);
+	ck_assert_ptr_eq(it, &array1->buffer[8]);
+	ck_assert_ptr_eq(it->array, array1);
+	ck_assert_ptr_eq(it->data, NULL);
+
+	it = amx_array_it_get_previous_free(it);
+	ck_assert_ptr_eq(it, &array1->buffer[7]);
+	ck_assert_ptr_eq(it->array, array1);
+	ck_assert_ptr_eq(it->data, NULL);
+
+	it = amx_array_it_get_previous_free(it);
+	ck_assert_ptr_eq(it, &array1->buffer[5]);
+	ck_assert_ptr_eq(it->array, array1);
+	ck_assert_ptr_eq(it->data, NULL);
+
+	it = amx_array_it_get_previous_free(it);
+	ck_assert_ptr_eq(it, &array1->buffer[4]);
+	ck_assert_ptr_eq(it->array, array1);
+	ck_assert_ptr_eq(it->data, NULL);
+
+	it = amx_array_it_get_previous_free(it);
+	ck_assert_ptr_eq(it, &array1->buffer[2]);
+	ck_assert_ptr_eq(it->array, array1);
+	ck_assert_ptr_eq(it->data, NULL);
+
+	it = amx_array_it_get_previous_free(it);
+	ck_assert_ptr_eq(it, &array1->buffer[1]);
+	ck_assert_ptr_eq(it->array, array1);
+	ck_assert_ptr_eq(it->data, NULL);
+
+	it = amx_array_it_get_previous_free(it);
+	ck_assert_ptr_eq(it, &array1->buffer[0]);
+	ck_assert_ptr_eq(it->array, array1);
+	ck_assert_ptr_eq(it->data, NULL);
+
+	it = amx_array_it_get_previous_free(it);
 	ck_assert_ptr_eq(it, NULL);
 }
 END_TEST
@@ -962,13 +1120,23 @@ Suite *amx_array_suite(void)
 	tcase_add_test (tc, amx_array_get_first_null_check);
 	tcase_add_test (tc, amx_array_get_first_check);
 	tcase_add_test (tc, amx_array_get_first_empty_check);
+	tcase_add_test (tc, amx_array_get_first_free_null_check);
+	tcase_add_test (tc, amx_array_get_first_free_check);
+	tcase_add_test (tc, amx_array_get_first_free_full_check);
 	tcase_add_test (tc, amx_array_get_last_null_check);
 	tcase_add_test (tc, amx_array_get_last_check);
 	tcase_add_test (tc, amx_array_get_last_empty_check);
+	tcase_add_test (tc, amx_array_get_last_free_null_check);
+	tcase_add_test (tc, amx_array_get_last_free_check);
+	tcase_add_test (tc, amx_array_get_last_free_full_check);
 	tcase_add_test (tc, amx_array_it_get_next_null_check);
 	tcase_add_test (tc, amx_array_it_get_next_check);
+	tcase_add_test (tc, amx_array_it_get_next_free_null_check);
+	tcase_add_test (tc, amx_array_it_get_next_free_check);
 	tcase_add_test (tc, amx_array_it_get_previous_null_check);
 	tcase_add_test (tc, amx_array_it_get_previous_check);
+	tcase_add_test (tc, amx_array_it_get_previous_free_null_check);
+	tcase_add_test (tc, amx_array_it_get_previous_free_check);
 	suite_add_tcase (s, tc);
 
 	tc = tcase_create ("amx_array_get_data");
