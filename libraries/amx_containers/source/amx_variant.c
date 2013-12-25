@@ -145,21 +145,69 @@ exit:
 	return retval;
 }
 
-int amx_var_convert(amx_var_t *dest, const amx_var_t *src, int type_id)
+int amx_var_convert(amx_var_t *dst, const amx_var_t *src, int type_id)
 {
 	int retval = -1;
+	if (!dst || !src)
+	{
+		goto exit;
+	}
 
 	// first clean the destination variant
-	amx_var_clean(dest);
+	amx_var_clean(dst);
 	// set the type of the destionation
-	dest->type_id = type_id;
+	dst->type_id = type_id;
 
-	// select convertion function
-	// this is either from the source variant type (prefered)
-	// or from the destination variant type (if it is a custom type and the source not)
+	amx_var_type_t *src_type = amx_var_get_type(src->type_id);
+	amx_var_type_t *dst_type = amx_var_get_type(dst->type_id);
+	// at least one conversion function must be available
+	if (!(src_type && src_type->convert) && !(dst_type && dst_type->convert))
+	{
+		goto exit;
+	}
 
-	// get the type function pointers of the src
+	if (dst_type && dst_type->type_id < AMX_VAR_TYPE_ID_CUSTOM_BASE)
+	{
+		// destination type is a fixed type, use source converstion function if available
+		if (src_type && src_type->convert)
+		{
+			retval = src_type->convert(dst, src);
+		}
+		else 
+		{
+			retval = dst_type->convert(dst, src);
+		}
+	}
+	else 
+	{
+		// destination is a custom type
+		if (src_type && src_type->type_id >= AMX_VAR_TYPE_ID_CUSTOM_BASE)
+		{
+			// source is a custom type, use source conversion function if available
+			if (src_type && src_type->convert)
+			{
+				retval = src_type->convert(dst, src);
+			}
+			else 
+			{
+				retval = dst_type->convert(dst, src);
+			}
+		}
+		else
+		{
+			// source is a fixed type, use destination conversion function if available
+			if (dst_type && dst_type->convert)
+			{
+				retval = dst_type->convert(dst, src);
+			}
+			else
+			{
+				retval = src_type->convert(dst, src);
+			}
+		}
+	}
 
+exit:
 	return retval;
 }
 
@@ -202,21 +250,20 @@ int amx_var_set_data_copy(amx_var_t *var, void *data, int type_id)
 		goto exit;
 	}
 
+	// first clean the destination variant
+	amx_var_clean(var);
+
+	// get the type function pointers of the src
 	amx_var_type_t *type = amx_var_get_type(type_id);
 	if (!type || !type->copy)
 	{
+		// no type found or no copy function available
 		goto exit;
 	}
 
-	// clean the variant
-	amx_var_clean(var);
-
-	var->data.data = NULL;
-	var->type_id = type_id;
-
 	if (!data)
 	{
-		// data is a null pointer
+		var->type_id = type_id;
 		retval = 0;
 		goto exit;
 	}

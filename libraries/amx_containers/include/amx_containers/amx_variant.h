@@ -153,7 +153,7 @@ amx_llist_it_t *amx_var_get_llist_it(const amx_var_t *var);
 amx_htable_it_t *amx_var_get_htable_it(const amx_var_t *var);
 
 int amx_var_copy(amx_var_t *dest, const amx_var_t *src);
-int amx_var_convert(amx_var_t *dest, const amx_var_t *src, int type_id);
+int amx_var_convert(amx_var_t *dst, const amx_var_t *src, int type_id);
 int amx_var_compare(const amx_var_t *var1, const amx_var_t *var2);
 
 int amx_var_get_type_id(const amx_var_t *var);

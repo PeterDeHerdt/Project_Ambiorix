@@ -144,8 +144,8 @@ START_TEST (amx_var_get_type_name_check)
 {
 	amx_var_t *var = NULL;
 	ck_assert_int_eq (amx_var_new(&var), 0);
-	var->type_id = 1;
-	ck_assert_str_eq (amx_var_get_type_name(var), AMX_VAR_TYPE_NAME_STRING);
+	var->type_id = 0;
+	ck_assert_str_eq (amx_var_get_type_name(var), AMX_VAR_TYPE_NAME_VOID);
 	amx_var_delete(&var);
 }
 END_TEST

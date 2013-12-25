@@ -21,6 +21,7 @@ Suite *amx_hash_suite(void);
 Suite *amx_htable_suite(void);
 Suite *amx_var_type_suite(void);
 Suite *amx_var_suite(void);
+Suite *amx_var_string_suite(void);
 
 #ifdef __cplusplus
 }

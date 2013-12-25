@@ -14,6 +14,7 @@ OBJECTS =	amx_llist.o \
 			amx_htable.o \
 			amx_htable_it.o \
 			amx_variant.o \
+			amx_variant_string.o \
 			amx_variant_type.o
 
 TARGET = libamx_containers
