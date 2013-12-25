@@ -16,8 +16,9 @@ OBJECTS =	amx_containers_check.o \
 			amx_rbuffer_check.o \
 			amx_hash_check.o \
 			amx_htable_check.o \
-			amx_variant_check.o \
 			amx_variant_types_check.o \
+			amx_variant_check.o \
+			amx_variant_string_check.o \
 			mock_malloc.o \
 			mock_strdup.o
 

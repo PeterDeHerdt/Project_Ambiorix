@@ -44,15 +44,6 @@ static amx_var_type_t amx_var_void =
 	.name = AMX_VAR_TYPE_NAME_VOID
 };
 
-static amx_var_type_t amx_var_string = 
-{
-	.copy = NULL,
-	.convert = NULL,
-	.compare = NULL,
-	.del = NULL,
-	.name = AMX_VAR_TYPE_NAME_STRING
-};
-
 static int amx_var_allocate_types()
 {
 	int retval = -1;
@@ -209,15 +200,13 @@ exit:
 }
 
 __attribute__((constructor)) static void amx_var_types_init() {
-	// add the basic types
+	// add the void type
 	amx_var_add_type(&amx_var_void, AMX_VAR_TYPE_ID_VOID);
-	amx_var_add_type(&amx_var_string, AMX_VAR_TYPE_ID_STRING);
 }
 
 __attribute__((destructor)) static void amx_var_types_cleanup() {
-	// remove the basic types
+	// remove the void type
 	amx_var_remove_type(&amx_var_void);
-	amx_var_remove_type(&amx_var_string);
 }
 
 int amx_var_register_type(amx_var_type_t *type)
