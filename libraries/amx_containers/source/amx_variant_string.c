@@ -37,6 +37,126 @@
 
 #include "amx_variant_priv.h"
 
+static int amx_var_string_copy(amx_var_t *dst, const amx_var_t *src);
+static int amx_var_string_convert(amx_var_t *dst, const amx_var_t *src);
+//static int amx_var_string_compare(amx_var_t *var1, amx_var_t *var2);
+static void amx_var_string_free(amx_var_t *var);
+
+static int amx_var_string_convert_to_int8(const char *string, int8_t *value);
+static int amx_var_string_convert_to_int16(const char *string, int16_t *value);
+static int amx_var_string_convert_to_int32(const char *string, int32_t *value);
+static int amx_var_string_convert_to_int64(const char *string, int64_t *value);
+static int amx_var_string_convert_to_uint8(const char *string, uint8_t *value);
+static int amx_var_string_convert_to_uint16(const char *string, uint16_t *value);
+static int amx_var_string_convert_to_uint32(const char *string, uint32_t *value);
+static int amx_var_string_convert_to_uint64(const char *string, uint64_t *value);
+static int amx_var_string_convert_to_double(const char *string, double *value);
+static int amx_var_string_convert_to_float(const char *string, float *value);
+static int amx_var_string_convert_to_bool(const char *string, bool *value);
+static int amx_var_string_convert_to_list(const char *string, amx_llist_t **value);
+static int amx_var_string_convert_to_htable(const char *string, amx_htable_t **value);
+
+static amx_var_type_t amx_var_string = 
+{
+	.copy = amx_var_string_copy,
+	.convert = amx_var_string_convert,
+	.compare = NULL,
+	.del = amx_var_string_free,
+	.name = AMX_VAR_TYPE_NAME_STRING
+};
+
+static int amx_var_string_copy(amx_var_t *dst, const amx_var_t *src)
+{
+	int retval = 0;
+	// make copy
+	dst->type_id = AMX_VAR_TYPE_ID_STRING;
+	if (src->data.s)
+	{
+		dst->data.s = strdup(src->data.s);
+		if (!dst->data.s)
+		{
+			retval = -1;
+		}
+	}
+	return retval;
+}
+
+static int amx_var_string_convert(amx_var_t *dst, const amx_var_t *src)
+{
+	int retval = 0;
+
+	switch(dst->type_id)
+	{
+	case AMX_VAR_TYPE_ID_VOID:
+		dst->data.data = NULL;
+	break;
+	case AMX_VAR_TYPE_ID_STRING:
+		retval = amx_var_string_copy(dst, src);
+	break;
+	case AMX_VAR_TYPE_ID_INT8:
+		retval = amx_var_string_convert_to_int8(src->data.s, &dst->data.i8);
+	break;
+	case AMX_VAR_TYPE_ID_INT16:
+		retval = amx_var_string_convert_to_int16(src->data.s, &dst->data.i16);
+	break;
+	case AMX_VAR_TYPE_ID_INT32:
+		retval = amx_var_string_convert_to_int32(src->data.s, &dst->data.i32);
+	break;
+	case AMX_VAR_TYPE_ID_INT64:
+		retval = amx_var_string_convert_to_int64(src->data.s, &dst->data.i64);
+	break;
+	case AMX_VAR_TYPE_ID_UINT8:
+		retval = amx_var_string_convert_to_uint8(src->data.s, &dst->data.ui8);
+	break;
+	case AMX_VAR_TYPE_ID_UINT16:
+		retval = amx_var_string_convert_to_uint16(src->data.s, &dst->data.ui16);
+	break;
+	case AMX_VAR_TYPE_ID_UINT32:
+		retval = amx_var_string_convert_to_uint32(src->data.s, &dst->data.ui32);
+	break;
+	case AMX_VAR_TYPE_ID_UINT64:
+		retval = amx_var_string_convert_to_uint64(src->data.s, &dst->data.ui64);
+	break;
+	case AMX_VAR_TYPE_ID_FLOAT:
+		retval = amx_var_string_convert_to_float(src->data.s, &dst->data.f);
+	break;
+	case AMX_VAR_TYPE_ID_DOUBLE:
+		retval = amx_var_string_convert_to_double(src->data.s, &dst->data.d);
+	break;
+	case AMX_VAR_TYPE_ID_BOOL:
+		retval = amx_var_string_convert_to_bool(src->data.s, &dst->data.b);
+	break;
+	case AMX_VAR_TYPE_ID_LIST:
+		retval = amx_var_string_convert_to_list(src->data.s, &dst->data.vl);
+	break;
+	case AMX_VAR_TYPE_ID_HTABLE:
+		retval = amx_var_string_convert_to_htable(src->data.s, &dst->data.vm);
+	break;
+	case AMX_VAR_TYPE_ID_FD:
+	// a string can not be converted to a file descriptor
+		retval = -1;
+	break;
+	default:
+		retval = -1;
+	break;
+	}
+
+	return retval;
+}
+
+/*
+static int amx_var_string_compare(amx_var_t *var1, amx_var_t *var2)
+{
+
+}
+*/
+
+static void amx_var_string_free(amx_var_t *var)
+{
+	free(var->data.s);
+}
+
+
 static int amx_var_string_convert_to_signed_int(const char *string, long long *converted)
 {
 	int retval = -1;
@@ -103,13 +223,21 @@ static int amx_var_string_convert_to_unsigned_int(const char *string, unsigned l
 		buffer++;
 	}
 
-	if (!isdigit(*buffer) && *buffer != '+') 
+	if (!isdigit(*buffer) && *buffer != '+' && *buffer != '-') 
 	{
 		goto exit;
 	}
 
 	errno = 0;
-	result = strtoull(buffer, &endptr, 0);
+	if (*buffer == '-')
+	{
+		long long s_result = strtoll(buffer, &endptr, 0);
+		result = llabs(s_result);
+	}
+	else
+	{
+		result = strtoull(buffer, &endptr, 0);
+	}
 
 	if ((errno == ERANGE && (result == 0 || result == ULLONG_MAX)) || (errno != 0 && result == 0))
 	{
@@ -135,8 +263,7 @@ static int amx_var_string_convert_to_int8(const char *string, int8_t *value)
 		goto exit;
 	}
 
-	/* verify overflow or underflow */
-	if (converted > (long long)INT8_MAX || converted < (long long)INT8_MIN)
+	if (amx_var_int64_convert_to_int8(converted, value) == -1)
 	{
 		goto exit;
 	}
@@ -156,9 +283,8 @@ static int amx_var_string_convert_to_int16(const char *string, int16_t *value)
 	{
 		goto exit;
 	}
-	
-	/* verify overflow or underflow */
-	if (converted > INT16_MAX || converted < INT16_MIN)
+
+	if (amx_var_int64_convert_to_int16(converted, value) == -1)
 	{
 		goto exit;
 	}
@@ -179,8 +305,7 @@ static int amx_var_string_convert_to_int32(const char *string, int32_t *value)
 		goto exit;
 	}
 
-	/* verify overflow or underflow */
-	if (converted > INT32_MAX || converted < INT32_MIN)
+	if (amx_var_int64_convert_to_int32(converted, value) == -1)
 	{
 		goto exit;
 	}
@@ -222,9 +347,8 @@ static int amx_var_string_convert_to_uint8(const char *string, uint8_t *value)
 	{
 		goto exit;
 	}
-	
-	/* verify overflow or underflow */
-	if (converted > UINT8_MAX)
+
+	if (amx_var_uint64_convert_to_uint8(converted, value) == -1)
 	{
 		goto exit;
 	}
@@ -244,9 +368,8 @@ static int amx_var_string_convert_to_uint16(const char *string, uint16_t *value)
 	{
 		goto exit;
 	}
-	
-	/* verify overflow or underflow */
-	if (converted > UINT16_MAX)
+
+	if (amx_var_uint64_convert_to_uint16(converted, value) == -1)
 	{
 		goto exit;
 	}
@@ -266,9 +389,8 @@ static int amx_var_string_convert_to_uint32(const char *string, uint32_t *value)
 	{
 		goto exit;
 	}
-	
-	/* verify overflow or underflow */
-	if (converted > UINT32_MAX)
+
+	if (amx_var_uint64_convert_to_uint32(converted, value) == -1)
 	{
 		goto exit;
 	}
@@ -410,113 +532,100 @@ exit:
 	return retval;
 }
 
-static int amx_var_string_copy(amx_var_t *dst, const amx_var_t *src);
-static int amx_var_string_convert(amx_var_t *dst, const amx_var_t *src);
-static int amx_var_string_compare(amx_var_t *var1, amx_var_t *var2);
-static void amx_var_string_free(amx_var_t *var);
-
-static amx_var_type_t amx_var_string = 
+static int amx_var_string_convert_to_list(const char *string, amx_llist_t **value)
 {
-	.copy = amx_var_string_copy,
-	.convert = amx_var_string_convert,
-	.compare = amx_var_string_compare,
-	.del = amx_var_string_free,
-	.name = AMX_VAR_TYPE_NAME_STRING
-};
-
-static int amx_var_string_copy(amx_var_t *dst, const amx_var_t *src)
-{
-	int retval = 0;
-	// make copy
-	dst->type_id = AMX_VAR_TYPE_ID_STRING;
-	if (src->data.s)
+	char *temp = NULL;
+	int retval = -1;
+	if (amx_llist_new(value) == -1)
 	{
-		dst->data.s = strdup(src->data.s);
-		if (!dst->data.s)
-		{
-			retval = -1;
-		}
-	}
-	return retval;
-}
-
-static int amx_var_string_convert(amx_var_t *dst, const amx_var_t *src)
-{
-	int retval = 0;
-
-	// string type can only convert from a string type to another fixed type
-	if (src->type_id != AMX_VAR_TYPE_ID_STRING ||
-		dst->type_id >= AMX_VAR_TYPE_ID_CUSTOM_BASE)
-	{
-		retval = -1;
 		goto exit;
 	}
 
-	switch(dst->type_id)
+	temp = strdup(string);
+	char *saveptr = NULL;
+	if (!temp)
 	{
-	case AMX_VAR_TYPE_ID_VOID:
-		dst->data.data = NULL;
-	break;
-	case AMX_VAR_TYPE_ID_STRING:
-		retval = amx_var_string_copy(dst, src);
-	break;
-	case AMX_VAR_TYPE_ID_INT8:
-		retval = amx_var_string_convert_to_int8(src->data.s, &dst->data.i8);
-	break;
-	case AMX_VAR_TYPE_ID_INT16:
-		retval = amx_var_string_convert_to_int16(src->data.s, &dst->data.i16);
-	break;
-	case AMX_VAR_TYPE_ID_INT32:
-		retval = amx_var_string_convert_to_int32(src->data.s, &dst->data.i32);
-	break;
-	case AMX_VAR_TYPE_ID_INT64:
-		retval = amx_var_string_convert_to_int64(src->data.s, &dst->data.i64);
-	break;
-	case AMX_VAR_TYPE_ID_UINT8:
-		retval = amx_var_string_convert_to_uint8(src->data.s, &dst->data.ui8);
-	break;
-	case AMX_VAR_TYPE_ID_UINT16:
-		retval = amx_var_string_convert_to_uint16(src->data.s, &dst->data.ui16);
-	break;
-	case AMX_VAR_TYPE_ID_UINT32:
-		retval = amx_var_string_convert_to_uint32(src->data.s, &dst->data.ui32);
-	break;
-	case AMX_VAR_TYPE_ID_UINT64:
-		retval = amx_var_string_convert_to_uint64(src->data.s, &dst->data.ui64);
-	break;
-	case AMX_VAR_TYPE_ID_FLOAT:
-		retval = amx_var_string_convert_to_float(src->data.s, &dst->data.f);
-	break;
-	case AMX_VAR_TYPE_ID_DOUBLE:
-		retval = amx_var_string_convert_to_double(src->data.s, &dst->data.d);
-	break;
-	case AMX_VAR_TYPE_ID_BOOL:
-		retval = amx_var_string_convert_to_bool(src->data.s, &dst->data.b);
-	break;
-	case AMX_VAR_TYPE_ID_LIST:
-	// convert strings in the form of "value, value, value, ..." into a hash table
-	break;
-	case AMX_VAR_TYPE_ID_HTABLE:
-	// convert strings in the form of "key=value, key=value, ..." into a hash table
-	break;
-	case AMX_VAR_TYPE_ID_FD:
-	// a string can not be converted to a file descriptor
-	retval = -1;
-	break;
+		amx_llist_delete(value, NULL);
+		goto exit;
 	}
 
+	char *element = strtok_r(temp, ",", &saveptr);
+	while(element)
+	{
+		amx_var_t *var = NULL;
+		if (amx_var_new(&var) == -1)
+		{
+			amx_llist_delete(value, amx_llist_var_delete);
+			goto exit;
+		}
+		var->type_id = AMX_VAR_TYPE_ID_STRING;
+		var->data.s = strdup(element);
+		if (!var->data.s)
+		{
+			amx_var_delete(&var);
+			amx_llist_delete(value, amx_llist_var_delete);
+			goto exit;
+		}
+		amx_llist_append(*value, &var->lit);
+		element = strtok_r(NULL, ",", &saveptr);
+	}
+
+	retval = 0;
+
 exit:
+	free(temp);
 	return retval;
 }
 
-static int amx_var_string_compare(amx_var_t *var1, amx_var_t *var2)
+static int amx_var_string_convert_to_htable(const char *string, amx_htable_t **value)
 {
+	char *temp = NULL;
+	int retval = -1;
+	if (amx_htable_new(value, 8) == -1)
+	{
+		goto exit;
+	}
 
-}
+	temp = strdup(string);
+	char *saveptr = NULL;
+	char *key_value_saveptr = NULL;
+	if (!temp)
+	{
+		amx_htable_delete(value, NULL);
+		goto exit;
+	}
 
-static void amx_var_string_free(amx_var_t *var)
-{
-	free(var->data.s);
+	char *element = strtok_r(temp, ",", &saveptr);
+	while(element)
+	{
+		amx_var_t *var = NULL;
+		if (amx_var_new(&var) == -1)
+		{
+			amx_htable_delete(value, amx_htable_var_delete);
+			goto exit;
+		}
+		var->type_id = AMX_VAR_TYPE_ID_STRING;
+		char *key = strtok_r(element, "=", &key_value_saveptr);
+		char *data = strtok_r(NULL, "=", &key_value_saveptr);
+		if (data)
+		{
+			var->data.s = strdup(data);
+			if (!var->data.s)
+			{
+				amx_var_delete(&var);
+				amx_htable_delete(value, amx_htable_var_delete);
+				goto exit;
+			}
+		}
+		amx_htable_insert(*value, key, &var->hit);
+		element = strtok_r(NULL, ",", &saveptr);
+	}
+
+	retval = 0;
+
+exit:
+	free(temp);
+	return retval;
 }
 
 __attribute__((constructor)) static void amx_var_types_init() {

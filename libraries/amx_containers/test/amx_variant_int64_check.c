@@ -5,6 +5,7 @@
 #include <amx_containers/amx_variant.h>
 #include "amx_containers_check.h"
 #include "mock_malloc.h"
+#include "mock_snprintf.h"
 
 amx_var_t var_int64[20];
 
@@ -147,6 +148,12 @@ START_TEST (amx_var_int64_to_string_check)
 	ck_assert_int_eq(amx_var_convert(&dest, &var_int64[11], AMX_VAR_TYPE_ID_STRING), 0);
 	ck_assert_int_eq(dest.type_id, AMX_VAR_TYPE_ID_STRING);
 	ck_assert_str_eq(dest.data.s, "-2147483700");
+
+	ck_mock_reset(snprintf);
+	Expectation_snprintf *exp = ck_mock_add_expectation(snprintf);
+	exp->fail = true;
+	ck_assert_int_eq(amx_var_convert(&dest, &var_int64[5], AMX_VAR_TYPE_ID_STRING), -1);
+	ck_mock_reset(snprintf);
 
 	amx_var_clean(&dest);
 }
@@ -797,6 +804,93 @@ START_TEST (amx_var_int64_to_invalid_type_check)
 }
 END_TEST
 
+
+START_TEST (amx_var_int64_to_llist_check)
+{
+	amx_var_t dest;
+	amx_var_init(&dest);
+
+	ck_assert_int_eq(amx_var_convert(&dest, &var_int64[0], AMX_VAR_TYPE_ID_LIST), 0);
+	ck_assert_int_eq(dest.type_id, AMX_VAR_TYPE_ID_LIST);
+	ck_assert_int_eq(amx_llist_size(dest.data.vl), 1);
+
+	ck_assert_int_eq(amx_var_convert(&dest, &var_int64[1], AMX_VAR_TYPE_ID_LIST), 0);
+	ck_assert_int_eq(dest.type_id, AMX_VAR_TYPE_ID_LIST);
+	ck_assert_int_eq(amx_llist_size(dest.data.vl), 1);
+
+	amx_var_clean(&dest);
+}
+END_TEST
+
+#ifdef MOCK_MALLOC
+START_TEST (amx_var_int64_to_llist_no_memory_check)
+{
+	amx_var_t dest;
+	amx_var_init(&dest);
+
+	Expectation_malloc *exp = ck_mock_add_expectation(malloc);
+	exp->fail = true;
+	int retval = amx_var_convert(&dest, &var_int64[0], AMX_VAR_TYPE_ID_LIST);
+	ck_mock_reset(malloc);
+	ck_assert_int_eq(retval, -1);
+
+	exp = ck_mock_add_expectation(malloc);
+	exp->fail = false;
+	exp = ck_mock_add_expectation(malloc);
+	exp->fail = true;
+	retval = amx_var_convert(&dest, &var_int64[0], AMX_VAR_TYPE_ID_LIST);
+	ck_mock_reset(malloc);
+	ck_assert_int_eq(retval, -1);
+
+	amx_var_clean(&dest);
+}
+END_TEST
+#endif
+
+START_TEST (amx_var_int64_to_htable_check)
+{
+	amx_var_t dest;
+	amx_var_init(&dest);
+
+	ck_assert_int_eq(amx_var_convert(&dest, &var_int64[0], AMX_VAR_TYPE_ID_HTABLE), 0);
+	ck_assert_int_eq(dest.type_id, AMX_VAR_TYPE_ID_HTABLE);
+	ck_assert_int_eq(amx_htable_size(dest.data.vm), 1);
+
+	ck_assert_int_eq(amx_var_convert(&dest, &var_int64[1], AMX_VAR_TYPE_ID_HTABLE), 0);
+	ck_assert_int_eq(dest.type_id, AMX_VAR_TYPE_ID_HTABLE);
+	ck_assert_int_eq(amx_htable_size(dest.data.vm), 1);
+
+	amx_var_clean(&dest);
+}
+END_TEST
+
+#ifdef MOCK_MALLOC
+START_TEST (amx_var_int64_to_htable_no_memory_check)
+{
+	amx_var_t dest;
+	amx_var_init(&dest);
+
+	Expectation_malloc *exp = ck_mock_add_expectation(malloc);
+	exp->fail = true;
+	int retval = amx_var_convert(&dest, &var_int64[0], AMX_VAR_TYPE_ID_HTABLE);
+	ck_mock_reset(malloc);
+	ck_assert_int_eq(retval, -1);
+
+	exp = ck_mock_add_expectation(malloc);
+	exp->fail = false;
+	exp = ck_mock_add_expectation(malloc);
+	exp->fail = false;
+	exp = ck_mock_add_expectation(malloc);
+	exp->fail = true;
+	retval = amx_var_convert(&dest, &var_int64[0], AMX_VAR_TYPE_ID_HTABLE);
+	ck_mock_reset(malloc);
+	ck_assert_int_eq(retval, -1);
+
+	amx_var_clean(&dest);
+}
+END_TEST
+#endif
+
 START_TEST (amx_var_int64_copy_check)
 {
 	amx_var_t dest;
@@ -878,6 +972,14 @@ Suite *amx_var_int64_suite(void)
 	tcase_add_test (tc, amx_var_int64_to_float_check);
 	tcase_add_test (tc, amx_var_int64_to_bool_check);
 	tcase_add_test (tc, amx_var_int64_to_invalid_type_check);
+	tcase_add_test (tc, amx_var_int64_to_llist_check);
+#ifdef MOCK_MALLOC
+	tcase_add_test (tc, amx_var_int64_to_llist_no_memory_check);
+#endif
+	tcase_add_test (tc, amx_var_int64_to_htable_check);
+#ifdef MOCK_MALLOC
+	tcase_add_test (tc, amx_var_int64_to_htable_no_memory_check);
+#endif
 	suite_add_tcase (s, tc);
 
 	tc = tcase_create ("amx_var_int64_copy");

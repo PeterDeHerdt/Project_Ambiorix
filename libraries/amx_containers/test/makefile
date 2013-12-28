@@ -19,8 +19,11 @@ OBJECTS =	amx_containers_check.o \
 			amx_variant_types_check.o \
 			amx_variant_check.o \
 			amx_variant_string_check.o \
+			amx_variant_int64_check.o \
+			amx_variant_uint64_check.o \
 			mock_malloc.o \
-			mock_strdup.o
+			mock_strdup.o \
+			mock_snprintf.o
 
 TARGET = amx_containers_check
 

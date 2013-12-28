@@ -32,6 +32,67 @@
 
 #include "amx_variant_priv.h"
 
+void amx_llist_var_delete(amx_llist_it_t *it)
+{
+	amx_var_t *var = amx_llist_it_get_data(it, amx_var_t, lit);
+	amx_var_delete(&var);
+}
+
+void amx_htable_var_delete(const char *key, amx_htable_it_t *it)
+{
+	(void)key;
+	amx_var_t *var = amx_htable_it_get_data(it, amx_var_t, hit);
+	amx_var_delete(&var);
+}
+
+int amx_var_convert_to_list(const amx_var_t *src, amx_llist_t **value)
+{
+	int retval = -1;
+	if (amx_llist_new(value) == -1)
+	{
+		goto exit;
+	}
+
+	amx_var_t *var = NULL;
+	if (amx_var_new(&var) == -1)
+	{
+		amx_llist_delete(value, amx_llist_var_delete);
+		goto exit;
+	}
+
+	amx_var_copy(var, src);
+	amx_llist_append(*value, &var->lit);
+
+	retval = 0;
+
+exit:
+	return retval;
+}
+
+int amx_var_convert_to_htable(const amx_var_t *src, amx_htable_t **value, const char *key)
+{
+	int retval = -1;
+	if (amx_htable_new(value, 8) == -1)
+	{
+		goto exit;
+	}
+
+	amx_var_t *var = NULL;
+	if (amx_var_new(&var) == -1)
+	{
+		amx_htable_delete(value, amx_htable_var_delete);
+		goto exit;
+	}
+
+	amx_var_copy(var, src);
+	amx_htable_insert(*value, key, &var->hit);
+
+	retval = 0;
+
+exit:
+	return retval;
+}
+
 /**
  @file
  @brief
@@ -211,12 +272,14 @@ exit:
 	return retval;
 }
 
+/*
 int amx_var_compare(const amx_var_t *var1, const amx_var_t *var2)
 {
 	int retval = -1;
 
 	return retval;
 }
+*/
 
 int amx_var_get_type_id(const amx_var_t *var)
 {
