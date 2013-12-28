@@ -443,10 +443,25 @@ START_TEST (amx_var_type_convert_null_check)
 {
 	// initialize a amx variant
 	amx_var_t myvar;
+	amx_var_t dest;
+	amx_var_init(&myvar);
+	amx_var_init(&dest);
+
+	ck_assert_int_eq(amx_var_convert(&dest, &myvar, amx_var_test_type1.type_id), -1);
+
+	amx_var_clean(&myvar);
+	amx_var_clean(&dest);
+}
+END_TEST
+
+START_TEST (amx_var_type_convert_custom_check)
+{
+	// initialize a amx variant
+	amx_var_t myvar;
 	amx_var_init(&myvar);
 
-	ck_assert_int_eq(amx_var_convert(NULL, NULL, AMX_VAR_TYPE_ID_STRING), -1);
-	ck_assert_int_eq(amx_var_convert(&myvar, NULL, AMX_VAR_TYPE_ID_STRING), -1);
+	myvar.type_id = AMX_VAR_TYPE_ID_STRING;
+	myvar.data.s = strdup("test");
 	ck_assert_int_eq(amx_var_convert(NULL, &myvar, AMX_VAR_TYPE_ID_STRING), -1);
 
 	amx_var_clean(&myvar);
@@ -570,6 +585,7 @@ Suite *amx_var_type_suite(void)
 	tc = tcase_create ("amx_var_type_convert");
 	tcase_add_checked_fixture (tc, amx_var_type_checks_setup, amx_var_type_checks_teardown);
 	tcase_add_test (tc, amx_var_type_convert_null_check);
+	tcase_add_test (tc, amx_var_type_convert_custom_check);
 	//tcase_add_test (tc, amx_var_type_convert_check);
 	//tcase_add_test (tc, amx_var_type_convert_invalid_type_check);
 	//tcase_add_test (tc, amx_var_type_convert_no_convert_fn_check);

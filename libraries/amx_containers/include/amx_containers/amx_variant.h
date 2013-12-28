@@ -55,6 +55,8 @@ extern "C"
 
 #define AMX_VAR_TYPE_NAME_VOID      "amx_void"
 #define AMX_VAR_TYPE_NAME_STRING    "amx_string"
+#define AMX_VAR_TYPE_NAME_INT64     "amx_int64"
+#define AMX_VAR_TYPE_NAME_UINT64    "amx_uint64"
 
 typedef struct _amx_var
 {

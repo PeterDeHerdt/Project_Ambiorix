@@ -103,8 +103,10 @@ static int amx_var_int64_convert(amx_var_t *dst, const amx_var_t *src)
 		dst->data.b = src->data.i64?true:false;
 	break;
 	case AMX_VAR_TYPE_ID_LIST:
+		retval = amx_var_convert_to_list(src, &dst->data.vl);
 	break;
 	case AMX_VAR_TYPE_ID_HTABLE:
+		retval = amx_var_convert_to_htable(src, &dst->data.vm, "1");
 	break;
 	case AMX_VAR_TYPE_ID_FD:
 	break;
@@ -252,12 +254,14 @@ exit:
 	return retval;
 }
 
-__attribute__((constructor)) static void amx_var_types_init() {
+__attribute__((constructor)) static void amx_var_types_init()
+{
 	// add the i64 type
 	amx_var_add_type(&amx_var_int64, AMX_VAR_TYPE_ID_INT64);
 }
 
-__attribute__((destructor)) static void amx_var_types_cleanup() {
+__attribute__((destructor)) static void amx_var_types_cleanup()
+{
 	// remove the string type
 	amx_var_remove_type(&amx_var_int64);
 }
