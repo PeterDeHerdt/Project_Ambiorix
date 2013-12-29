@@ -23,6 +23,9 @@ OBJECTS =	amx_containers_check.o \
 			amx_variant_int16_check.o \
 			amx_variant_int32_check.o \
 			amx_variant_int64_check.o \
+			amx_variant_uint8_check.o \
+			amx_variant_uint16_check.o \
+			amx_variant_uint32_check.o \
 			amx_variant_uint64_check.o \
 			mock_malloc.o \
 			mock_strdup.o \

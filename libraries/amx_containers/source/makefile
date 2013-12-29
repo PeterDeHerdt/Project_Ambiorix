@@ -19,6 +19,9 @@ OBJECTS =	amx_llist.o \
 			amx_variant_int16.o \
 			amx_variant_int32.o \
 			amx_variant_int64.o \
+			amx_variant_uint8.o \
+			amx_variant_uint16.o \
+			amx_variant_uint32.o \
 			amx_variant_uint64.o \
 			amx_variant_type.o
 
