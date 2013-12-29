@@ -32,6 +32,9 @@
 #include <stdint.h>
 #include <limits.h>
 #include <inttypes.h>
+#include <unistd.h>
+#include <fcntl.h>
+#include <errno.h>
 
 #include "amx_variant_priv.h"
 
@@ -109,6 +112,7 @@ static int amx_var_int64_convert(amx_var_t *dst, const amx_var_t *src)
 		retval = amx_var_convert_to_htable(src, &dst->data.vm, "1");
 	break;
 	case AMX_VAR_TYPE_ID_FD:
+		retval = amx_var_int64_convert_to_fd(src->data.i64, &dst->data.fd);
 	break;
 	default:
 		retval = -1;
@@ -154,6 +158,7 @@ int amx_var_int64_convert_to_int8(long long i64, int8_t *value)
 	/* verify overflow or underflow */
 	if (i64 > INT8_MAX || i64 < INT8_MIN)
 	{
+		printf("value = %" PRId64 "\n", i64);
 		goto exit;
 	}
 
@@ -248,6 +253,29 @@ int amx_var_int64_convert_to_uint32(long long i64, uint32_t *value)
 	}
 
 	*value = (uint32_t)llabs(i64);
+	retval = 0;
+
+exit:
+	return retval;
+}
+
+int amx_var_int64_convert_to_fd(long long i64, int *value)
+{
+	int retval = -1;
+	*value = -1;
+
+	/* verify overflow or underflow */
+	if (i64 == INT64_MIN || llabs(i64) > INT_MAX)
+	{
+		goto exit;
+	}
+
+	if (fcntl((int)llabs(i64), F_GETFD) == -1) 
+	{
+		goto exit;
+	}
+	
+	*value = (int)llabs(i64);
 	retval = 0;
 
 exit:

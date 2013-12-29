@@ -26,6 +26,7 @@ int AMX_PRIVATE amx_var_int64_convert_to_int32(long long i64, int32_t *value);
 int AMX_PRIVATE amx_var_int64_convert_to_uint8(long long i64, uint8_t *value);
 int AMX_PRIVATE amx_var_int64_convert_to_uint16(long long i64, uint16_t *value);
 int AMX_PRIVATE amx_var_int64_convert_to_uint32(long long i64, uint32_t *value);
+int AMX_PRIVATE amx_var_int64_convert_to_fd(long long i64, int *value);
 
 int AMX_PRIVATE amx_var_uint64_convert_to_string(unsigned long long i64, char **value);
 int AMX_PRIVATE amx_var_uint64_convert_to_int8(unsigned long long ui64, int8_t *value);
@@ -35,6 +36,7 @@ int AMX_PRIVATE amx_var_uint64_convert_to_int64(unsigned long long ui64, int64_t
 int AMX_PRIVATE amx_var_uint64_convert_to_uint8(unsigned long long ui64, uint8_t *value);
 int AMX_PRIVATE amx_var_uint64_convert_to_uint16(unsigned long long ui64, uint16_t *value);
 int AMX_PRIVATE amx_var_uint64_convert_to_uint32(unsigned long long ui64, uint32_t *value);
+int AMX_PRIVATE amx_var_uint64_convert_to_fd(unsigned long long ui64, int *value);
 
 int AMX_PRIVATE amx_var_convert_to_list(const amx_var_t *src, amx_llist_t **value);
 int AMX_PRIVATE amx_var_convert_to_htable(const amx_var_t *src, amx_htable_t **value, const char *key);

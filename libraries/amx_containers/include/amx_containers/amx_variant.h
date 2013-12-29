@@ -55,6 +55,9 @@ extern "C"
 
 #define AMX_VAR_TYPE_NAME_VOID      "amx_void"
 #define AMX_VAR_TYPE_NAME_STRING    "amx_string"
+#define AMX_VAR_TYPE_NAME_INT8      "amx_int8"
+#define AMX_VAR_TYPE_NAME_INT16     "amx_int16"
+#define AMX_VAR_TYPE_NAME_INT32     "amx_int32"
 #define AMX_VAR_TYPE_NAME_INT64     "amx_int64"
 #define AMX_VAR_TYPE_NAME_UINT64    "amx_uint64"
 

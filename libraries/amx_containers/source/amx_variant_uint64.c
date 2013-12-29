@@ -31,6 +31,9 @@
 #include <stdlib.h>
 #include <stdint.h>
 #include <limits.h>
+#include <unistd.h>
+#include <fcntl.h>
+#include <errno.h>
 
 #include "amx_variant_priv.h"
 
@@ -108,6 +111,7 @@ static int amx_var_uint64_convert(amx_var_t *dst, const amx_var_t *src)
 		retval = amx_var_convert_to_htable(src, &dst->data.vm, "1");
 	break;
 	case AMX_VAR_TYPE_ID_FD:
+		retval = amx_var_uint64_convert_to_fd(src->data.ui64, &dst->data.fd);
 	break;
 	default:
 		retval = -1;
@@ -265,6 +269,29 @@ int amx_var_uint64_convert_to_uint32(unsigned long long ui64, uint32_t *value)
 	}
 
 	*value = (uint32_t)ui64;
+	retval = 0;
+
+exit:
+	return retval;
+}
+
+int amx_var_uint64_convert_to_fd(unsigned long long ui64, int *value)
+{
+	int retval = -1;
+	*value = -1;
+
+	/* verify overflow or underflow */
+	if (ui64 > INT_MAX)
+	{
+		goto exit;
+	}
+
+	if (fcntl((int)ui64, F_GETFD) == -1) 
+	{
+		goto exit;
+	}
+	
+	*value = (int)ui64;
 	retval = 0;
 
 exit:

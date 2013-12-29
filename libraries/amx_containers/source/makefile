@@ -15,6 +15,9 @@ OBJECTS =	amx_llist.o \
 			amx_htable_it.o \
 			amx_variant.o \
 			amx_variant_string.o \
+			amx_variant_int8.o \
+			amx_variant_int16.o \
+			amx_variant_int32.o \
 			amx_variant_int64.o \
 			amx_variant_uint64.o \
 			amx_variant_type.o
