@@ -18,6 +18,9 @@ int main (void)
 	srunner_add_suite(sr, amx_var_type_suite());
 	srunner_add_suite(sr, amx_var_suite());
 	srunner_add_suite(sr, amx_var_string_suite());
+	srunner_add_suite(sr, amx_var_int8_suite());
+	srunner_add_suite(sr, amx_var_int16_suite());
+	srunner_add_suite(sr, amx_var_int32_suite());
 	srunner_add_suite(sr, amx_var_int64_suite());
 	srunner_add_suite(sr, amx_var_uint64_suite());
 

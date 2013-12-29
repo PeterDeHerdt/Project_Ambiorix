@@ -663,6 +663,27 @@ START_TEST (amx_var_uint64_to_htable_no_memory_check)
 END_TEST
 #endif
 
+START_TEST (amx_var_uint64_to_fd)
+{
+	amx_var_t dest;
+	amx_var_init(&dest);
+
+	ck_assert_int_eq(amx_var_convert(&dest, &var_uint64[0], AMX_VAR_TYPE_ID_FD), -1);
+	ck_assert_int_eq(dest.type_id, AMX_VAR_TYPE_ID_FD);
+	ck_assert_int_eq(dest.data.fd, -1);
+
+	ck_assert_int_eq(amx_var_convert(&dest, &var_uint64[1], AMX_VAR_TYPE_ID_FD), 0);
+	ck_assert_int_eq(dest.type_id, AMX_VAR_TYPE_ID_FD);
+	ck_assert_int_eq(dest.data.fd, 0);
+
+	ck_assert_int_eq(amx_var_convert(&dest, &var_uint64[6], AMX_VAR_TYPE_ID_FD), -1);
+	ck_assert_int_eq(dest.type_id, AMX_VAR_TYPE_ID_FD);
+	ck_assert_int_eq(dest.data.fd, -1);
+
+	amx_var_clean(&dest);
+}
+END_TEST
+
 START_TEST (amx_var_uint64_copy_check)
 {
 	amx_var_t dest;
@@ -732,6 +753,7 @@ Suite *amx_var_uint64_suite(void)
 #ifdef MOCK_MALLOC
 	tcase_add_test (tc, amx_var_uint64_to_htable_no_memory_check);
 #endif
+	tcase_add_test (tc, amx_var_uint64_to_fd);
 	suite_add_tcase (s, tc);
 
 	tc = tcase_create ("amx_var_uint64_copy");
