@@ -723,7 +723,7 @@ END_TEST
 
 Suite *amx_var_uint64_suite(void)
 {
-	Suite *s = suite_create ("amx_variant_int64");
+	Suite *s = suite_create ("amx_variant_uint64");
 	TCase *tc = NULL;
 	
 	tc = tcase_create ("amx_var_uint64_convert_checks");

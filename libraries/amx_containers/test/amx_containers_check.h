@@ -26,6 +26,9 @@ Suite *amx_var_int8_suite(void);
 Suite *amx_var_int16_suite(void);
 Suite *amx_var_int32_suite(void);
 Suite *amx_var_int64_suite(void);
+Suite *amx_var_uint8_suite(void);
+Suite *amx_var_uint16_suite(void);
+Suite *amx_var_uint32_suite(void);
 Suite *amx_var_uint64_suite(void);
 
 #ifdef __cplusplus
