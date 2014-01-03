@@ -37,7 +37,7 @@ TARGET = amx_containers_check
 CFLAGS  += -std=c99 -g -Wall -W -Werror -I. -I../include -I$(AMX_INCLUDE_DIR) \
 			$(shell pkg-config --cflags check amx_containers)
 LDFLAGS += -L$(AMX_LIB_DIR) \
-			$(shell pkg-config --libs check amx_containers) -ldl
+			$(shell pkg-config --libs check amx_containers) -ldl -lpthread
 
 ifdef CONFIG_GLIBC_MALLOC_BUILD
 LIBS+=$(AMX_OUTPUT_DIR)/lib/libglibcmalloc.a

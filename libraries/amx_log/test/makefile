@@ -13,7 +13,7 @@ TARGET = amx_log_check
 CFLAGS  += -O2 -std=c99 -g -Wall -W -Werror -I. -I../include -I$(AMX_INCLUDE_DIR) \
 		   $(shell pkg-config --cflags check amx_log)
 LDFLAGS += -L$(AMX_LIB_DIR) \
-		   $(shell pkg-config --libs check amx_log) -ldl
+		   $(shell pkg-config --libs check amx_log) -ldl -lpthread
 
 ifdef CONFIG_GLIBC_MALLOC_BUILD
 LIBS+=$(AMX_OUTPUT_DIR)/lib/libglibcmalloc.a
