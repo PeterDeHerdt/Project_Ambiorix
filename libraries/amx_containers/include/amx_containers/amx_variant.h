@@ -63,6 +63,8 @@ extern "C"
 #define AMX_VAR_TYPE_NAME_UINT16    "amx_uint16"
 #define AMX_VAR_TYPE_NAME_UINT32    "amx_uint32"
 #define AMX_VAR_TYPE_NAME_UINT64    "amx_uint64"
+#define AMX_VAR_TYPE_NAME_FLOAT     "amx_float"
+#define AMX_VAR_TYPE_NAME_DOUBLE    "amx_double"
 
 typedef struct _amx_var
 {
@@ -113,28 +115,28 @@ int amx_var_init(amx_var_t *var);
 void amx_var_clean(amx_var_t *var);
 
 int amx_var_set_string_copy(amx_var_t *var, const char *string);
-void amx_var_set_string_move(amx_var_t *var, char *string);
-void amx_var_set_int8(amx_var_t *var, int8_t number);
-void amx_var_set_int16(amx_var_t *var, int16_t number);
-void amx_var_set_int32(amx_var_t *var, int32_t number);
-void amx_var_set_int64(amx_var_t *var, int64_t number);
-void amx_var_set_uint8(amx_var_t *var, uint8_t number);
-void amx_var_set_uint16(amx_var_t *var, uint16_t number);
-void amx_var_set_uint32(amx_var_t *var, uint32_t number);
-void amx_var_set_uint64(amx_var_t *var, uint64_t number);
-void amx_var_set_float(amx_var_t *var, float number);
-void amx_var_set_double(amx_var_t *var, double number);
-void amx_var_set_bool(amx_var_t *var, bool boolean);
+int amx_var_set_string_move(amx_var_t *var, char *string);
+int amx_var_set_int8(amx_var_t *var, int8_t number);
+int amx_var_set_int16(amx_var_t *var, int16_t number);
+int amx_var_set_int32(amx_var_t *var, int32_t number);
+int amx_var_set_int64(amx_var_t *var, int64_t number);
+int amx_var_set_uint8(amx_var_t *var, uint8_t number);
+int amx_var_set_uint16(amx_var_t *var, uint16_t number);
+int amx_var_set_uint32(amx_var_t *var, uint32_t number);
+int amx_var_set_uint64(amx_var_t *var, uint64_t number);
+int amx_var_set_float(amx_var_t *var, float number);
+int amx_var_set_double(amx_var_t *var, double number);
+int amx_var_set_bool(amx_var_t *var, bool boolean);
 int amx_var_set_llist_copy(amx_var_t *var, const amx_llist_t *list);
-void amx_var_set_llist_move(amx_var_t *var, amx_llist_t *list);
+int amx_var_set_llist_move(amx_var_t *var, amx_llist_t *list);
 int amx_var_set_htable_copy(amx_var_t *var, const amx_htable_t *table);
-void amx_var_set_htable_move(amx_var_t *var, amx_htable_t *table);
+int amx_var_set_htable_move(amx_var_t *var, amx_htable_t *table);
 int amx_var_set_fd(amx_var_t *var, int fd);
 int amx_var_set_data_copy(amx_var_t *var, void *data, int type_id);
 int amx_var_set_data_move(amx_var_t *var, void *data, int type_id);
 
 char *amx_var_get_string(const amx_var_t *var);
-char *amx_var_get_string_da(const amx_var_t *var);
+const char *amx_var_get_string_da(const amx_var_t *var);
 int8_t amx_var_get_int8(const amx_var_t *var);
 int16_t amx_var_get_int16(const amx_var_t *var);
 int32_t amx_var_get_int32(const amx_var_t *var);

@@ -139,3 +139,37 @@ __attribute__((destructor)) static void amx_var_types_cleanup()
 	// remove the string type
 	amx_var_remove_type(&amx_var_uint16);
 }
+
+int amx_var_set_uint16(amx_var_t *var, uint16_t number)
+{
+	int retval = -1;
+	if (!var)
+	{
+		goto exit;
+	}
+
+	amx_var_clean(var);
+	var->type_id = AMX_VAR_TYPE_ID_UINT16;
+	var->data.ui16 = number;
+	retval = 0;
+
+exit:
+	return retval;
+}
+
+uint16_t amx_var_get_uint16(const amx_var_t *var)
+{
+	int16_t number = 0;
+	if (!var)
+	{
+		goto exit;
+	}
+
+	amx_var_t variant;
+	amx_var_init(&variant);
+	amx_var_convert(&variant, var, AMX_VAR_TYPE_ID_UINT16);
+	number = variant.data.ui16;
+
+exit:
+	return number;
+}
