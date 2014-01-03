@@ -27,6 +27,7 @@ int main (void)
 	srunner_add_suite(sr, amx_var_uint32_suite());
 	srunner_add_suite(sr, amx_var_uint64_suite());
 	srunner_add_suite(sr, amx_var_float_suite());
+	srunner_add_suite(sr, amx_var_double_suite());
 
 	srunner_run_all (sr, CK_VERBOSE);
 	number_failed = srunner_ntests_failed (sr);
