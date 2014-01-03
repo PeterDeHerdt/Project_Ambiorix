@@ -447,7 +447,8 @@ START_TEST (amx_var_type_convert_null_check)
 	amx_var_init(&myvar);
 	amx_var_init(&dest);
 
-	ck_assert_int_eq(amx_var_convert(&dest, &myvar, amx_var_test_type1.type_id), -1);
+    ck_assert_int_eq(amx_var_convert(&dest, &myvar, amx_var_test_type1.type_id), -1);
+    ck_assert_int_eq(amx_var_convert(&dest, NULL, amx_var_test_type1.type_id), -1);
 
 	amx_var_clean(&myvar);
 	amx_var_clean(&dest);
