@@ -35,32 +35,33 @@
 #include <unistd.h>
 #include <fcntl.h>
 #include <errno.h>
+#include <math.h>
 
 #include "amx_variant_priv.h"
 
-static int amx_var_int64_copy(amx_var_t *dst, const amx_var_t *src);
-static int amx_var_int64_convert(amx_var_t *dst, const amx_var_t *src);
+static int amx_var_float_copy(amx_var_t *dst, const amx_var_t *src);
+static int amx_var_float_convert(amx_var_t *dst, const amx_var_t *src);
 //static int amx_var_int64_compare(amx_var_t *var1, amx_var_t *var2);
 
-static amx_var_type_t amx_var_int64 = 
+static amx_var_type_t amx_var_float = 
 {
-	.copy = amx_var_int64_copy,
-	.convert = amx_var_int64_convert,
+	.copy = amx_var_float_copy,
+	.convert = amx_var_float_convert,
 	.compare = NULL,
 	.del = NULL,
-	.name = AMX_VAR_TYPE_NAME_INT64
+	.name = AMX_VAR_TYPE_NAME_FLOAT
 };
 
-static int amx_var_int64_copy(amx_var_t *dst, const amx_var_t *src)
+static int amx_var_float_copy(amx_var_t *dst, const amx_var_t *src)
 {
 	int retval = 0;
 	// make copy
-	dst->type_id = AMX_VAR_TYPE_ID_INT64;
-	dst->data.i64 = src->data.i64;
+	dst->type_id = AMX_VAR_TYPE_ID_FLOAT;
+	dst->data.f = src->data.f;
 	return retval;
 }
 
-static int amx_var_int64_convert(amx_var_t *dst, const amx_var_t *src)
+static int amx_var_float_convert(amx_var_t *dst, const amx_var_t *src)
 {
 	int retval = 0;
 
@@ -70,40 +71,40 @@ static int amx_var_int64_convert(amx_var_t *dst, const amx_var_t *src)
 		dst->data.data = NULL;
 	break;
 	case AMX_VAR_TYPE_ID_STRING:
-		retval = amx_var_int64_convert_to_string(src->data.i64, &dst->data.s);
+		retval = amx_var_float_convert_to_string(src->data.f, &dst->data.s);
 	break;
 	case AMX_VAR_TYPE_ID_INT8:
-		retval = amx_var_int64_convert_to_int8(src->data.i64, &dst->data.i8);
+		retval = amx_var_float_convert_to_int8(src->data.f, &dst->data.i8);
 	break;
 	case AMX_VAR_TYPE_ID_INT16:
-		retval = amx_var_int64_convert_to_int16(src->data.i64, &dst->data.i16);
+		retval = amx_var_float_convert_to_int16(src->data.f, &dst->data.i16);
 	break;
 	case AMX_VAR_TYPE_ID_INT32:
-		retval = amx_var_int64_convert_to_int32(src->data.i64, &dst->data.i32);
+		retval = amx_var_float_convert_to_int32(src->data.f, &dst->data.i32);
 	break;
 	case AMX_VAR_TYPE_ID_INT64:
-		dst->data.i64 = src->data.i64;
+		retval = amx_var_float_convert_to_int64(src->data.f, &dst->data.i64);
 	break;
 	case AMX_VAR_TYPE_ID_UINT8:
-		retval = amx_var_int64_convert_to_uint8(src->data.i64, &dst->data.ui8);
+		retval = amx_var_float_convert_to_uint8(src->data.f, &dst->data.ui8);
 	break;
 	case AMX_VAR_TYPE_ID_UINT16:
-		retval = amx_var_int64_convert_to_uint16(src->data.i64, &dst->data.ui16);
+		retval = amx_var_float_convert_to_uint16(src->data.f, &dst->data.ui16);
 	break;
 	case AMX_VAR_TYPE_ID_UINT32:
-		retval = amx_var_int64_convert_to_uint32(src->data.i64, &dst->data.ui32);
+		retval = amx_var_float_convert_to_uint32(src->data.f, &dst->data.ui32);
 	break;
 	case AMX_VAR_TYPE_ID_UINT64:
-		dst->data.ui64 = llabs(src->data.i64);
+		retval = amx_var_float_convert_to_uint64(src->data.f, &dst->data.ui64);
 	break;
 	case AMX_VAR_TYPE_ID_FLOAT:
-		dst->data.f = (float)src->data.i64;
+		dst->data.f = src->data.f;
 	break;
 	case AMX_VAR_TYPE_ID_DOUBLE:
-		dst->data.d = (double)src->data.i64;
+		dst->data.d = (double)src->data.f;
 	break;
 	case AMX_VAR_TYPE_ID_BOOL:
-		dst->data.b = src->data.i64?true:false;
+		dst->data.b = src->data.f?true:false;
 	break;
 	case AMX_VAR_TYPE_ID_LIST:
 		retval = amx_var_convert_to_list(src, &dst->data.vl);
@@ -112,7 +113,7 @@ static int amx_var_int64_convert(amx_var_t *dst, const amx_var_t *src)
 		retval = amx_var_convert_to_htable(src, &dst->data.vm, "1");
 	break;
 	case AMX_VAR_TYPE_ID_FD:
-		retval = amx_var_int64_convert_to_fd(src->data.i64, &dst->data.fd);
+		retval = amx_var_float_convert_to_fd(src->data.f, &dst->data.fd);
 	break;
 	default:
 		retval = -1;
@@ -129,7 +130,7 @@ static int amx_var_int64_compare(amx_var_t *var1, amx_var_t *var2)
 }
 */
 
-int amx_var_int64_convert_to_string(long long i64, char **value)
+int amx_var_float_convert_to_string(float f, char **value)
 {
 	int retval = -1;
 	*value = calloc(1,64);
@@ -139,7 +140,7 @@ int amx_var_int64_convert_to_string(long long i64, char **value)
 		goto exit;
 	}
 
-	if (snprintf(*value, 64, "%" PRId64, i64) < 0)
+	if (snprintf(*value, 64, "%f", f) < 0)
 	{
 		goto exit;
 	}
@@ -150,132 +151,167 @@ exit:
 	return retval;
 }
 
-int amx_var_int64_convert_to_int8(long long i64, int8_t *value)
+int amx_var_float_convert_to_int8(float f, int8_t *value)
 {
 	int retval = -1;
 	*value = 0;
 
 	/* verify overflow or underflow */
-	if (i64 > INT8_MAX || i64 < INT8_MIN)
+	if (f > INT8_MAX || f < INT8_MIN)
 	{
-		printf("value = %" PRId64 "\n", i64);
 		goto exit;
 	}
 
-	*value = (int8_t)i64;
+	*value = (int8_t)f;
 	retval = 0;
 
 exit:
 	return retval;
 }
 
-int amx_var_int64_convert_to_int16(long long i64, int16_t *value)
+int amx_var_float_convert_to_int16(float f, int16_t *value)
 {
 	int retval = -1;
 	*value = 0;
 
 	/* verify overflow or underflow */
-	if (i64 > INT16_MAX || i64 < INT16_MIN)
+	if (f > INT16_MAX || f < INT16_MIN)
 	{
 		goto exit;
 	}
 
-	*value = (int16_t)i64;
+	*value = (int16_t)f;
 	retval = 0;
 
 exit:
 	return retval;
 }
 
-int amx_var_int64_convert_to_int32(long long i64, int32_t *value)
+int amx_var_float_convert_to_int32(float f, int32_t *value)
 {
 	int retval = -1;
 	*value = 0;
 
 	/* verify overflow or underflow */
-	if (i64 > INT32_MAX || i64 < INT32_MIN)
+	if (f > INT32_MAX || f < INT32_MIN)
 	{
 		goto exit;
 	}
 
-	*value = (int32_t)i64;
+	*value = (int32_t)f;
 	retval = 0;
 
 exit:
 	return retval;
 }
 
-int amx_var_int64_convert_to_uint8(long long i64, uint8_t *value)
+int amx_var_float_convert_to_int64(float f, int64_t *value)
 {
 	int retval = -1;
 	*value = 0;
 
 	/* verify overflow or underflow */
-	if (i64 == INT64_MIN || llabs(i64) > UINT8_MAX)
+	if (f > INT64_MAX || f < INT64_MIN)
 	{
 		goto exit;
 	}
 
-	*value = (uint8_t)llabs(i64);
+	*value = (int32_t)f;
 	retval = 0;
 
 exit:
 	return retval;
 }
 
-int amx_var_int64_convert_to_uint16(long long i64, uint16_t *value)
+int amx_var_float_convert_to_uint8(float f, uint8_t *value)
 {
 	int retval = -1;
 	*value = 0;
 
 	/* verify overflow or underflow */
-	if (i64 == INT64_MIN || llabs(i64) > UINT16_MAX)
+	if (fabsf(f) > UINT8_MAX)
 	{
 		goto exit;
 	}
 
-	*value = (uint16_t)llabs(i64);
+	*value = (uint8_t)fabsf(f);
 	retval = 0;
 
 exit:
 	return retval;
 }
 
-int amx_var_int64_convert_to_uint32(long long i64, uint32_t *value)
+int amx_var_float_convert_to_uint16(float f, uint16_t *value)
 {
 	int retval = -1;
 	*value = 0;
 
 	/* verify overflow or underflow */
-	if (i64 == INT64_MIN || llabs(i64) > UINT32_MAX)
+	if (fabsf(f) > UINT16_MAX)
 	{
 		goto exit;
 	}
 
-	*value = (uint32_t)llabs(i64);
+	*value = (uint16_t)fabsf(f);
 	retval = 0;
 
 exit:
 	return retval;
 }
 
-int amx_var_int64_convert_to_fd(long long i64, int *value)
+int amx_var_float_convert_to_uint32(float f, uint32_t *value)
+{
+	int retval = -1;
+	*value = 0;
+
+	/* verify overflow or underflow */
+	if (fabsf(f) > UINT32_MAX)
+	{
+		goto exit;
+	}
+
+	*value = (uint32_t)fabsf(f);
+	retval = 0;
+
+exit:
+	return retval;
+}
+
+int amx_var_float_convert_to_uint64(float f, uint64_t *value)
+{
+	int retval = -1;
+	*value = 0;
+
+	/* verify overflow or underflow */
+	if (fabsf(f) > UINT64_MAX)
+	{
+		goto exit;
+	}
+
+	*value = (uint64_t)fabsf(f);
+	retval = 0;
+
+exit:
+	return retval;
+}
+
+int amx_var_float_convert_to_fd(float f, int *value)
 {
 	int retval = -1;
 	*value = -1;
 
 	/* verify overflow or underflow */
-	if (i64 == INT64_MIN || llabs(i64) > INT_MAX)
+	if (fabsf(f) > INT_MAX)
 	{
 		goto exit;
 	}
 
-	if (fcntl((int)llabs(i64), F_GETFD) == -1) 
+	if (fcntl((int)fabsf(f), F_GETFD) == -1) 
 	{
 		goto exit;
 	}
 	
-	*value = (int)llabs(i64);
+	*value = (int)fabsf(f);
 	retval = 0;
 
 exit:
@@ -284,17 +320,17 @@ exit:
 
 __attribute__((constructor)) static void amx_var_types_init()
 {
-	// add the i64 type
-	amx_var_add_type(&amx_var_int64, AMX_VAR_TYPE_ID_INT64);
+	// add the float type
+	amx_var_add_type(&amx_var_float, AMX_VAR_TYPE_ID_FLOAT);
 }
 
 __attribute__((destructor)) static void amx_var_types_cleanup()
 {
 	// remove the string type
-	amx_var_remove_type(&amx_var_int64);
+	amx_var_remove_type(&amx_var_float);
 }
 
-int amx_var_set_int64(amx_var_t *var, int64_t number)
+int amx_var_set_float(amx_var_t *var, float number)
 {
 	int retval = -1;
 	if (!var)
@@ -303,17 +339,17 @@ int amx_var_set_int64(amx_var_t *var, int64_t number)
 	}
 
 	amx_var_clean(var);
-	var->type_id = AMX_VAR_TYPE_ID_INT64;
-	var->data.i64 = number;
+	var->type_id = AMX_VAR_TYPE_ID_FLOAT;
+	var->data.f = number;
 	retval = 0;
 
 exit:
 	return retval;
 }
 
-int64_t amx_var_get_int64(const amx_var_t *var)
+float amx_var_get_float(const amx_var_t *var)
 {
-	int64_t number = 0;
+	float number = 0;
 	if (!var)
 	{
 		goto exit;
@@ -321,9 +357,10 @@ int64_t amx_var_get_int64(const amx_var_t *var)
 
 	amx_var_t variant;
 	amx_var_init(&variant);
-	amx_var_convert(&variant, var, AMX_VAR_TYPE_ID_INT64);
-	number = variant.data.i64;
+	amx_var_convert(&variant, var, AMX_VAR_TYPE_ID_FLOAT);
+	number = variant.data.f;
 
 exit:
 	return number;
 }
+

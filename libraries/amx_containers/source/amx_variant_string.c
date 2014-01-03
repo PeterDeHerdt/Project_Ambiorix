@@ -637,3 +637,75 @@ __attribute__((destructor)) static void amx_var_types_cleanup() {
 	// remove the string type
 	amx_var_remove_type(&amx_var_string);
 }
+
+int amx_var_set_string_copy(amx_var_t *var, const char *string)
+{
+	int retval = -1;
+	if (!var)
+	{
+		goto exit;
+	}
+
+	amx_var_clean(var);
+	var->type_id = AMX_VAR_TYPE_ID_STRING;
+	if (string)
+	{
+		var->data.s = strdup(string);
+		if (!var->data.s)
+		{
+			goto exit;
+		}
+	}
+	retval = 0;
+
+exit:
+	return retval;
+}
+
+int amx_var_set_string_move(amx_var_t *var, char *string)
+{
+	int retval = -1;
+	if (!var)
+	{
+		goto exit;
+	}
+
+	amx_var_clean(var);
+	var->type_id = AMX_VAR_TYPE_ID_STRING;
+	var->data.s = string;
+	retval = 0;
+
+exit:
+	return retval;
+}
+
+char *amx_var_get_string(const amx_var_t *var)
+{
+	char *string = NULL;
+	if (!var)
+	{
+		goto exit;
+	}
+
+	amx_var_t variant;
+	amx_var_init(&variant);
+	amx_var_convert(&variant, var, AMX_VAR_TYPE_ID_STRING);
+	string = variant.data.s;
+
+exit:
+	return string;
+}
+
+const char *amx_var_get_string_da(const amx_var_t *var)
+{
+	const char *string = NULL;
+	if (!var || var->type_id != AMX_VAR_TYPE_ID_STRING)
+	{
+		goto exit;
+	}
+
+	string = var->data.s;
+
+exit:
+	return string;
+}

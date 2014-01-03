@@ -1025,6 +1025,93 @@ START_TEST (amx_var_string_copy_no_memory_check)
 END_TEST
 #endif
 
+START_TEST (amx_var_set_string_null_check)
+{
+	amx_var_t variant;
+	amx_var_init(&variant);
+
+	ck_assert_int_eq(amx_var_set_string_copy(NULL, NULL), -1);
+	ck_assert_int_eq(amx_var_set_string_move(NULL, NULL), -1);
+	ck_assert_int_eq(amx_var_set_string_copy(&variant, NULL), 0);
+	ck_assert_int_eq(variant.type_id, AMX_VAR_TYPE_ID_STRING);
+	ck_assert_ptr_eq(variant.data.s, NULL);
+	ck_assert_int_eq(amx_var_set_string_move(&variant, NULL), 0);
+	ck_assert_int_eq(variant.type_id, AMX_VAR_TYPE_ID_STRING);
+	ck_assert_ptr_eq(variant.data.s, NULL);
+}
+END_TEST
+
+START_TEST (amx_var_set_string_check)
+{
+	char *text = calloc(1,20);
+	strcpy(text,"hallo world");
+
+	amx_var_t variant;
+	amx_var_init(&variant);
+
+	ck_assert_int_eq(amx_var_set_string_copy(&variant, text), 0);
+	ck_assert_int_eq(variant.type_id, AMX_VAR_TYPE_ID_STRING);
+	ck_assert_str_eq(variant.data.s, "hallo world");
+
+	ck_assert_int_eq(amx_var_set_string_move(&variant, text), 0);
+	ck_assert_int_eq(variant.type_id, AMX_VAR_TYPE_ID_STRING);
+	ck_assert_str_eq(variant.data.s, "hallo world");
+
+	amx_var_clean(&variant);
+}
+END_TEST
+
+#ifdef MOCK_MALLOC
+START_TEST (amx_var_set_string_no_memory_check)
+{
+	char *text = calloc(1,20);
+	strcpy(text,"hallo world");
+
+	amx_var_t variant;
+	amx_var_init(&variant);
+
+	// first malloc fails
+	Expectation_strdup *exp = ck_mock_add_expectation(strdup);
+	exp->fail = true;
+	int retval = amx_var_set_string_copy(&variant, text);
+
+	ck_mock_reset(strdup);
+	ck_assert_int_eq (retval, -1);
+
+	amx_var_clean(&variant);
+}
+END_TEST
+#endif
+
+START_TEST (amx_var_get_string_null_check)
+{
+	ck_assert_ptr_eq(amx_var_get_string(NULL), NULL);
+	ck_assert_ptr_eq((char *)amx_var_get_string_da(NULL), NULL);
+}
+END_TEST
+
+START_TEST (amx_var_get_string_check)
+{
+	amx_var_t variant;
+	amx_var_init(&variant);
+	variant.type_id = AMX_VAR_TYPE_ID_UINT32;
+	variant.data.ui32 = 2048;
+
+	char *text = amx_var_get_string(&variant);
+	ck_assert_str_eq(text, "2048");
+	free(text);
+	ck_assert_ptr_eq((char *)amx_var_get_string_da(&variant), NULL);
+
+	ck_assert_int_eq(amx_var_set_string_copy(&variant,"Hello world"), 0);
+	ck_assert_str_eq((char *)amx_var_get_string_da(&variant), "Hello world");
+	text = amx_var_get_string(&variant);
+	ck_assert_str_eq(text, "Hello world");
+	free(text);
+
+	amx_var_clean(&variant);
+}
+END_TEST
+
 Suite *amx_var_string_suite(void)
 {
 	Suite *s = suite_create ("amx_variant_string");
@@ -1064,6 +1151,19 @@ Suite *amx_var_string_suite(void)
 	tcase_add_test (tc, amx_var_string_copy_no_memory_check);
 #endif
 	suite_add_tcase (s, tc);
-	
+
+	tc = tcase_create ("amx_var_set_string");
+	tcase_add_test (tc, amx_var_set_string_null_check);
+#ifdef MOCK_MALLOC
+	tcase_add_test (tc, amx_var_set_string_no_memory_check);
+#endif
+	tcase_add_test (tc, amx_var_set_string_check);
+	suite_add_tcase (s, tc);
+
+	tc = tcase_create ("amx_var_get_string");
+	tcase_add_test (tc, amx_var_get_string_null_check);
+	tcase_add_test (tc, amx_var_get_string_check);
+	suite_add_tcase (s, tc);
+
 	return s;
 }

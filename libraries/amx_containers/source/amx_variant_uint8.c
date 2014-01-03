@@ -140,3 +140,36 @@ __attribute__((destructor)) static void amx_var_types_cleanup()
 	amx_var_remove_type(&amx_var_uint8);
 }
 
+int amx_var_set_uint8(amx_var_t *var, uint8_t number)
+{
+	int retval = -1;
+	if (!var)
+	{
+		goto exit;
+	}
+
+	amx_var_clean(var);
+	var->type_id = AMX_VAR_TYPE_ID_UINT8;
+	var->data.ui8 = number;
+	retval = 0;
+
+exit:
+	return retval;
+}
+
+uint8_t amx_var_get_uint8(const amx_var_t *var)
+{
+	int8_t number = 0;
+	if (!var)
+	{
+		goto exit;
+	}
+
+	amx_var_t variant;
+	amx_var_init(&variant);
+	amx_var_convert(&variant, var, AMX_VAR_TYPE_ID_UINT8);
+	number = variant.data.ui8;
+
+exit:
+	return number;
+}
