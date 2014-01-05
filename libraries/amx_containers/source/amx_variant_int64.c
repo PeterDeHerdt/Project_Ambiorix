@@ -158,7 +158,6 @@ int amx_var_int64_convert_to_int8(long long i64, int8_t *value)
 	/* verify overflow or underflow */
 	if (i64 > INT8_MAX || i64 < INT8_MIN)
 	{
-		printf("value = %" PRId64 "\n", i64);
 		goto exit;
 	}
 
