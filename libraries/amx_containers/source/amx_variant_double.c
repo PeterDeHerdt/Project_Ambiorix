@@ -113,7 +113,7 @@ static int amx_var_double_convert(amx_var_t *dst, const amx_var_t *src)
 		retval = amx_var_convert_to_htable(src, &dst->data.vm, "1");
 	break;
 	case AMX_VAR_TYPE_ID_FD:
-		retval = amx_var_double_convert_to_fd(src->data.f, &dst->data.fd);
+		retval = amx_var_double_convert_to_fd(src->data.d, &dst->data.fd);
 	break;
 	default:
 		retval = -1;
@@ -306,7 +306,9 @@ int amx_var_double_convert_to_fd(double d, int *value)
 		goto exit;
 	}
 
-	if (fcntl((int)fabs(d), F_GETFD) == -1) 
+	int fd = (int)fabs(d);
+	printf("double = %f, fd = %d\n", d, fd);
+	if (fcntl(fd, F_GETFD) == -1) 
 	{
 		goto exit;
 	}

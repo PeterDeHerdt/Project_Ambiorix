@@ -21,6 +21,12 @@ static void amx_var_double_checks_setup(void)
 	var_double[3].data.d = 1024;
 	var_double[4].data.d = 2000.125;
 	var_double[5].data.d = 1000.10;
+	var_double[6].data.d = INT16_MIN;
+	var_double[7].data.d = INT16_MAX;
+	var_double[8].data.d = INT32_MIN;
+	var_double[9].data.d = 0x7F000000;
+	var_double[10].data.d = (double)-1e+32;
+	var_double[11].data.d = (double)1e+32;
 }
 
 static void amx_var_double_checks_teardown(void)
@@ -152,6 +158,30 @@ START_TEST (amx_var_double_to_int8_check)
 	ck_assert_int_eq(dest.type_id, AMX_VAR_TYPE_ID_INT8);
 	ck_assert_int_eq(dest.data.i8, 0);
 
+	ck_assert_int_eq(amx_var_convert(&dest, &var_double[6], AMX_VAR_TYPE_ID_INT8), -1);
+	ck_assert_int_eq(dest.type_id, AMX_VAR_TYPE_ID_INT8);
+	ck_assert_int_eq(dest.data.i8, 0);
+
+	ck_assert_int_eq(amx_var_convert(&dest, &var_double[7], AMX_VAR_TYPE_ID_INT8), -1);
+	ck_assert_int_eq(dest.type_id, AMX_VAR_TYPE_ID_INT8);
+	ck_assert_int_eq(dest.data.i8, 0);
+
+	ck_assert_int_eq(amx_var_convert(&dest, &var_double[8], AMX_VAR_TYPE_ID_INT8), -1);
+	ck_assert_int_eq(dest.type_id, AMX_VAR_TYPE_ID_INT8);
+	ck_assert_int_eq(dest.data.i8, 0);
+
+	ck_assert_int_eq(amx_var_convert(&dest, &var_double[9], AMX_VAR_TYPE_ID_INT8), -1);
+	ck_assert_int_eq(dest.type_id, AMX_VAR_TYPE_ID_INT8);
+	ck_assert_int_eq(dest.data.i8, 0);
+
+	ck_assert_int_eq(amx_var_convert(&dest, &var_double[10], AMX_VAR_TYPE_ID_INT8), -1);
+	ck_assert_int_eq(dest.type_id, AMX_VAR_TYPE_ID_INT8);
+	ck_assert_int_eq(dest.data.i8, 0);
+
+	ck_assert_int_eq(amx_var_convert(&dest, &var_double[11], AMX_VAR_TYPE_ID_INT8), -1);
+	ck_assert_int_eq(dest.type_id, AMX_VAR_TYPE_ID_INT8);
+	ck_assert_int_eq(dest.data.i8, 0);
+
 	amx_var_clean(&dest);
 }
 END_TEST
@@ -184,6 +214,30 @@ START_TEST (amx_var_double_to_int16_check)
 	ck_assert_int_eq(amx_var_convert(&dest, &var_double[5], AMX_VAR_TYPE_ID_INT16), 0);
 	ck_assert_int_eq(dest.type_id, AMX_VAR_TYPE_ID_INT16);
 	ck_assert_int_eq(dest.data.i16, 1000);
+
+	ck_assert_int_eq(amx_var_convert(&dest, &var_double[6], AMX_VAR_TYPE_ID_INT16), 0);
+	ck_assert_int_eq(dest.type_id, AMX_VAR_TYPE_ID_INT16);
+	ck_assert_int_eq(dest.data.i16, INT16_MIN);
+
+	ck_assert_int_eq(amx_var_convert(&dest, &var_double[7], AMX_VAR_TYPE_ID_INT16), 0);
+	ck_assert_int_eq(dest.type_id, AMX_VAR_TYPE_ID_INT16);
+	ck_assert_int_eq(dest.data.i16, INT16_MAX);
+
+	ck_assert_int_eq(amx_var_convert(&dest, &var_double[8], AMX_VAR_TYPE_ID_INT16), -1);
+	ck_assert_int_eq(dest.type_id, AMX_VAR_TYPE_ID_INT16);
+	ck_assert_int_eq(dest.data.i16, 0);
+
+	ck_assert_int_eq(amx_var_convert(&dest, &var_double[9], AMX_VAR_TYPE_ID_INT16), -1);
+	ck_assert_int_eq(dest.type_id, AMX_VAR_TYPE_ID_INT16);
+	ck_assert_int_eq(dest.data.i16, 0);
+
+	ck_assert_int_eq(amx_var_convert(&dest, &var_double[10], AMX_VAR_TYPE_ID_INT16), -1);
+	ck_assert_int_eq(dest.type_id, AMX_VAR_TYPE_ID_INT16);
+	ck_assert_int_eq(dest.data.i16, 0);
+
+	ck_assert_int_eq(amx_var_convert(&dest, &var_double[11], AMX_VAR_TYPE_ID_INT16), -1);
+	ck_assert_int_eq(dest.type_id, AMX_VAR_TYPE_ID_INT16);
+	ck_assert_int_eq(dest.data.i16, 0);
 
 	amx_var_clean(&dest);
 }
@@ -218,6 +272,30 @@ START_TEST (amx_var_double_to_int32_check)
 	ck_assert_int_eq(dest.type_id, AMX_VAR_TYPE_ID_INT32);
 	ck_assert_int_eq(dest.data.i32, 1000);
 
+	ck_assert_int_eq(amx_var_convert(&dest, &var_double[6], AMX_VAR_TYPE_ID_INT32), 0);
+	ck_assert_int_eq(dest.type_id, AMX_VAR_TYPE_ID_INT32);
+	ck_assert_int_eq(dest.data.i32, INT16_MIN);
+
+	ck_assert_int_eq(amx_var_convert(&dest, &var_double[7], AMX_VAR_TYPE_ID_INT32), 0);
+	ck_assert_int_eq(dest.type_id, AMX_VAR_TYPE_ID_INT32);
+	ck_assert_int_eq(dest.data.i32, INT16_MAX);
+
+	ck_assert_int_eq(amx_var_convert(&dest, &var_double[8], AMX_VAR_TYPE_ID_INT32), 0);
+	ck_assert_int_eq(dest.type_id, AMX_VAR_TYPE_ID_INT32);
+	ck_assert_int_eq(dest.data.i32, INT32_MIN);
+
+	ck_assert_int_eq(amx_var_convert(&dest, &var_double[9], AMX_VAR_TYPE_ID_INT32), 0);
+	ck_assert_int_eq(dest.type_id, AMX_VAR_TYPE_ID_INT32);
+	ck_assert_int_eq(dest.data.i32, 0x7F000000);
+
+	ck_assert_int_eq(amx_var_convert(&dest, &var_double[10], AMX_VAR_TYPE_ID_INT32), -1);
+	ck_assert_int_eq(dest.type_id, AMX_VAR_TYPE_ID_INT32);
+	ck_assert_int_eq(dest.data.i32, 0);
+
+	ck_assert_int_eq(amx_var_convert(&dest, &var_double[11], AMX_VAR_TYPE_ID_INT32), -1);
+	ck_assert_int_eq(dest.type_id, AMX_VAR_TYPE_ID_INT32);
+	ck_assert_int_eq(dest.data.i32, 0);
+
 	amx_var_clean(&dest);
 }
 END_TEST
@@ -251,6 +329,30 @@ START_TEST (amx_var_double_to_int64_check)
 	ck_assert_int_eq(dest.type_id, AMX_VAR_TYPE_ID_INT64);
 	ck_assert_int_eq(dest.data.i64, 1000);
 
+	ck_assert_int_eq(amx_var_convert(&dest, &var_double[6], AMX_VAR_TYPE_ID_INT64), 0);
+	ck_assert_int_eq(dest.type_id, AMX_VAR_TYPE_ID_INT64);
+	ck_assert_int_eq(dest.data.i64, INT16_MIN);
+
+	ck_assert_int_eq(amx_var_convert(&dest, &var_double[7], AMX_VAR_TYPE_ID_INT64), 0);
+	ck_assert_int_eq(dest.type_id, AMX_VAR_TYPE_ID_INT64);
+	ck_assert_int_eq(dest.data.i64, INT16_MAX);
+
+	ck_assert_int_eq(amx_var_convert(&dest, &var_double[8], AMX_VAR_TYPE_ID_INT64), 0);
+	ck_assert_int_eq(dest.type_id, AMX_VAR_TYPE_ID_INT64);
+	ck_assert_int_eq(dest.data.i64, INT32_MIN);
+
+	ck_assert_int_eq(amx_var_convert(&dest, &var_double[9], AMX_VAR_TYPE_ID_INT64), 0);
+	ck_assert_int_eq(dest.type_id, AMX_VAR_TYPE_ID_INT64);
+	ck_assert_int_eq(dest.data.i64, 0x7F000000);
+
+	ck_assert_int_eq(amx_var_convert(&dest, &var_double[10], AMX_VAR_TYPE_ID_INT64), -1);
+	ck_assert_int_eq(dest.type_id, AMX_VAR_TYPE_ID_INT64);
+	ck_assert_int_eq(dest.data.i64, 0);
+
+	ck_assert_int_eq(amx_var_convert(&dest, &var_double[11], AMX_VAR_TYPE_ID_INT64), -1);
+	ck_assert_int_eq(dest.type_id, AMX_VAR_TYPE_ID_INT64);
+	ck_assert_int_eq(dest.data.i64, 0);
+
 	amx_var_clean(&dest);
 }
 END_TEST
@@ -281,6 +383,10 @@ START_TEST (amx_var_double_to_uint8_check)
 	ck_assert_int_eq(dest.data.ui8, 0);
 
 	ck_assert_int_eq(amx_var_convert(&dest, &var_double[5], AMX_VAR_TYPE_ID_UINT8), -1);
+	ck_assert_int_eq(dest.type_id, AMX_VAR_TYPE_ID_UINT8);
+	ck_assert_int_eq(dest.data.ui8, 0);
+
+	ck_assert_int_eq(amx_var_convert(&dest, &var_double[11], AMX_VAR_TYPE_ID_UINT8), -1);
 	ck_assert_int_eq(dest.type_id, AMX_VAR_TYPE_ID_UINT8);
 	ck_assert_int_eq(dest.data.ui8, 0);
 
@@ -317,6 +423,10 @@ START_TEST (amx_var_double_to_uint16_check)
 	ck_assert_int_eq(dest.type_id, AMX_VAR_TYPE_ID_UINT16);
 	ck_assert_int_eq(dest.data.ui16, 1000);
 
+	ck_assert_int_eq(amx_var_convert(&dest, &var_double[11], AMX_VAR_TYPE_ID_UINT16), -1);
+	ck_assert_int_eq(dest.type_id, AMX_VAR_TYPE_ID_UINT16);
+	ck_assert_int_eq(dest.data.ui16, 0);
+
 	amx_var_clean(&dest);
 }
 END_TEST
@@ -350,6 +460,10 @@ START_TEST (amx_var_double_to_uint32_check)
 	ck_assert_int_eq(dest.type_id, AMX_VAR_TYPE_ID_UINT32);
 	ck_assert_int_eq(dest.data.ui32, 1000);
 
+	ck_assert_int_eq(amx_var_convert(&dest, &var_double[11], AMX_VAR_TYPE_ID_UINT32), -1);
+	ck_assert_int_eq(dest.type_id, AMX_VAR_TYPE_ID_UINT32);
+	ck_assert_int_eq(dest.data.ui32, 0);
+
 	amx_var_clean(&dest);
 }
 END_TEST
@@ -382,6 +496,10 @@ START_TEST (amx_var_double_to_uint64_check)
 	ck_assert_int_eq(amx_var_convert(&dest, &var_double[5], AMX_VAR_TYPE_ID_UINT64), 0);
 	ck_assert_int_eq(dest.type_id, AMX_VAR_TYPE_ID_UINT64);
 	ck_assert_int_eq(dest.data.ui64, 1000);
+
+	ck_assert_int_eq(amx_var_convert(&dest, &var_double[11], AMX_VAR_TYPE_ID_UINT64), -1);
+	ck_assert_int_eq(dest.type_id, AMX_VAR_TYPE_ID_UINT64);
+	ck_assert_int_eq(dest.data.ui64, 0);
 
 	amx_var_clean(&dest);
 }
@@ -581,17 +699,21 @@ START_TEST (amx_var_double_to_fd)
 	amx_var_t dest;
 	amx_var_init(&dest);
 
-	//ck_assert_int_eq(amx_var_convert(&dest, &var_double[0], AMX_VAR_TYPE_ID_FD), -1);
-	//ck_assert_int_eq(dest.type_id, AMX_VAR_TYPE_ID_FD);
-	//ck_assert_int_eq(dest.data.fd, -1);
+	ck_assert_int_eq(amx_var_convert(&dest, &var_double[0], AMX_VAR_TYPE_ID_FD), -1);
+	ck_assert_int_eq(dest.type_id, AMX_VAR_TYPE_ID_FD);
+	ck_assert_int_eq(dest.data.fd, -1);
 
 	ck_assert_int_eq(amx_var_convert(&dest, &var_double[1], AMX_VAR_TYPE_ID_FD), 0);
 	ck_assert_int_eq(dest.type_id, AMX_VAR_TYPE_ID_FD);
 	ck_assert_int_eq(dest.data.fd, 0);
 
-	//ck_assert_int_eq(amx_var_convert(&dest, &var_double[2], AMX_VAR_TYPE_ID_FD), -1);
-	//ck_assert_int_eq(dest.type_id, AMX_VAR_TYPE_ID_FD);
-	//ck_assert_int_eq(dest.data.fd, -1);
+	ck_assert_int_eq(amx_var_convert(&dest, &var_double[2], AMX_VAR_TYPE_ID_FD), -1);
+	ck_assert_int_eq(dest.type_id, AMX_VAR_TYPE_ID_FD);
+	ck_assert_int_eq(dest.data.fd, -1);
+
+	ck_assert_int_eq(amx_var_convert(&dest, &var_double[11], AMX_VAR_TYPE_ID_FD), -1);
+	ck_assert_int_eq(dest.type_id, AMX_VAR_TYPE_ID_FD);
+	ck_assert_int_eq(dest.data.fd, -1);
 
 	amx_var_clean(&dest);
 }
