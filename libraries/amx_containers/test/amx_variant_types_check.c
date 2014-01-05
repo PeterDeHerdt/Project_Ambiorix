@@ -53,14 +53,12 @@ static int test_type1_copy(amx_var_t *dest, const amx_var_t *src)
 	amx_var_set_data_move(dest, dst_data, amx_var_test_type1.type_id);
 
 	dst_data->age = src_data->age;
-	printf("name = %s\n", src_data->name);
 	dst_data->name = strdup(src_data->name);
 	if (!dst_data->name)
 	{
 		amx_var_clean(dest);
 		goto exit;
 	}
-	printf("email = %s\n", src_data->email);
 	dst_data->email = strdup(src_data->email);
 	if (!dst_data->name)
 	{

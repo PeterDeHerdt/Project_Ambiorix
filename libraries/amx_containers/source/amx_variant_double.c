@@ -307,7 +307,6 @@ int amx_var_double_convert_to_fd(double d, int *value)
 	}
 
 	int fd = (int)fabs(d);
-	printf("double = %f, fd = %d\n", d, fd);
 	if (fcntl(fd, F_GETFD) == -1) 
 	{
 		goto exit;
