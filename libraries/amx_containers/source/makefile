@@ -25,6 +25,7 @@ OBJECTS =	amx_llist.o \
 			amx_variant_uint64.o \
 			amx_variant_float.o \
 			amx_variant_double.o \
+			amx_variant_bool.o \
 			amx_variant_type.o
 
 TARGET = libamx_containers
