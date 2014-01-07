@@ -29,6 +29,7 @@ OBJECTS =	amx_containers_check.o \
 			amx_variant_uint64_check.o \
 			amx_variant_float_check.o \
 			amx_variant_double_check.o \
+			amx_variant_bool_check.o \
 			mock_malloc.o \
 			mock_strdup.o \
 			mock_snprintf.o
