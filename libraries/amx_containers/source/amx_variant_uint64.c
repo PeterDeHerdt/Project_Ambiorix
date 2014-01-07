@@ -309,3 +309,37 @@ __attribute__((destructor)) static void amx_var_types_cleanup()
 	// remove the string type
 	amx_var_remove_type(&amx_var_uint64);
 }
+
+int amx_var_set_uint64(amx_var_t *var, uint64_t number)
+{
+	int retval = -1;
+	if (!var)
+	{
+		goto exit;
+	}
+
+	amx_var_clean(var);
+	var->type_id = AMX_VAR_TYPE_ID_UINT64;
+	var->data.ui64 = number;
+	retval = 0;
+
+exit:
+	return retval;
+}
+
+uint64_t amx_var_get_uint64(const amx_var_t *var)
+{
+	uint64_t number = 0;
+	if (!var)
+	{
+		goto exit;
+	}
+
+	amx_var_t variant;
+	amx_var_init(&variant);
+	amx_var_convert(&variant, var, AMX_VAR_TYPE_ID_UINT64);
+	number = variant.data.ui64;
+
+exit:
+	return number;
+}

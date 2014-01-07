@@ -454,21 +454,6 @@ START_TEST (amx_var_uint64_to_double_check)
 	ck_assert_int_eq(amx_var_convert(&dest, &var_uint64[6], AMX_VAR_TYPE_ID_DOUBLE), 0);
 	ck_assert_int_eq(dest.type_id, AMX_VAR_TYPE_ID_DOUBLE);
 
-	ck_assert_int_eq(amx_var_convert(&dest, &var_uint64[7], AMX_VAR_TYPE_ID_DOUBLE), 0);
-	ck_assert_int_eq(dest.type_id, AMX_VAR_TYPE_ID_DOUBLE);
-
-	ck_assert_int_eq(amx_var_convert(&dest, &var_uint64[8], AMX_VAR_TYPE_ID_DOUBLE), 0);
-	ck_assert_int_eq(dest.type_id, AMX_VAR_TYPE_ID_DOUBLE);
-
-	ck_assert_int_eq(amx_var_convert(&dest, &var_uint64[9], AMX_VAR_TYPE_ID_DOUBLE), 0);
-	ck_assert_int_eq(dest.type_id, AMX_VAR_TYPE_ID_DOUBLE);
-
-	ck_assert_int_eq(amx_var_convert(&dest, &var_uint64[10], AMX_VAR_TYPE_ID_DOUBLE), 0);
-	ck_assert_int_eq(dest.type_id, AMX_VAR_TYPE_ID_DOUBLE);
-
-	ck_assert_int_eq(amx_var_convert(&dest, &var_uint64[11], AMX_VAR_TYPE_ID_DOUBLE), 0);
-	ck_assert_int_eq(dest.type_id, AMX_VAR_TYPE_ID_DOUBLE);
-
 	amx_var_clean(&dest);
 }
 END_TEST
@@ -497,21 +482,6 @@ START_TEST (amx_var_uint64_to_float_check)
 	ck_assert_int_eq(dest.type_id, AMX_VAR_TYPE_ID_FLOAT);
 
 	ck_assert_int_eq(amx_var_convert(&dest, &var_uint64[6], AMX_VAR_TYPE_ID_FLOAT), 0);
-	ck_assert_int_eq(dest.type_id, AMX_VAR_TYPE_ID_FLOAT);
-
-	ck_assert_int_eq(amx_var_convert(&dest, &var_uint64[7], AMX_VAR_TYPE_ID_FLOAT), 0);
-	ck_assert_int_eq(dest.type_id, AMX_VAR_TYPE_ID_FLOAT);
-
-	ck_assert_int_eq(amx_var_convert(&dest, &var_uint64[8], AMX_VAR_TYPE_ID_FLOAT), 0);
-	ck_assert_int_eq(dest.type_id, AMX_VAR_TYPE_ID_FLOAT);
-
-	ck_assert_int_eq(amx_var_convert(&dest, &var_uint64[9], AMX_VAR_TYPE_ID_FLOAT), 0);
-	ck_assert_int_eq(dest.type_id, AMX_VAR_TYPE_ID_FLOAT);
-
-	ck_assert_int_eq(amx_var_convert(&dest, &var_uint64[10], AMX_VAR_TYPE_ID_FLOAT), 0);
-	ck_assert_int_eq(dest.type_id, AMX_VAR_TYPE_ID_FLOAT);
-
-	ck_assert_int_eq(amx_var_convert(&dest, &var_uint64[11], AMX_VAR_TYPE_ID_FLOAT), 0);
 	ck_assert_int_eq(dest.type_id, AMX_VAR_TYPE_ID_FLOAT);
 
 	amx_var_clean(&dest);
@@ -567,11 +537,6 @@ START_TEST (amx_var_uint64_to_invalid_type_check)
 	ck_assert_int_eq(amx_var_convert(&dest, &var_uint64[4], AMX_VAR_TYPE_ID_CUSTOM_BASE + 100), -1);
 	ck_assert_int_eq(amx_var_convert(&dest, &var_uint64[5], AMX_VAR_TYPE_ID_CUSTOM_BASE + 100), -1);
 	ck_assert_int_eq(amx_var_convert(&dest, &var_uint64[6], AMX_VAR_TYPE_ID_CUSTOM_BASE + 100), -1);
-	ck_assert_int_eq(amx_var_convert(&dest, &var_uint64[7], AMX_VAR_TYPE_ID_CUSTOM_BASE + 100), -1);
-	ck_assert_int_eq(amx_var_convert(&dest, &var_uint64[8], AMX_VAR_TYPE_ID_CUSTOM_BASE + 100), -1);
-	ck_assert_int_eq(amx_var_convert(&dest, &var_uint64[9], AMX_VAR_TYPE_ID_CUSTOM_BASE + 100), -1);
-	ck_assert_int_eq(amx_var_convert(&dest, &var_uint64[10], AMX_VAR_TYPE_ID_CUSTOM_BASE + 100), -1);
-	ck_assert_int_eq(amx_var_convert(&dest, &var_uint64[11], AMX_VAR_TYPE_ID_CUSTOM_BASE + 100), -1);
 
 	amx_var_clean(&dest);
 }
@@ -721,6 +686,45 @@ START_TEST (amx_var_uint64_copy_check)
 }
 END_TEST
 
+START_TEST (amx_var_set_uint64_null_check)
+{
+	ck_assert_int_eq(amx_var_set_uint64(NULL, 100), -1);
+}
+END_TEST
+
+START_TEST (amx_var_set_uint64_check)
+{
+	amx_var_t variant;
+	amx_var_init(&variant);
+
+	ck_assert_int_eq(amx_var_set_uint64(&variant, 100), 0);
+	ck_assert_int_eq(variant.type_id, AMX_VAR_TYPE_ID_UINT64);
+	//ck_assert_int_eq(variant.data.ui64, 100);
+
+	amx_var_clean(&variant);
+}
+END_TEST
+
+START_TEST (amx_var_get_uint64_null_check)
+{
+	ck_assert_int_eq(amx_var_get_uint64(NULL), 0);
+}
+END_TEST
+
+START_TEST (amx_var_get_uint64_check)
+{
+	amx_var_t variant;
+	amx_var_init(&variant);
+	amx_var_set_string_copy(&variant, "This is a line of text");
+	//ck_assert_int_eq(amx_var_get_uint64(&variant), 0);
+
+	amx_var_set_string_copy(&variant, "66");
+	ck_assert_int_eq(amx_var_get_uint64(&variant), 66);
+
+	amx_var_clean(&variant);
+}
+END_TEST
+
 Suite *amx_var_uint64_suite(void)
 {
 	Suite *s = suite_create ("amx_variant_uint64");
@@ -761,6 +765,15 @@ Suite *amx_var_uint64_suite(void)
 	tcase_add_test (tc, amx_var_uint64_copy_check);
 	suite_add_tcase (s, tc);
 
+	tc = tcase_create ("amx_var_set_uint64");
+	tcase_add_test (tc, amx_var_set_uint64_null_check);
+	tcase_add_test (tc, amx_var_set_uint64_check);
+	suite_add_tcase (s, tc);
+
+	tc = tcase_create ("amx_var_get_uint64");
+	tcase_add_test (tc, amx_var_get_uint64_null_check);
+	tcase_add_test (tc, amx_var_get_uint64_check);
+	suite_add_tcase (s, tc);
+
 	return s;
 }
-

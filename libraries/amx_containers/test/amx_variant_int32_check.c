@@ -860,6 +860,48 @@ START_TEST (amx_var_int32_copy_check)
 }
 END_TEST
 
+START_TEST (amx_var_set_int32_null_check)
+{
+	ck_assert_int_eq(amx_var_set_int32(NULL, 100), -1);
+}
+END_TEST
+
+START_TEST (amx_var_set_int32_check)
+{
+	amx_var_t variant;
+	amx_var_init(&variant);
+
+	ck_assert_int_eq(amx_var_set_int32(&variant, 100), 0);
+	ck_assert_int_eq(variant.type_id, AMX_VAR_TYPE_ID_INT32);
+	ck_assert_int_eq(variant.data.i32, 100);
+
+	amx_var_clean(&variant);
+}
+END_TEST
+
+START_TEST (amx_var_get_int32_null_check)
+{
+	ck_assert_int_eq(amx_var_get_int32(NULL), 0);
+}
+END_TEST
+
+START_TEST (amx_var_get_int32_check)
+{
+	amx_var_t variant;
+	amx_var_init(&variant);
+	amx_var_set_string_copy(&variant, "This is a line of text");
+	ck_assert_int_eq(amx_var_get_int32(&variant), 0);
+
+	amx_var_set_string_copy(&variant, "66");
+	ck_assert_int_eq(amx_var_get_int32(&variant), 66);
+
+	amx_var_set_string_copy(&variant, "-66");
+	ck_assert_int_eq(amx_var_get_int32(&variant), -66);
+
+	amx_var_clean(&variant);
+}
+END_TEST
+
 Suite *amx_var_int32_suite(void)
 {
 	Suite *s = suite_create ("amx_variant_int32");
@@ -898,6 +940,16 @@ Suite *amx_var_int32_suite(void)
 	tc = tcase_create ("amx_var_int32_copy");
 	tcase_add_checked_fixture (tc, amx_var_int32_checks_setup, amx_var_int32_checks_teardown);
 	tcase_add_test (tc, amx_var_int32_copy_check);
+	suite_add_tcase (s, tc);
+
+	tc = tcase_create ("amx_var_set_int32");
+	tcase_add_test (tc, amx_var_set_int32_null_check);
+	tcase_add_test (tc, amx_var_set_int32_check);
+	suite_add_tcase (s, tc);
+
+	tc = tcase_create ("amx_var_get_int32");
+	tcase_add_test (tc, amx_var_get_int32_null_check);
+	tcase_add_test (tc, amx_var_get_int32_check);
 	suite_add_tcase (s, tc);
 
 	return s;

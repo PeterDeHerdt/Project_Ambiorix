@@ -132,3 +132,37 @@ __attribute__((destructor)) static void amx_var_types_cleanup()
 	// remove the string type
 	amx_var_remove_type(&amx_var_int32);
 }
+
+int amx_var_set_int32(amx_var_t *var, int32_t number)
+{
+	int retval = -1;
+	if (!var)
+	{
+		goto exit;
+	}
+
+	amx_var_clean(var);
+	var->type_id = AMX_VAR_TYPE_ID_INT32;
+	var->data.i32 = number;
+	retval = 0;
+
+exit:
+	return retval;
+}
+
+int32_t amx_var_get_int32(const amx_var_t *var)
+{
+	int32_t number = 0;
+	if (!var)
+	{
+		goto exit;
+	}
+
+	amx_var_t variant;
+	amx_var_init(&variant);
+	amx_var_convert(&variant, var, AMX_VAR_TYPE_ID_INT32);
+	number = variant.data.i32;
+
+exit:
+	return number;
+}
