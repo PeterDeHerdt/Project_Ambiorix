@@ -12,20 +12,20 @@ include $(AMX_BUILD_DIR)/amx.config
 export AMX_VERSION=0.0.1
 export DOC_OUTPUT_DIR=$(AMX_OUTPUT_DIR)/documentation/amx/
 
-all: amx_log amx_containers glibcmalloc
+all: amx_log amx_containers amx_parser glibcmalloc
 
-doc: amx_log_doc amx_containers_doc
+doc: amx_log_doc amx_containers_doc amx_parser_doc
 	$(INSTALL) -d $(DOC_OUTPUT_DIR)
 	$(DOXYGEN) amx.doxy
 
-test: amx_log_test amx_containers_test
+test: amx_log_test amx_containers_test amx_parser_test
 	$(LCOV) $(addprefix -a , $(shell find output/coverage -type f -name "*.info")) --output-file amx.info
 	$(GENHTML) -o ./output/coverage/report amx.info
 ifdef AMX_TEST_COVERAGE_SHOW
 	$(BROWSER) ./output/coverage/report/index.html
 endif
 
-clean: amx_log_clean amx_containers_clean glibcmalloc
+clean: amx_log_clean amx_containers_clean amx_parser_clean glibcmalloc
 
 amx_log:
 ifdef CONFIG_AMX_LOG_BUILD
@@ -86,8 +86,32 @@ endif
 glibcmalloc_clean:
 	make -C $(AMX_ROOT_DIR)/libraries/glibcmalloc clean
 
-ifdef NO_DEPENDENCIES
-.PHONY: amx_log amx_log_clean amx_containers amx_containers_clean
+amx_parser:
+ifdef CONFIG_AMX_PARSER_BUILD
+	make -C $(AMX_ROOT_DIR)/libraries/amx_parser
+	make -C $(AMX_ROOT_DIR)/libraries/amx_parser install
+endif
+
+amx_parser_doc: amx_parser
+ifdef CONFIG_AMX_PARSER_BUILD
+	make -C $(AMX_ROOT_DIR)/libraries/amx_parser doc
+endif
+
+ifdef CONFIG_GLIBC_MALLOC_BUILD
+amx_parser_test: amx_parser glibcmalloc
 else
-.PHONY: amx_log amx_log_clean amx_containers_clean
+amx_parser_test: amx_parser
+endif
+ifdef CONFIG_AMX_PARSER_BUILD
+	make -C $(AMX_ROOT_DIR)/libraries/amx_parser test
+endif
+
+amx_parser_clean:
+	make -C $(AMX_ROOT_DIR)/libraries/amx_parser clean
+
+
+ifdef NO_DEPENDENCIES
+.PHONY: amx_log amx_log_clean amx_containers amx_containers_clean amx_parser amx_parser_clean
+else
+.PHONY: amx_log amx_log_clean amx_containers_clean amx_parser amx_parser_clean
 endif
