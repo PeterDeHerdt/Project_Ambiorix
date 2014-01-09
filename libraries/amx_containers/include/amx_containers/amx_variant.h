@@ -66,6 +66,7 @@ extern "C"
 #define AMX_VAR_TYPE_NAME_FLOAT     "amx_float"
 #define AMX_VAR_TYPE_NAME_DOUBLE    "amx_double"
 #define AMX_VAR_TYPE_NAME_BOOL      "amx_bool"
+#define AMX_VAR_TYPE_NAME_FD        "amx_fd"
 
 typedef struct _amx_var
 {

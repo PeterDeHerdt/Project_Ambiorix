@@ -288,11 +288,9 @@ amx_htable_it_t *amx_htable_get(const amx_htable_t *htable, const char *key)
 	}
 
 	unsigned int index = amx_htable_key2index(htable, key);
+	// the index is always in array bounderies.
+	// the following line is always returning a valid array iterator pointer
 	amx_array_it_t *ait = amx_array_get_at(&htable->table, index);
-
-    if(!ait) {
-        goto exit;
-    }
 
 	it = ait->data;
 	while(it && strcmp(key, it->key) != 0)
