@@ -282,7 +282,11 @@ exit:
 amx_htable_it_t *amx_htable_get(const amx_htable_t *htable, const char *key)
 {
 	amx_htable_it_t *it = NULL;
-	if (!htable || !htable->table.items || !key || !(*key))
+	if (!htable || !key || !(*key))
+	{
+		goto exit;
+	}
+	if (htable->table.items == 0)
 	{
 		goto exit;
 	}

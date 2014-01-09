@@ -186,8 +186,9 @@ int amx_array_init(amx_array_t *array, size_t items)
 		goto exit;
 	}
 
+	// initialize array data
+	array->items = 0;
 	array->buffer = NULL;
-	array->items = items;
 	array->first_used = 0;
 	array->last_used = 0;
 
@@ -198,12 +199,15 @@ int amx_array_init(amx_array_t *array, size_t items)
 		goto exit;
 	}
 
+	// allocate the buffer
 	amx_array_realloc(array, items);
 	if (!array->buffer)
 	{
 		goto exit;
 	}
 
+	// set the allocated size
+	array->items = items;
 	amx_array_initialize_items(array, 0);
 
 	retval = 0;
