@@ -151,7 +151,7 @@ int amx_parser_store_add_parser(amx_parser_store_parser_t *parser)
 {
     int result = -1;
     // check if the type is already registered
-    amx_htable_it_t *hit = amx_htable_get(&amx_parser_types, parser->name);    
+    amx_htable_it_t *hit = amx_htable_get(&amx_parser_types, parser->name);
     if (hit) // already a type registered with that name
     {
         goto exit;

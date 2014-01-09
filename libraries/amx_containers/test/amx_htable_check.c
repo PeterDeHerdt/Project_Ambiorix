@@ -122,7 +122,7 @@ START_TEST (amx_htable_init_no_memory_check)
 	Expectation_malloc *exp = ck_mock_add_expectation(malloc);
 	exp->fail = true;
 
-	int retval = amx_htable_init(&htable, 0);
+	int retval = amx_htable_init(&htable, 20);
 	ck_mock_reset(malloc);
 
 	ck_assert_int_eq (retval, -1);

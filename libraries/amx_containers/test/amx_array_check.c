@@ -151,6 +151,7 @@ START_TEST (amx_array_init_no_memory_check)
 	int retval = amx_array_init(&array, 10);
 	ck_mock_reset(malloc);
 	ck_assert_int_eq (retval, -1);
+	ck_assert_int_eq (array.items, 0);
 }
 END_TEST
 #endif
