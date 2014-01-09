@@ -47,11 +47,11 @@ static amx_var_type_t amx_var_void =
 static int amx_var_allocate_types()
 {
 	int retval = -1;
-	if (amx_htable_init(&amx_variant_types, AMX_VAR_TYPE_ID_CUSTOM_BASE - 1) == -1)
+	if (amx_htable_init(&amx_variant_types, AMX_VAR_TYPE_ID_CUSTOM_BASE) == -1)
 	{
 		goto exit;
 	}
-	if (amx_array_init(&amx_array_types, AMX_VAR_TYPE_ID_CUSTOM_BASE - 1) == -1)
+	if (amx_array_init(&amx_array_types, AMX_VAR_TYPE_ID_CUSTOM_BASE) == -1)
 	{
 		goto exit;
 	}

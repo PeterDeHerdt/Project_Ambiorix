@@ -229,7 +229,7 @@ int amx_var_convert(amx_var_t *dst, const amx_var_t *src, int type_id)
 
 	if (dst_type && dst_type->type_id < AMX_VAR_TYPE_ID_CUSTOM_BASE)
 	{
-		// destination type is a fixed type, use source converstion function if available
+		// destination type is a fixed type, use source conversion function if available
 		if (src_type && src_type->convert)
 		{
 			retval = src_type->convert(dst, src);
