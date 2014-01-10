@@ -64,10 +64,10 @@ typedef int (* amx_parser_store_verify_fn_t) (int fd, bool *result);
 /******************************** the store *********************************************/
 
 typedef struct _amx_parser_store_parser {
-    amx_htable_it_t hit;                    /**< Hash table iterator, can be used to store the variant in a hash table */
-    char *name;                             /**< Name of the parser */
-    amx_parser_store_parse_fn_t parse;      /**< Function pointer to the parse functionality */
-    amx_parser_store_verify_fn_t verify;    /**< Function pointer to the verify functionality */
+	amx_htable_it_t hit;                    /**< Hash table iterator, can be used to store the variant in a hash table */
+	char *name;                             /**< Name of the parser */
+	amx_parser_store_parse_fn_t parse;      /**< Function pointer to the parse functionality */
+	amx_parser_store_verify_fn_t verify;    /**< Function pointer to the verify functionality */
 } amx_parser_store_parser_t;
 
 /**
