@@ -63,6 +63,20 @@ typedef struct _amx_llist
  */
 #define amx_llist_it_get_data(it, type, member) ((type *)(((void *)it) - offsetof(type,member)))
 
+/** 
+ @ingroup amx_llist
+ @brief
+ Loops over the list
+ 
+ Iterates over the list and updates the iterator each time.
+
+ @warning
+ Do not modify the list itself while using this macro.
+*/
+#define amx_llist_for_each(it, list) for(amx_llist_it_t *it = list?list->head:NULL; \
+                                         it; \
+                                         it = it->next)
+
 /**
  @ingroup amx_llist
  @brief

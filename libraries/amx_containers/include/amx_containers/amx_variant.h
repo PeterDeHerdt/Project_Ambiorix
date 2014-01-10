@@ -66,6 +66,7 @@ extern "C"
 #define AMX_VAR_TYPE_NAME_FLOAT     "amx_float"
 #define AMX_VAR_TYPE_NAME_DOUBLE    "amx_double"
 #define AMX_VAR_TYPE_NAME_BOOL      "amx_bool"
+#define AMX_VAR_TYPE_NAME_LIST      "amx_list"
 #define AMX_VAR_TYPE_NAME_FD        "amx_fd"
 
 typedef struct _amx_var
@@ -159,10 +160,9 @@ void *amx_var_get_data_da(const amx_var_t *var);
 
 amx_var_t *amx_var_from_llist_it(const amx_llist_it_t *it);
 amx_var_t *amx_var_from_htable_it(const amx_htable_it_t *it);
-amx_var_t *amx_var_from_array_it(const amx_array_it_t *it);
 
-amx_llist_it_t *amx_var_get_llist_it(const amx_var_t *var);
-amx_htable_it_t *amx_var_get_htable_it(const amx_var_t *var);
+amx_llist_it_t *amx_var_get_llist_it(amx_var_t *var);
+amx_htable_it_t *amx_var_get_htable_it(amx_var_t *var);
 
 int amx_var_copy(amx_var_t *dest, const amx_var_t *src);
 int amx_var_convert(amx_var_t *dst, const amx_var_t *src, int type_id);

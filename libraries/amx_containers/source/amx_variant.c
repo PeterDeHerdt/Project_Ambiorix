@@ -180,6 +180,26 @@ exit:
 	return;
 }
 
+amx_var_t *amx_var_from_llist_it(const amx_llist_it_t *it)
+{
+	return it?amx_llist_it_get_data(it, amx_var_t, lit):NULL;
+}
+
+amx_var_t *amx_var_from_htable_it(const amx_htable_it_t *it)
+{
+	return it?amx_htable_it_get_data(it, amx_var_t, hit):NULL;
+}
+
+amx_llist_it_t *amx_var_get_llist_it(amx_var_t *var)
+{
+	return var?&var->lit:NULL;
+}
+
+amx_htable_it_t *amx_var_get_htable_it(amx_var_t *var)
+{
+	return var?&var->hit:NULL;
+}
+
 int amx_var_copy(amx_var_t *dest, const amx_var_t *src)
 {
 	int retval = -1;
