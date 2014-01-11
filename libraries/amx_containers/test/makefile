@@ -34,7 +34,8 @@ OBJECTS =	amx_containers_check.o \
 			amx_variant_fd_check.o \
 			mock_malloc.o \
 			mock_strdup.o \
-			mock_snprintf.o
+			mock_snprintf.o \
+			mock_amx_rbuffer_write.o
 
 TARGET = amx_containers_check
 

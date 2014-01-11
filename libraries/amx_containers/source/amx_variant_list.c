@@ -156,32 +156,52 @@ static void amx_var_list_free(amx_var_t *var)
 static int amx_var_llist_convert_to_string(amx_llist_t *list, char **string)
 {
 	int retval = -1;
+	amx_var_t text;
+	amx_var_init(&text);
+
 	amx_rbuffer_t buf;
 	if (amx_rbuffer_init(&buf, 64) == -1)
 	{
 		goto exit;
 	}
 
-	char *text = NULL;
 	const char *sep = "";
 	amx_llist_for_each(it, list)
 	{
 		amx_var_t *item = amx_var_from_llist_it(it);
-		text = amx_var_get_string(item);
-		if (text)
+		if (amx_var_convert(&text, item, AMX_VAR_TYPE_ID_STRING) == -1)
+		{
+			amx_rbuffer_clean(&buf);
+			goto exit;
+		}
+		const char *txt = amx_var_get_string_da(&text);
+		if (txt)
+		{
+			int length = strlen(txt);
+			if (amx_rbuffer_write(&buf, sep, strlen(sep)) == -1)
+			{
+				amx_rbuffer_clean(&buf);
+				goto exit;
+			}
+			if (amx_rbuffer_write(&buf, txt, length) == -1)
+			{
+				amx_rbuffer_clean(&buf);
+				goto exit;
+			}
+		}
+		else
 		{
 			if (amx_rbuffer_write(&buf, sep, strlen(sep)) == -1)
 			{
 				amx_rbuffer_clean(&buf);
 				goto exit;
 			}
-			if (amx_rbuffer_write(&buf, text, strlen(text)) == -1)
+			if (amx_rbuffer_write(&buf, "null", 4) == -1)
 			{
 				amx_rbuffer_clean(&buf);
 				goto exit;
 			}
 		}
-		free(text);
 		sep = ",";
 	}
 
@@ -189,6 +209,7 @@ static int amx_var_llist_convert_to_string(amx_llist_t *list, char **string)
 	retval = 0;
 
 exit:
+	amx_var_clean(&text);
 	return retval;
 }
 

@@ -5,8 +5,12 @@
 #include "amx_containers_check.h"
 #include "mock_malloc.h"
 #include "mock_snprintf.h"
+#include "mock_strdup.h"
+#include "mock_amx_rbuffer_write.h"
 
 amx_var_t var_list;
+amx_var_t var_null_list;
+amx_var_t var_empty_list;
 
 static void amx_var_list_checks_setup(void)
 {
@@ -14,7 +18,11 @@ static void amx_var_list_checks_setup(void)
 	amx_var_init(&var_list);
 	var_list.type_id = AMX_VAR_TYPE_ID_LIST;
 	amx_llist_new(&var_list.data.vl);
-	
+
+	amx_var_new(&var);
+	amx_var_set_string_move(var, NULL);
+	amx_llist_append(var_list.data.vl, &var->lit);
+
 	amx_var_new(&var);
 	amx_var_set_string_copy(var, "Hello");
 	amx_llist_append(var_list.data.vl, &var->lit);
@@ -34,6 +42,9 @@ static void amx_var_list_checks_setup(void)
 	amx_var_new(&var);
 	amx_var_set_bool(var, true);
 	amx_llist_append(var_list.data.vl, &var->lit);
+
+	amx_var_init(&var_null_list);
+	var_null_list.type_id = AMX_VAR_TYPE_ID_LIST;
 }
 
 static void amx_var_list_checks_teardown(void)
@@ -45,8 +56,12 @@ START_TEST (amx_var_list_to_void_check)
 {
 	amx_var_t dest;
 	amx_var_init(&dest);
-	
+
 	ck_assert_int_eq(amx_var_convert(&dest, &var_list, AMX_VAR_TYPE_ID_VOID), 0);
+	ck_assert_int_eq(dest.type_id, AMX_VAR_TYPE_ID_VOID);
+	ck_assert_ptr_eq(dest.data.data, NULL);
+
+	ck_assert_int_eq(amx_var_convert(&dest, &var_null_list, AMX_VAR_TYPE_ID_VOID), 0);
 	ck_assert_int_eq(dest.type_id, AMX_VAR_TYPE_ID_VOID);
 	ck_assert_ptr_eq(dest.data.data, NULL);
 
@@ -61,12 +76,92 @@ START_TEST (amx_var_list_to_string_check)
 
 	ck_assert_int_eq(amx_var_convert(&dest, &var_list, AMX_VAR_TYPE_ID_STRING), 0);
 	ck_assert_int_eq(dest.type_id, AMX_VAR_TYPE_ID_STRING);
-	ck_assert_str_eq(dest.data.s, "Hello,World,123,-123,true");
+	ck_assert_str_eq(dest.data.s, "null,Hello,World,123,-123,true");
+
+	ck_assert_int_eq(amx_var_convert(&dest, &var_null_list, AMX_VAR_TYPE_ID_STRING), 0);
+	ck_assert_int_eq(dest.type_id, AMX_VAR_TYPE_ID_STRING);
+	ck_assert_str_eq(dest.data.s, "");
 
 	amx_var_clean(&dest);
 }
 END_TEST
 
+#ifdef MOCK_MALLOC
+START_TEST (amx_var_list_to_string_no_memory_check)
+{
+	amx_var_t dest;
+	amx_var_init(&dest);
+
+	Expectation_malloc *exp = ck_mock_add_expectation(malloc);
+	exp->fail = true;
+	int retval = amx_var_convert(&dest, &var_list, AMX_VAR_TYPE_ID_STRING);
+	ck_mock_reset(malloc);
+
+	ck_assert_int_eq(retval, -1);
+	ck_assert_int_eq(dest.type_id, AMX_VAR_TYPE_ID_STRING);
+	ck_assert_ptr_eq(dest.data.s, NULL);
+
+	Expectation_strdup *exp_strdup = ck_mock_add_expectation(strdup);
+	exp_strdup->fail = true;
+	retval = amx_var_convert(&dest, &var_list, AMX_VAR_TYPE_ID_STRING);
+	ck_mock_reset(strdup);
+
+	ck_assert_int_eq(retval, -1);
+	ck_assert_int_eq(dest.type_id, AMX_VAR_TYPE_ID_STRING);
+	ck_assert_ptr_eq(dest.data.s, NULL);
+	
+	Expectation_amx_rbuffer_write *exp_rbuffer = ck_mock_add_expectation(amx_rbuffer_write);
+	exp_rbuffer->fail = true;
+	retval = amx_var_convert(&dest, &var_list, AMX_VAR_TYPE_ID_STRING);
+	ck_mock_reset(amx_rbuffer_write);
+
+	ck_assert_int_eq(retval, -1);
+	ck_assert_int_eq(dest.type_id, AMX_VAR_TYPE_ID_STRING);
+	ck_assert_ptr_eq(dest.data.s, NULL);
+
+	exp_rbuffer = ck_mock_add_expectation(amx_rbuffer_write);
+	exp_rbuffer->fail = false;
+	exp_rbuffer = ck_mock_add_expectation(amx_rbuffer_write);
+	exp_rbuffer->fail = true;
+	retval = amx_var_convert(&dest, &var_list, AMX_VAR_TYPE_ID_STRING);
+	ck_mock_reset(amx_rbuffer_write);
+
+	ck_assert_int_eq(retval, -1);
+	ck_assert_int_eq(dest.type_id, AMX_VAR_TYPE_ID_STRING);
+	ck_assert_ptr_eq(dest.data.s, NULL);
+
+	exp_rbuffer = ck_mock_add_expectation(amx_rbuffer_write);
+	exp_rbuffer->fail = false;
+	exp_rbuffer = ck_mock_add_expectation(amx_rbuffer_write);
+	exp_rbuffer->fail = false;
+	exp_rbuffer = ck_mock_add_expectation(amx_rbuffer_write);
+	exp_rbuffer->fail = true;
+	retval = amx_var_convert(&dest, &var_list, AMX_VAR_TYPE_ID_STRING);
+	ck_mock_reset(amx_rbuffer_write);
+
+	ck_assert_int_eq(retval, -1);
+	ck_assert_int_eq(dest.type_id, AMX_VAR_TYPE_ID_STRING);
+	ck_assert_ptr_eq(dest.data.s, NULL);
+
+	exp_rbuffer = ck_mock_add_expectation(amx_rbuffer_write);
+	exp_rbuffer->fail = false;
+	exp_rbuffer = ck_mock_add_expectation(amx_rbuffer_write);
+	exp_rbuffer->fail = false;
+	exp_rbuffer = ck_mock_add_expectation(amx_rbuffer_write);
+	exp_rbuffer->fail = false;
+	exp_rbuffer = ck_mock_add_expectation(amx_rbuffer_write);
+	exp_rbuffer->fail = true;
+	retval = amx_var_convert(&dest, &var_list, AMX_VAR_TYPE_ID_STRING);
+	ck_mock_reset(amx_rbuffer_write);
+
+	ck_assert_int_eq(retval, -1);
+	ck_assert_int_eq(dest.type_id, AMX_VAR_TYPE_ID_STRING);
+	ck_assert_ptr_eq(dest.data.s, NULL);
+
+	amx_var_clean(&dest);
+}
+END_TEST
+#endif
 
 START_TEST (amx_var_list_to_int8_check)
 {
@@ -75,7 +170,7 @@ START_TEST (amx_var_list_to_int8_check)
 
 	ck_assert_int_eq(amx_var_convert(&dest, &var_list, AMX_VAR_TYPE_ID_INT8), 0);
 	ck_assert_int_eq(dest.type_id, AMX_VAR_TYPE_ID_INT8);
-	ck_assert_int_eq(dest.data.i8, 5);
+	ck_assert_int_eq(dest.data.i8, 6);
 
 	amx_var_clean(&dest);
 }
@@ -88,7 +183,7 @@ START_TEST (amx_var_list_to_int16_check)
 
 	ck_assert_int_eq(amx_var_convert(&dest, &var_list, AMX_VAR_TYPE_ID_INT16), 0);
 	ck_assert_int_eq(dest.type_id, AMX_VAR_TYPE_ID_INT16);
-	ck_assert_int_eq(dest.data.i16, 5);
+	ck_assert_int_eq(dest.data.i16, 6);
 
 	amx_var_clean(&dest);
 }
@@ -101,7 +196,7 @@ START_TEST (amx_var_list_to_int32_check)
 
 	ck_assert_int_eq(amx_var_convert(&dest, &var_list, AMX_VAR_TYPE_ID_INT32), 0);
 	ck_assert_int_eq(dest.type_id, AMX_VAR_TYPE_ID_INT32);
-	ck_assert_int_eq(dest.data.i32, 5);
+	ck_assert_int_eq(dest.data.i32, 6);
 
 	amx_var_clean(&dest);
 }
@@ -114,7 +209,7 @@ START_TEST (amx_var_list_to_int64_check)
 
 	ck_assert_int_eq(amx_var_convert(&dest, &var_list, AMX_VAR_TYPE_ID_INT64), 0);
 	ck_assert_int_eq(dest.type_id, AMX_VAR_TYPE_ID_INT64);
-	ck_assert_int_eq(dest.data.i64, 5);
+	ck_assert_int_eq(dest.data.i64, 6);
 
 	amx_var_clean(&dest);
 }
@@ -127,7 +222,7 @@ START_TEST (amx_var_list_to_uint8_check)
 
 	ck_assert_int_eq(amx_var_convert(&dest, &var_list, AMX_VAR_TYPE_ID_UINT8), 0);
 	ck_assert_int_eq(dest.type_id, AMX_VAR_TYPE_ID_UINT8);
-	ck_assert_int_eq(dest.data.ui8, 5);
+	ck_assert_int_eq(dest.data.ui8, 6);
 
 	amx_var_clean(&dest);
 }
@@ -140,7 +235,7 @@ START_TEST (amx_var_list_to_uint16_check)
 
 	ck_assert_int_eq(amx_var_convert(&dest, &var_list, AMX_VAR_TYPE_ID_UINT16), 0);
 	ck_assert_int_eq(dest.type_id, AMX_VAR_TYPE_ID_UINT16);
-	ck_assert_int_eq(dest.data.ui16, 5);
+	ck_assert_int_eq(dest.data.ui16, 6);
 
 	amx_var_clean(&dest);
 }
@@ -153,7 +248,7 @@ START_TEST (amx_var_list_to_uint32_check)
 
 	ck_assert_int_eq(amx_var_convert(&dest, &var_list, AMX_VAR_TYPE_ID_UINT32), 0);
 	ck_assert_int_eq(dest.type_id, AMX_VAR_TYPE_ID_UINT32);
-	ck_assert_int_eq(dest.data.ui32, 5);
+	ck_assert_int_eq(dest.data.ui32, 6);
 
 	amx_var_clean(&dest);
 }
@@ -166,7 +261,7 @@ START_TEST (amx_var_list_to_uint64_check)
 
 	ck_assert_int_eq(amx_var_convert(&dest, &var_list, AMX_VAR_TYPE_ID_UINT64), 0);
 	ck_assert_int_eq(dest.type_id, AMX_VAR_TYPE_ID_UINT64);
-	ck_assert_int_eq(dest.data.ui64, 5);
+	ck_assert_int_eq(dest.data.ui64, 6);
 
 	amx_var_clean(&dest);
 }
@@ -227,7 +322,11 @@ START_TEST (amx_var_list_to_llist_check)
 
 	ck_assert_int_eq(amx_var_convert(&dest, &var_list, AMX_VAR_TYPE_ID_LIST), 0);
 	ck_assert_int_eq(dest.type_id, AMX_VAR_TYPE_ID_LIST);
-	ck_assert_int_eq(amx_llist_size(dest.data.vl), 5);
+	ck_assert_int_eq(amx_llist_size(dest.data.vl), 6);
+
+	ck_assert_int_eq(amx_var_convert(&dest, &var_null_list, AMX_VAR_TYPE_ID_LIST), 0);
+	ck_assert_int_eq(dest.type_id, AMX_VAR_TYPE_ID_LIST);
+	ck_assert_int_eq(amx_llist_size(dest.data.vl), 0);
 
 	amx_var_clean(&dest);
 }
@@ -265,7 +364,11 @@ START_TEST (amx_var_list_to_htable_check)
 
 	ck_assert_int_eq(amx_var_convert(&dest, &var_list, AMX_VAR_TYPE_ID_HTABLE), 0);
 	ck_assert_int_eq(dest.type_id, AMX_VAR_TYPE_ID_HTABLE);
-	ck_assert_int_eq(amx_htable_size(dest.data.vm), 5);
+	ck_assert_int_eq(amx_htable_size(dest.data.vm), 6);
+
+	ck_assert_int_eq(amx_var_convert(&dest, &var_null_list, AMX_VAR_TYPE_ID_HTABLE), 0);
+	ck_assert_int_eq(dest.type_id, AMX_VAR_TYPE_ID_HTABLE);
+	ck_assert_int_eq(amx_htable_size(dest.data.vm), 0);
 
 	amx_var_clean(&dest);
 }
@@ -318,7 +421,11 @@ START_TEST (amx_var_list_copy_check)
 
 	ck_assert_int_eq(amx_var_copy(&dest, &var_list), 0);
 	ck_assert_int_eq(dest.type_id, AMX_VAR_TYPE_ID_LIST);
-	ck_assert_int_eq(amx_llist_size(dest.data.vl), 5);
+	ck_assert_int_eq(amx_llist_size(dest.data.vl), 6);
+
+	ck_assert_int_eq(amx_var_copy(&dest, &var_null_list), 0);
+	ck_assert_int_eq(dest.type_id, AMX_VAR_TYPE_ID_LIST);
+	ck_assert_int_eq(amx_llist_size(dest.data.vl), 0);
 
 	amx_var_clean(&dest);
 }
@@ -333,6 +440,9 @@ Suite *amx_var_list_suite(void)
 	tcase_add_checked_fixture (tc, amx_var_list_checks_setup, amx_var_list_checks_teardown);
 	tcase_add_test (tc, amx_var_list_to_void_check);
 	tcase_add_test (tc, amx_var_list_to_string_check);
+#ifdef MOCK_MALLOC
+	tcase_add_test (tc, amx_var_list_to_string_no_memory_check);
+#endif
 	tcase_add_test (tc, amx_var_list_to_int8_check);
 	tcase_add_test (tc, amx_var_list_to_int16_check);
 	tcase_add_test (tc, amx_var_list_to_int32_check);
