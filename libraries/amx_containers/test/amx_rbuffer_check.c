@@ -401,6 +401,17 @@ START_TEST (amx_rbuffer_write_no_memory_check)
 	ck_assert_ptr_eq (rbuffer->read_pos, rbuffer->buffer_start);
 	ck_assert_ptr_eq (rbuffer->write_pos, rbuffer->buffer_start);
 
+	exp = ck_mock_add_expectation(malloc);
+	exp->fail = true;
+	retval = amx_rbuffer_write(rbuffer, data, 50);
+	ck_mock_reset(malloc);
+
+	ck_assert_int_eq (retval, -1);
+	ck_assert_ptr_ne (rbuffer->buffer_start, NULL);
+	ck_assert_ptr_eq (rbuffer->buffer_end, rbuffer->buffer_start + 8);
+	ck_assert_ptr_eq (rbuffer->read_pos, rbuffer->buffer_start);
+	ck_assert_ptr_eq (rbuffer->write_pos, rbuffer->buffer_start);
+
 	amx_rbuffer_delete(&rbuffer);
 }
 END_TEST
