@@ -152,7 +152,7 @@ float amx_var_get_float(const amx_var_t *var);
 double amx_var_get_double(const amx_var_t *var);
 bool amx_var_get_bool(const amx_var_t *var);
 amx_llist_t *amx_var_get_llist(const amx_var_t *var);
-amx_llist_t *amx_var_get_llist_da(const amx_var_t *var);
+const amx_llist_t *amx_var_get_llist_da(const amx_var_t *var);
 amx_htable_t *amx_var_get_htable(const amx_var_t *var);
 amx_htable_t *amx_var_get_htable_da(const amx_var_t *var);
 int amx_var_get_fd(const amx_var_t *var);
@@ -175,6 +175,9 @@ int amx_var_register_type(amx_var_type_t *type);
 int amx_var_unregister_type(amx_var_type_t *type);
 const char *amx_var_get_type_name_from_id(int type_id);
 int amx_var_get_type_id_from_name(const char *name);
+
+void amx_llist_var_delete(amx_llist_it_t *it);
+void amx_htable_var_delete(const char *key, amx_htable_it_t *it);
 
 #ifdef __cplusplus
 }

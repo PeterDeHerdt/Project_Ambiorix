@@ -5,6 +5,7 @@
 #include <amx_containers/amx_rbuffer.h>
 
 #include "mock_malloc.h"
+#include "mock_amx_rbuffer_write.h"
 
 START_TEST (amx_rbuffer_new_delete_null_check)
 {

@@ -9,9 +9,6 @@
 
 #include <amx_containers/amx_variant.h>
 
-void AMX_PRIVATE amx_llist_var_delete(amx_llist_it_t *it);
-void AMX_PRIVATE amx_htable_var_delete(const char *key, amx_htable_it_t *it);
-
 int AMX_PRIVATE amx_var_add_type(amx_var_type_t *type, int index);
 int AMX_PRIVATE amx_var_remove_type(amx_var_type_t *type);
 
