@@ -174,15 +174,15 @@ static int amx_var_llist_convert_to_string(amx_llist_t *list, char **string)
 			amx_rbuffer_clean(&buf);
 			goto exit;
 		}
+		if (amx_rbuffer_write(&buf, sep, strlen(sep)) == -1)
+		{
+			amx_rbuffer_clean(&buf);
+			goto exit;
+		}
 		const char *txt = amx_var_get_string_da(&text);
 		if (txt)
 		{
 			int length = strlen(txt);
-			if (amx_rbuffer_write(&buf, sep, strlen(sep)) == -1)
-			{
-				amx_rbuffer_clean(&buf);
-				goto exit;
-			}
 			if (amx_rbuffer_write(&buf, txt, length) == -1)
 			{
 				amx_rbuffer_clean(&buf);
@@ -191,11 +191,6 @@ static int amx_var_llist_convert_to_string(amx_llist_t *list, char **string)
 		}
 		else
 		{
-			if (amx_rbuffer_write(&buf, sep, strlen(sep)) == -1)
-			{
-				amx_rbuffer_clean(&buf);
-				goto exit;
-			}
 			if (amx_rbuffer_write(&buf, "null", 4) == -1)
 			{
 				amx_rbuffer_clean(&buf);
@@ -270,4 +265,98 @@ __attribute__((destructor)) static void amx_var_types_cleanup()
 {
 	// remove the list type
 	amx_var_remove_type(&amx_var_list);
+}
+
+int amx_var_set_llist_copy(amx_var_t *var, const amx_llist_t *list)
+{
+	int retval = -1;
+	if (!var)
+	{
+		goto exit;
+	}
+
+	amx_var_t *src = NULL;
+	amx_var_t *dest = NULL;
+
+	amx_var_clean(var);
+	var->type_id = AMX_VAR_TYPE_ID_LIST;
+
+	// alloc list
+	if (amx_llist_new(&var->data.vl) == -1)
+	{
+		goto exit;
+	}
+
+	// loop over list
+	amx_llist_for_each(var_it, list)
+	{
+		src = amx_var_from_llist_it(var_it);
+		if (amx_var_new(&dest) == -1)
+		{
+			amx_llist_delete(&var->data.vl, amx_llist_var_delete);
+			goto exit;
+		}
+
+		if (amx_var_copy(dest,src) == -1)
+		{
+			amx_llist_delete(&var->data.vl, amx_llist_var_delete);
+			goto exit;
+		}
+
+		amx_llist_append(var->data.vl, &dest->lit);
+	}
+
+	retval = 0;
+
+exit:
+	return retval;
+}
+
+int amx_var_set_llist_move(amx_var_t *var, amx_llist_t *list)
+{
+	int retval = -1;
+	if (!var)
+	{
+		goto exit;
+	}
+
+	amx_var_clean(var);
+	var->type_id = AMX_VAR_TYPE_ID_LIST;
+	var->data.vl = list;
+
+	retval = 0;
+
+exit:
+	return retval;
+}
+
+amx_llist_t *amx_var_get_llist(const amx_var_t *var)
+{
+	amx_llist_t *list = NULL;
+	if (!var)
+	{
+		goto exit;
+	}
+
+	amx_var_t variant;
+	amx_var_init(&variant);
+	amx_var_convert(&variant, var, AMX_VAR_TYPE_ID_LIST);
+	list = variant.data.vl;
+
+exit:
+	return list;
+}
+
+const amx_llist_t *amx_var_get_llist_da(const amx_var_t *var)
+{
+	const amx_llist_t *list = NULL;
+	if (!var || var->type_id != AMX_VAR_TYPE_ID_LIST)
+	{
+		goto exit;
+	}
+
+	list = var->data.vl;
+
+exit:
+	return list;
 }
