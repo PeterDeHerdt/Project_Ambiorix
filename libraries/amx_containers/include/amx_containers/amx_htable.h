@@ -36,6 +36,20 @@ extern "C"
  */
 #define amx_htable_it_get_data(it, type, member) ((type *)(((void *)it) - offsetof(type,member)))
 
+/** 
+ @ingroup amx_llist
+ @brief
+ Loops over the list
+ 
+ Iterates over the list and updates the iterator each time.
+
+ @warning
+ Do not modify the list itself while using this macro.
+*/
+#define amx_htable_for_each(it, htable) for(amx_htable_it_t *it = amx_htable_get_first(htable); \
+                                         it; \
+                                         it = amx_htable_it_get_next(it))
+
 /**
  @ingroup amx_htable
  @brief

@@ -39,44 +39,44 @@
 #include <amx_containers/amx_rbuffer.h>
 #include "amx_variant_priv.h"
 
-static int amx_var_llist_convert_to_string(amx_llist_t *list, char **string);
-static int amx_var_llist_convert_to_htable(amx_llist_t *list, amx_htable_t **htable);
+static int amx_var_htable_convert_to_string(amx_htable_t *htable, char **string);
+static int amx_var_htable_convert_to_llist(amx_htable_t *htable, amx_llist_t **llist);
 
-static void amx_var_list_free(amx_var_t *var);
-static int amx_var_list_copy(amx_var_t *dst, const amx_var_t *src);
-static int amx_var_list_convert(amx_var_t *dst, const amx_var_t *src);
-//static int amx_var_list_compare(amx_var_t *var1, amx_var_t *var2);
+static void amx_var_htable_free(amx_var_t *var);
+static int amx_var_htable_copy(amx_var_t *dst, const amx_var_t *src);
+static int amx_var_htable_convert(amx_var_t *dst, const amx_var_t *src);
+//static int amx_var_htable_compare(amx_var_t *var1, amx_var_t *var2);
 
-static amx_var_type_t amx_var_list = 
+static amx_var_type_t amx_var_htable = 
 {
-	.copy = amx_var_list_copy,
-	.convert = amx_var_list_convert,
+	.copy = amx_var_htable_copy,
+	.convert = amx_var_htable_convert,
 	.compare = NULL,
-	.del = amx_var_list_free,
-	.name = AMX_VAR_TYPE_NAME_LIST
+	.del = amx_var_htable_free,
+	.name = AMX_VAR_TYPE_NAME_HTABLE
 };
 
-static int amx_var_list_copy(amx_var_t *dst, const amx_var_t *src)
+static int amx_var_htable_copy(amx_var_t *dst, const amx_var_t *src)
 {
 	int retval = -1;
 	// make copy
-	dst->type_id = AMX_VAR_TYPE_ID_LIST;
-	if (amx_llist_new(&dst->data.vl) == -1)
+	dst->type_id = AMX_VAR_TYPE_ID_HTABLE;
+	if (amx_htable_new(&dst->data.vm, src->data.vm?src->data.vm->table.items:0) == -1)
 	{
 		goto exit;
 	}
 
 	amx_var_t *var = NULL;
-	amx_llist_for_each(it, src->data.vl)
+	amx_htable_for_each(it, src->data.vm)
 	{
 		if (amx_var_new(&var) == -1)
 		{
 			amx_var_clean(dst);
 			goto exit;
 		}
-		amx_var_t *item = amx_var_from_llist_it(it);
+		amx_var_t *item = amx_var_from_htable_it(it);
 		amx_var_copy(var, item);
-		amx_llist_append(dst->data.vl, &var->lit);
+		amx_htable_insert(dst->data.vm, it->key, &var->hit);
 	}
 
 	retval = 0;
@@ -85,7 +85,7 @@ exit:
 	return retval;
 }
 
-static int amx_var_list_convert(amx_var_t *dst, const amx_var_t *src)
+static int amx_var_htable_convert(amx_var_t *dst, const amx_var_t *src)
 {
 	int retval = 0;
 
@@ -95,46 +95,46 @@ static int amx_var_list_convert(amx_var_t *dst, const amx_var_t *src)
 		dst->data.data = NULL;
 	break;
 	case AMX_VAR_TYPE_ID_STRING:
-		retval = amx_var_llist_convert_to_string(src->data.vl, &dst->data.s);
+		retval = amx_var_htable_convert_to_string(src->data.vm, &dst->data.s);
 	break;
 	case AMX_VAR_TYPE_ID_INT8:
-		retval = amx_var_uint64_convert_to_int8((unsigned long long)amx_llist_size(src->data.vl), &dst->data.i8);
+		retval = amx_var_uint64_convert_to_int8((unsigned long long)(src->data.vm?src->data.vm->items:0), &dst->data.i8);
 	break;
 	case AMX_VAR_TYPE_ID_INT16:
-		retval = amx_var_uint64_convert_to_int16((unsigned long long)amx_llist_size(src->data.vl), &dst->data.i16);
+		retval = amx_var_uint64_convert_to_int16((unsigned long long)(src->data.vm?src->data.vm->items:0), &dst->data.i16);
 	break;
 	case AMX_VAR_TYPE_ID_INT32:
-		retval = amx_var_uint64_convert_to_int32((unsigned long long)amx_llist_size(src->data.vl), &dst->data.i32);
+		retval = amx_var_uint64_convert_to_int32((unsigned long long)(src->data.vm?src->data.vm->items:0), &dst->data.i32);
 	break;
 	case AMX_VAR_TYPE_ID_INT64:
-		retval = amx_var_uint64_convert_to_int64((unsigned long long)amx_llist_size(src->data.vl), &dst->data.i64);
+		retval = amx_var_uint64_convert_to_int64((unsigned long long)(src->data.vm?src->data.vm->items:0), &dst->data.i64);
 	break;
 	case AMX_VAR_TYPE_ID_UINT8:
-		retval = amx_var_uint64_convert_to_uint8((unsigned long long)amx_llist_size(src->data.vl), &dst->data.ui8);
+		retval = amx_var_uint64_convert_to_uint8((unsigned long long)(src->data.vm?src->data.vm->items:0), &dst->data.ui8);
 	break;
 	case AMX_VAR_TYPE_ID_UINT16:
-		retval = amx_var_uint64_convert_to_uint16((unsigned long long)amx_llist_size(src->data.vl), &dst->data.ui16);
+		retval = amx_var_uint64_convert_to_uint16((unsigned long long)(src->data.vm?src->data.vm->items:0), &dst->data.ui16);
 	break;
 	case AMX_VAR_TYPE_ID_UINT32:
-		retval = amx_var_uint64_convert_to_uint32((unsigned long long)amx_llist_size(src->data.vl), &dst->data.ui32);
+		retval = amx_var_uint64_convert_to_uint32((unsigned long long)(src->data.vm?src->data.vm->items:0), &dst->data.ui32);
 	break;
 	case AMX_VAR_TYPE_ID_UINT64:
-		dst->data.ui64 = (unsigned long long)amx_llist_size(src->data.vl);
+		dst->data.ui64 = (unsigned long long)(src->data.vm?src->data.vm->items:0);
 	break;
 	case AMX_VAR_TYPE_ID_FLOAT:
-		dst->data.f = (float)amx_llist_size(src->data.vl);
+		dst->data.f = (float)(src->data.vm?src->data.vm->items:0);
 	break;
 	case AMX_VAR_TYPE_ID_DOUBLE:
-		dst->data.d = (double)amx_llist_size(src->data.vl);
+		dst->data.d = (double)(src->data.vm?src->data.vm->items:0);
 	break;
 	case AMX_VAR_TYPE_ID_BOOL:
-		dst->data.b = !amx_llist_is_empty(src->data.vl);
+		dst->data.b = (src->data.vm?(src->data.vm->items != 0):false);
 	break;
 	case AMX_VAR_TYPE_ID_LIST:
-		retval = amx_var_list_copy(dst, src);
+		retval = amx_var_htable_convert_to_llist(src->data.vm, &dst->data.vl);
 	break;
 	case AMX_VAR_TYPE_ID_HTABLE:
-		retval = amx_var_llist_convert_to_htable(src->data.vl, &dst->data.vm);
+		retval = amx_var_htable_copy(dst, src);
 	break;
 	case AMX_VAR_TYPE_ID_FD:
 		dst->data.fd = -1;
@@ -148,12 +148,12 @@ static int amx_var_list_convert(amx_var_t *dst, const amx_var_t *src)
 	return retval;
 }
 
-static void amx_var_list_free(amx_var_t *var)
+static void amx_var_htable_free(amx_var_t *var)
 {
-	amx_llist_delete(&var->data.vl, amx_llist_var_delete);
+	amx_htable_delete(&var->data.vm, amx_htable_var_delete);
 }
 
-static int amx_var_llist_convert_to_string(amx_llist_t *list, char **string)
+static int amx_var_htable_convert_to_string(amx_htable_t *htable, char **string)
 {
 	int retval = -1;
 	amx_var_t text;
@@ -166,9 +166,9 @@ static int amx_var_llist_convert_to_string(amx_llist_t *list, char **string)
 	}
 
 	const char *sep = "";
-	amx_llist_for_each(it, list)
+	amx_htable_for_each(it, htable)
 	{
-		amx_var_t *item = amx_var_from_llist_it(it);
+		amx_var_t *item = amx_var_from_htable_it(it);
 		if (amx_var_convert(&text, item, AMX_VAR_TYPE_ID_STRING) == -1)
 		{
 			amx_rbuffer_clean(&buf);
@@ -179,10 +179,21 @@ static int amx_var_llist_convert_to_string(amx_llist_t *list, char **string)
 			amx_rbuffer_clean(&buf);
 			goto exit;
 		}
+		int length = strlen(it->key);
+		if (amx_rbuffer_write(&buf, it->key, length) == -1)
+		{
+			amx_rbuffer_clean(&buf);
+			goto exit;
+		}
+		if (amx_rbuffer_write(&buf, "=", 1) == -1)
+		{
+			amx_rbuffer_clean(&buf);
+			goto exit;
+		}
 		const char *txt = amx_var_get_string_da(&text);
 		if (txt)
 		{
-			int length = strlen(txt);
+			length = strlen(txt);
 			if (amx_rbuffer_write(&buf, txt, length) == -1)
 			{
 				amx_rbuffer_clean(&buf);
@@ -208,45 +219,37 @@ exit:
 	return retval;
 }
 
-static int amx_var_llist_convert_to_htable(amx_llist_t *list, amx_htable_t **htable)
+static int amx_var_htable_convert_to_llist(amx_htable_t *htable, amx_llist_t **llist)
 {
 	int retval = -1;
-	if (amx_htable_new(htable, amx_llist_size(list)) == -1)
+	if (amx_llist_new(llist) == -1)
 	{
 		goto exit;
 	}
 
-	amx_var_t key;
 	amx_var_t *data = NULL;
-	unsigned int index = 0;
-	amx_var_init(&key);
-	amx_llist_for_each(it, list)
+	amx_htable_for_each(it, htable)
 	{
-		amx_var_t *item = amx_var_from_llist_it(it);
+		amx_var_t *item = amx_var_from_htable_it(it);
 		// allocate new variant and copy the item
 		if (amx_var_new(&data) == -1)
 		{
-			amx_htable_delete(htable, amx_htable_var_delete);
+			amx_llist_delete(llist, amx_llist_var_delete);
 			goto exit;
 		}
 		if (amx_var_copy(data, item) == -1)
 		{
 			amx_var_delete(&data);
-			amx_htable_delete(htable, amx_htable_var_delete);
+			amx_llist_delete(llist, amx_llist_var_delete);
 			goto exit;
 		}
-		// create a key or the htable
-		amx_var_set_uint32(&key, index);
 		// insert in the htable
-		char *text = amx_var_get_string(&key);
-		if (amx_htable_insert(*htable, text, amx_var_get_htable_it(data)) == -1)
+		if (amx_llist_append(*llist, amx_var_get_llist_it(data)) == -1)
 		{
-			free(text);
 			amx_var_delete(&data);
-			amx_htable_delete(htable, amx_htable_var_delete);
+			amx_llist_delete(llist, amx_llist_var_delete);
 			goto exit;
 		}
-		free(text);
 	}
 
 	retval = 0;
@@ -257,17 +260,17 @@ exit:
 
 __attribute__((constructor)) static void amx_var_types_init()
 {
-	// add the list type
-	amx_var_add_type(&amx_var_list, AMX_VAR_TYPE_ID_LIST);
+	// add the htable type
+	amx_var_add_type(&amx_var_htable, AMX_VAR_TYPE_ID_HTABLE);
 }
 
 __attribute__((destructor)) static void amx_var_types_cleanup()
 {
-	// remove the list type
-	amx_var_remove_type(&amx_var_list);
+	// remove the htable type
+	amx_var_remove_type(&amx_var_htable);
 }
 
-int amx_var_set_llist_copy(amx_var_t *var, const amx_llist_t *list)
+int amx_var_set_htable_copy(amx_var_t *var, const amx_htable_t *htable)
 {
 	int retval = -1;
 	if (!var)
@@ -279,31 +282,31 @@ int amx_var_set_llist_copy(amx_var_t *var, const amx_llist_t *list)
 	amx_var_t *dest = NULL;
 
 	amx_var_clean(var);
-	var->type_id = AMX_VAR_TYPE_ID_LIST;
+	var->type_id = AMX_VAR_TYPE_ID_HTABLE;
 
 	// alloc list
-	if (amx_llist_new(&var->data.vl) == -1)
+	if (amx_htable_new(&var->data.vm, htable?htable->table.items:0) == -1)
 	{
 		goto exit;
 	}
 
 	// loop over list
-	amx_llist_for_each(var_it, list)
+	amx_htable_for_each(var_it, htable)
 	{
-		src = amx_var_from_llist_it(var_it);
+		src = amx_var_from_htable_it(var_it);
 		if (amx_var_new(&dest) == -1)
 		{
-			amx_llist_delete(&var->data.vl, amx_llist_var_delete);
+			amx_htable_delete(&var->data.vm, amx_htable_var_delete);
 			goto exit;
 		}
 
 		if (amx_var_copy(dest,src) == -1)
 		{
-			amx_llist_delete(&var->data.vl, amx_llist_var_delete);
+			amx_htable_delete(&var->data.vm, amx_htable_var_delete);
 			goto exit;
 		}
 
-		amx_llist_append(var->data.vl, &dest->lit);
+		amx_htable_insert(var->data.vm, var_it->key, &dest->hit);
 	}
 
 	retval = 0;
@@ -312,7 +315,7 @@ exit:
 	return retval;
 }
 
-int amx_var_set_llist_move(amx_var_t *var, amx_llist_t *list)
+int amx_var_set_htable_move(amx_var_t *var, amx_htable_t *htable)
 {
 	int retval = -1;
 	if (!var)
@@ -321,8 +324,8 @@ int amx_var_set_llist_move(amx_var_t *var, amx_llist_t *list)
 	}
 
 	amx_var_clean(var);
-	var->type_id = AMX_VAR_TYPE_ID_LIST;
-	var->data.vl = list;
+	var->type_id = AMX_VAR_TYPE_ID_HTABLE;
+	var->data.vm = htable;
 
 	retval = 0;
 
@@ -330,9 +333,9 @@ exit:
 	return retval;
 }
 
-amx_llist_t *amx_var_get_llist(const amx_var_t *var)
+amx_htable_t *amx_var_get_htable(const amx_var_t *var)
 {
-	amx_llist_t *list = NULL;
+	amx_htable_t *htable = NULL;
 	if (!var)
 	{
 		goto exit;
@@ -340,23 +343,24 @@ amx_llist_t *amx_var_get_llist(const amx_var_t *var)
 
 	amx_var_t variant;
 	amx_var_init(&variant);
-	amx_var_convert(&variant, var, AMX_VAR_TYPE_ID_LIST);
-	list = variant.data.vl;
+	amx_var_convert(&variant, var, AMX_VAR_TYPE_ID_HTABLE);
+	htable = variant.data.vm;
 
 exit:
-	return list;
+	return htable;
 }
 
-amx_llist_t *amx_var_get_llist_da(const amx_var_t *var)
+amx_htable_t *amx_var_get_htable_da(const amx_var_t *var)
 {
-	amx_llist_t *list = NULL;
-	if (!var || var->type_id != AMX_VAR_TYPE_ID_LIST)
+	amx_htable_t *htable = NULL;
+	if (!var || var->type_id != AMX_VAR_TYPE_ID_HTABLE)
 	{
 		goto exit;
 	}
 
-	list = var->data.vl;
+	htable = var->data.vm;
 
 exit:
-	return list;
+	return htable;
 }
+
