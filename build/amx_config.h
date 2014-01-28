@@ -11,6 +11,8 @@
 
 #define CONFIG_AMX_PARSER_BUILD y
 
+#define CONFIG_AMX_PARSER_OBJECT_BUILD y
+
 #define CONFIG_GLIBC_MALLOC_BUILD y
 
 #endif // __AMX_CONFIG_H__
