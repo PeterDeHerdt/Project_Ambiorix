@@ -1,5 +1,6 @@
 #define _BSD_SOURCE
 #include <string.h>
+#include <stdio.h>
 
 #include <amx_containers/amx_variant.h>
 #include "amx_containers_check.h"
@@ -410,6 +411,7 @@ START_TEST (amx_var_list_to_htable_check)
 	ck_assert_int_eq(amx_var_convert(&dest, &var_null_list, AMX_VAR_TYPE_ID_HTABLE), 0);
 	ck_assert_int_eq(dest.type_id, AMX_VAR_TYPE_ID_HTABLE);
 	ck_assert_int_eq(amx_htable_size(dest.data.vm), 0);
+	printf("DONE\n");
 
 	amx_var_clean(&dest);
 }

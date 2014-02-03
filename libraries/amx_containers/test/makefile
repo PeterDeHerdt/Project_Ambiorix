@@ -31,6 +31,7 @@ OBJECTS =	amx_containers_check.o \
 			amx_variant_double_check.o \
 			amx_variant_bool_check.o \
 			amx_variant_list_check.o \
+			amx_variant_htable_check.o \
 			amx_variant_fd_check.o \
 			mock_malloc.o \
 			mock_strdup.o \

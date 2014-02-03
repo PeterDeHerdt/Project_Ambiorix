@@ -174,7 +174,7 @@ static int amx_var_htable_convert_to_string(amx_htable_t *htable, char **string)
 			amx_rbuffer_clean(&buf);
 			goto exit;
 		}
-		if (amx_rbuffer_write(&buf, sep, strlen(sep)) == -1)
+		if (*sep && amx_rbuffer_write(&buf, sep, strlen(sep)) == -1)
 		{
 			amx_rbuffer_clean(&buf);
 			goto exit;
@@ -211,6 +211,8 @@ static int amx_var_htable_convert_to_string(amx_htable_t *htable, char **string)
 		sep = ",";
 	}
 
+	char eot = 0x00;
+	amx_rbuffer_write(&buf, &eot, 1);
 	*string = buf.buffer_start;
 	retval = 0;
 
@@ -244,12 +246,7 @@ static int amx_var_htable_convert_to_llist(amx_htable_t *htable, amx_llist_t **l
 			goto exit;
 		}
 		// insert in the htable
-		if (amx_llist_append(*llist, amx_var_get_llist_it(data)) == -1)
-		{
-			amx_var_delete(&data);
-			amx_llist_delete(llist, amx_llist_var_delete);
-			goto exit;
-		}
+		amx_llist_append(*llist, amx_var_get_llist_it(data));
 	}
 
 	retval = 0;

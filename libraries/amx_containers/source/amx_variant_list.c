@@ -200,6 +200,10 @@ static int amx_var_llist_convert_to_string(amx_llist_t *list, char **string)
 		sep = ",";
 	}
 
+	char eot = 0x00;
+	amx_rbuffer_write(&buf, &eot, 1);
+	retval = 0;
+
 	*string = buf.buffer_start;
 	retval = 0;
 
@@ -248,7 +252,6 @@ static int amx_var_llist_convert_to_htable(amx_llist_t *list, amx_htable_t **hta
 		}
 		free(text);
 	}
-
 	retval = 0;
 
 exit:

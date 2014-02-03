@@ -32,6 +32,25 @@
 
 #include <amx_containers/amx_rbuffer.h>
 
+/*
+static void amx_rbuffer_dump(amx_rbuffer_t *rb)
+{
+	for(int i = 0;rb->buffer_start + i < rb->buffer_end; i++)
+	{
+		printf("%2.2X ", rb->buffer_start[i]);
+		if (((i + 1) % 8) == 0)
+		{
+			printf("- ");
+		}
+		if (((i + 1) % 16) == 0)
+		{
+			printf("\n");
+		}
+	}
+	printf("\n");
+}
+*/
+
 static char *amx_rbuffer_alloc(amx_rbuffer_t *rb, size_t size)
 {
 	char *buffer = NULL;
@@ -169,15 +188,16 @@ int amx_rbuffer_grow(amx_rbuffer_t *rb, size_t size)
 	rb->write_pos = rb->buffer_start + write_pos;
 
 	// if the read pointer is after the write pointer, the read pointer must be move the number of bytes
-	// the buffer has grown, and the data has t be move
+	// the buffer has grown, and the data has to be moved
 	if (rb->read_pos > rb->write_pos)
 	{
-		memmove(rb->buffer_start + read_pos, rb->buffer_start + read_pos + size, size);
+		memmove(rb->buffer_start + read_pos + size, rb->buffer_start + read_pos, size);
+		memset(rb->buffer_start + read_pos, 0, size);
 		rb->read_pos += size;
+	} else {
+		memset(rb->buffer_start + write_pos, 0, size);
 	}
 
-	// NOTE:
-	// The extra allocated memory is not initialized to 0, reading from it could return random data
 	retval = 0;
 
 exit:

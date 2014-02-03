@@ -173,8 +173,8 @@ void amx_var_clean(amx_var_t *var)
 clean:
 	var->type_id = 0;
 	var->data.data = NULL;
-	amx_htable_it_clean(&var->hit, NULL);
-	amx_llist_it_clean(&var->lit, NULL);
+	//amx_htable_it_clean(&var->hit, NULL);
+	//amx_llist_it_clean(&var->lit, NULL);
 
 exit:
 	return;
