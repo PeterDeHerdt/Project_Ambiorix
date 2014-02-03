@@ -65,7 +65,6 @@ static int amx_var_fd_convert(amx_var_t *dst, const amx_var_t *src)
 {
 	int retval = 0;
 	int fd_flags = fcntl(src->data.fd, F_GETFD);
-	printf("fd flags = %d\n", fd_flags);
 	bool valid_fd = (fd_flags==-1)?false:true;
 
 	switch(dst->type_id)

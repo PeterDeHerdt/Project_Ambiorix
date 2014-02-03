@@ -15,12 +15,10 @@ extern void dlfree(void *ptr);
 
 void *calloc(size_t nmemb, size_t size)
 {
-	printf("==> MALLOC\n");
 	if (ck_mock_has_expectations(malloc))
 	{
 		if (ck_mock_get_expectation(malloc)->fail)
 		{
-			printf("==> MALLOC FAIL\n");
 			return NULL;
 		}
 	}
@@ -29,12 +27,10 @@ void *calloc(size_t nmemb, size_t size)
 
 void *realloc(void *ptr, size_t size) 
 {
-	printf("==> MALLOC\n");
 	if (ck_mock_has_expectations(malloc))
 	{
 		if (ck_mock_get_expectation(malloc)->fail)
 		{
-			printf("==> MALLOC FAIL\n");
 			return NULL;
 		}
 	}
@@ -43,12 +39,10 @@ void *realloc(void *ptr, size_t size)
 
 void *malloc(size_t size)
 {
-	printf("==> MALLOC\n");
 	if (ck_mock_has_expectations(malloc))
 	{
 		if (ck_mock_get_expectation(malloc)->fail)
 		{
-			printf("==> MALLOC FAIL\n");
 			return NULL;
 		}
 	}
