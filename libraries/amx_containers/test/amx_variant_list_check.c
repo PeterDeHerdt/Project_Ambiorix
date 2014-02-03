@@ -1,5 +1,6 @@
 #define _BSD_SOURCE
 #include <string.h>
+#include <stdio.h>
 
 #include <amx_containers/amx_variant.h>
 #include "amx_containers_check.h"

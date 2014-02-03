@@ -39,6 +39,77 @@
 
 static amx_htable_t amx_parser_types;
 
+static int amx_parser_store_allocate_types()
+{
+	int retval = -1;
+	if (amx_htable_init(&amx_parser_types, AMX_PARSER_STORE_DEFAULT_COUNT) == -1)
+	{
+		goto exit;
+	}
+	retval = 0;
+
+exit:
+	return retval;
+}
+
+static int amx_parser_store_add_parser(amx_parser_store_parser_t *parser)
+{
+	int result = -1;
+	// check if the type is already registered
+	amx_htable_it_t *hit = amx_htable_get(&amx_parser_types, parser->name);
+	if (hit) // already a type registered with that name
+	{
+		goto exit;
+	}
+
+	if (amx_parser_types.items == 0)
+	{
+		// nothing allocated yet - pre-allocate all fixed items
+		if (amx_parser_store_allocate_types() == -1)
+		{
+			goto exit;
+		}
+	}
+	// insert in hash table
+	amx_htable_it_init(&parser->hit);
+	if (amx_htable_insert(&amx_parser_types, parser->name, &parser->hit) == -1)
+	{
+		goto exit;
+	}
+
+	result = 0;
+
+exit:
+	return result;
+}
+
+static int amx_parser_store_remove_parser(amx_parser_store_parser_t *parser)
+{
+	int retval = -1;
+	amx_htable_it_t *hit = amx_htable_get(&amx_parser_types, parser->name);
+	if (!hit)
+	{
+		// type not found
+		goto exit;
+	}
+
+	// remove from the table
+	amx_htable_it_take(hit);
+	amx_htable_it_clean(hit, NULL);
+
+	// if hash table is empty, no more types are registered, clear buffers
+	if (amx_parser_types.items == 0)
+	{
+		// no more registered types - clean buffers
+		amx_htable_clean(&amx_parser_types, NULL);
+	}
+
+	retval = 0;
+
+exit:
+	return retval;
+}
+
 int amx_parser_store_parser_init(amx_parser_store_parser_t *parser, const char *name)
 {
 	int retval = -1;
@@ -134,77 +205,6 @@ exit:
 	return retval;
 }
 
-static int amx_parser_store_allocate_types()
-{
-	int retval = -1;
-	if (amx_htable_init(&amx_parser_types, AMX_PARSER_STORE_DEFAULT_COUNT) == -1)
-	{
-		goto exit;
-	}
-	retval = 0;
-
-exit:
-	return retval;
-}
-
-int amx_parser_store_add_parser(amx_parser_store_parser_t *parser)
-{
-	int result = -1;
-	// check if the type is already registered
-	amx_htable_it_t *hit = amx_htable_get(&amx_parser_types, parser->name);
-	if (hit) // already a type registered with that name
-	{
-		goto exit;
-	}
-
-	if (amx_parser_types.items == 0)
-	{
-		// nothing allocated yet - pre-allocate all fixed items
-		if (amx_parser_store_allocate_types() == -1)
-		{
-			goto exit;
-		}
-	}
-	// insert in hash table
-	amx_htable_it_init(&parser->hit);
-	if (amx_htable_insert(&amx_parser_types, parser->name, &parser->hit) == -1)
-	{
-		goto exit;
-	}
-
-	result = 0;
-
-exit:
-	return result;
-}
-
-int amx_parser_store_remove_parser(amx_parser_store_parser_t *parser)
-{
-	int retval = -1;
-	amx_htable_it_t *hit = amx_htable_get(&amx_parser_types, parser->name);
-	if (!hit)
-	{
-		// type not found
-		goto exit;
-	}
-
-	// remove from the table
-	amx_htable_it_take(hit);
-	amx_htable_it_clean(hit, NULL);
-
-	// if hash table is empty, no more types are registered, clear buffers
-	if (amx_parser_types.items == 0)
-	{
-		// no more registered types - clean buffers
-		amx_htable_clean(&amx_parser_types, NULL);
-	}
-
-	retval = 0;
-
-exit:
-	return retval;
-}
-
 int amx_parser_store_register_parser(amx_parser_store_parser_t *parser)
 {
 	int retval = -1;
@@ -259,7 +259,8 @@ int amx_parser_store_parse_file(const char *file, const char *name, amx_var_t *r
 {
 	int retval = -1;
 
-	if(!file) {
+	if(!file)
+	{
 		goto exit;
 	}
 

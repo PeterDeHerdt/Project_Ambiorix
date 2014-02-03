@@ -126,7 +126,6 @@ START_TEST (amx_var_int64_to_string_check)
 
 	ck_assert_int_eq(amx_var_convert(&dest, &var_int64[6], AMX_VAR_TYPE_ID_STRING), 0);
 	ck_assert_int_eq(dest.type_id, AMX_VAR_TYPE_ID_STRING);
-	printf("Converted value = %s\n",dest.data.s);
 	ck_assert_str_eq(dest.data.s, "4294967295");
 
 	ck_assert_int_eq(amx_var_convert(&dest, &var_int64[7], AMX_VAR_TYPE_ID_STRING), 0);

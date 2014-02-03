@@ -30,6 +30,7 @@ int main (void)
 	srunner_add_suite(sr, amx_var_double_suite());
 	srunner_add_suite(sr, amx_var_bool_suite());
 	srunner_add_suite(sr, amx_var_list_suite());
+	srunner_add_suite(sr, amx_var_htable_suite());
 	srunner_add_suite(sr, amx_var_fd_suite());
 
 	srunner_run_all (sr, CK_VERBOSE);

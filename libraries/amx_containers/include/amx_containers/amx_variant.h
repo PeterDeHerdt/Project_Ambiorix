@@ -67,6 +67,7 @@ extern "C"
 #define AMX_VAR_TYPE_NAME_DOUBLE    "amx_double"
 #define AMX_VAR_TYPE_NAME_BOOL      "amx_bool"
 #define AMX_VAR_TYPE_NAME_LIST      "amx_list"
+#define AMX_VAR_TYPE_NAME_HTABLE    "amx_htable"
 #define AMX_VAR_TYPE_NAME_FD        "amx_fd"
 
 typedef struct _amx_var
@@ -132,7 +133,7 @@ int amx_var_set_double(amx_var_t *var, double number);
 int amx_var_set_bool(amx_var_t *var, bool boolean);
 int amx_var_set_llist_copy(amx_var_t *var, const amx_llist_t *list);
 int amx_var_set_llist_move(amx_var_t *var, amx_llist_t *list);
-int amx_var_set_htable_copy(amx_var_t *var, const amx_htable_t *table);
+int amx_var_set_htable_copy(amx_var_t *var, const amx_htable_t *htable);
 int amx_var_set_htable_move(amx_var_t *var, amx_htable_t *table);
 int amx_var_set_fd(amx_var_t *var, int fd);
 int amx_var_set_data_copy(amx_var_t *var, void *data, int type_id);
@@ -152,7 +153,7 @@ float amx_var_get_float(const amx_var_t *var);
 double amx_var_get_double(const amx_var_t *var);
 bool amx_var_get_bool(const amx_var_t *var);
 amx_llist_t *amx_var_get_llist(const amx_var_t *var);
-const amx_llist_t *amx_var_get_llist_da(const amx_var_t *var);
+amx_llist_t *amx_var_get_llist_da(const amx_var_t *var);
 amx_htable_t *amx_var_get_htable(const amx_var_t *var);
 amx_htable_t *amx_var_get_htable_da(const amx_var_t *var);
 int amx_var_get_fd(const amx_var_t *var);

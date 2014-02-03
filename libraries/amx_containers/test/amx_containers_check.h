@@ -34,6 +34,7 @@ Suite *amx_var_float_suite(void);
 Suite *amx_var_double_suite(void);
 Suite *amx_var_bool_suite(void);
 Suite *amx_var_list_suite(void);
+Suite *amx_var_htable_suite(void);
 Suite *amx_var_fd_suite(void);
 
 #ifdef __cplusplus

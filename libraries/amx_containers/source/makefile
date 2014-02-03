@@ -27,6 +27,7 @@ OBJECTS =	amx_llist.o \
 			amx_variant_double.o \
 			amx_variant_bool.o \
 			amx_variant_list.o \
+			amx_variant_htable.o \
 			amx_variant_fd.o \
 			amx_variant_type.o
 
