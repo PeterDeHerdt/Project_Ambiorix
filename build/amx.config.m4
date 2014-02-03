@@ -5,4 +5,5 @@ define(`CONFIG_AMX_LOG_COLORS',`y')dnl
 define(`CONFIG_AMX_LOG_COLORS_SIMPLE',`y')dnl
 define(`CONFIG_AMX_CONTAINERS_BUILD',`y')dnl
 define(`CONFIG_AMX_PARSER_BUILD',`y')dnl
+define(`CONFIG_AMX_PARSER_OBJECT_BUILD',`y')dnl
 define(`CONFIG_GLIBC_MALLOC_BUILD',`y')dnl
