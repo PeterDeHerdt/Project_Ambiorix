@@ -445,8 +445,8 @@ START_TEST (amx_var_type_convert_null_check)
 	amx_var_init(&myvar);
 	amx_var_init(&dest);
 
-    ck_assert_int_eq(amx_var_convert(&dest, &myvar, amx_var_test_type1.type_id), -1);
-    ck_assert_int_eq(amx_var_convert(&dest, NULL, amx_var_test_type1.type_id), -1);
+	ck_assert_int_eq(amx_var_convert(&dest, &myvar, amx_var_test_type1.type_id), -1);
+	ck_assert_int_eq(amx_var_convert(&dest, NULL, amx_var_test_type1.type_id), -1);
 
 	amx_var_clean(&myvar);
 	amx_var_clean(&dest);
@@ -467,73 +467,24 @@ START_TEST (amx_var_type_convert_custom_check)
 }
 END_TEST
 
-/*
-START_TEST (amx_var_type_copy_check)
-{
-	// make a copy
-	amx_var_t copyvar;
-	amx_var_init(&copyvar);
-
-	// do the copy
-	ck_assert_int_eq(amx_var_copy(&copyvar, &test_var), 0);
-	ck_assert_ptr_ne(copyvar.data.data, NULL);
-	ck_assert_int_eq(copyvar.type_id, test_var.type_id);
-	test_type1_t *test_data = test_var.data.data;
-	test_type1_t *copy_data = copyvar.data.data;
-	ck_assert_str_eq(copy_data->email, test_data->email);
-	ck_assert_str_eq(copy_data->name, test_data->name);
-	ck_assert_int_eq(copy_data->age, test_data->age);
-
-	// clean the variants
-	amx_var_clean(&copyvar);
-}
-END_TEST
-
-START_TEST (amx_var_type_copy_invalid_type_check)
+START_TEST (amx_var_type_convert_invalid_type_check)
 {
 	// initialize a amx variant
 	amx_var_t myvar;
+	amx_var_t dest;
 	amx_var_init(&myvar);
-	myvar.type_id = AMX_VAR_TYPE_ID_CUSTOM_BASE + 100;
+	amx_var_init(&dest);
 
-	// make a copy
-	amx_var_t copyvar;
-	amx_var_init(&copyvar);
+	myvar.type_id = 777;
+	dest.type_id = AMX_VAR_TYPE_ID_STRING;
+	ck_assert_int_eq(amx_var_convert(&dest, &myvar, amx_var_test_type1.type_id), -1);
+	ck_assert_int_eq(amx_var_convert(&dest, &myvar, 777), -1);
 
-	// do the copy
-	ck_assert_int_eq(amx_var_copy(&copyvar, &myvar), -1);
-	ck_assert_ptr_eq(copyvar.data.data, NULL);
-
-	// clean the variants
 	amx_var_clean(&myvar);
-	amx_var_clean(&copyvar);
+	amx_var_clean(&dest);
 }
 END_TEST
 
-START_TEST (amx_var_type_copy_no_copy_fn_check)
-{
-	ck_assert_int_ge(amx_var_register_type(&amx_var_test_type3), AMX_VAR_TYPE_ID_CUSTOM_BASE);
-	// initialize a amx variant
-	amx_var_t myvar;
-	amx_var_init(&myvar);
-	myvar.type_id = amx_var_test_type3.type_id;
-
-	// make a copy
-	amx_var_t copyvar;
-	amx_var_init(&copyvar);
-
-	// do the copy
-	ck_assert_int_eq(amx_var_copy(&copyvar, &myvar), -1);
-	ck_assert_ptr_eq(copyvar.data.data, NULL);
-
-	// clean the variants
-	amx_var_clean(&myvar);
-	amx_var_clean(&copyvar);
-
-	amx_var_unregister_type(&amx_var_test_type3);
-}
-END_TEST
-*/
 Suite *amx_var_type_suite(void)
 {
 	Suite *s = suite_create ("amx_variant_types");
@@ -586,7 +537,7 @@ Suite *amx_var_type_suite(void)
 	tcase_add_test (tc, amx_var_type_convert_null_check);
 	tcase_add_test (tc, amx_var_type_convert_custom_check);
 	//tcase_add_test (tc, amx_var_type_convert_check);
-	//tcase_add_test (tc, amx_var_type_convert_invalid_type_check);
+	tcase_add_test (tc, amx_var_type_convert_invalid_type_check);
 	//tcase_add_test (tc, amx_var_type_convert_no_convert_fn_check);
 	suite_add_tcase (s, tc);
 

@@ -631,11 +631,10 @@ START_TEST (amx_var_set_htable_check)
 }
 END_TEST
 
-/*
 #ifdef MOCK_MALLOC
-START_TEST (amx_var_set_llist_no_memory_check)
+START_TEST (amx_var_set_htable_no_memory_check)
 {
-	amx_llist_t *var_htable = NULL;
+	amx_htable_t *var_htable = NULL;
 	ck_assert_int_eq(amx_htable_new(&var_htable, 10), 0);
 
 	amx_var_t variant;
@@ -644,27 +643,19 @@ START_TEST (amx_var_set_llist_no_memory_check)
 	amx_var_t *var = NULL;
 	amx_var_new(&var);
 	amx_var_set_string_move(var, NULL);
-	amx_llist_append(var_htable, &var->lit);
+	amx_htable_insert(var_htable, "K1", &var->hit);
 
 	amx_var_new(&var);
 	amx_var_set_string_copy(var, "Hello");
-	amx_llist_append(var_htable, &var->lit);
+	amx_htable_insert(var_htable, "K2", &var->hit);
 
 	amx_var_new(&var);
 	amx_var_set_string_copy(var, "World");
-	amx_llist_append(var_htable, &var->lit);
+	amx_htable_insert(var_htable, "K3", &var->hit);
 
 	Expectation_malloc *exp = ck_mock_add_expectation(malloc);
 	exp->fail = true;
-	int retval = amx_var_set_llist_copy(&variant, var_htable);
-	ck_mock_reset(malloc);
-	ck_assert_int_eq (retval, -1);
-
-	exp = ck_mock_add_expectation(malloc);
-	exp->fail = false;
-	exp = ck_mock_add_expectation(malloc);
-	exp->fail = true;
-	retval = amx_var_set_llist_copy(&variant, var_htable);
+	int retval = amx_var_set_htable_copy(&variant, var_htable);
 	ck_mock_reset(malloc);
 	ck_assert_int_eq (retval, -1);
 
@@ -673,10 +664,24 @@ START_TEST (amx_var_set_llist_no_memory_check)
 	exp = ck_mock_add_expectation(malloc);
 	exp->fail = false;
 	exp = ck_mock_add_expectation(malloc);
+	exp->fail = true;
+	retval = amx_var_set_htable_copy(&variant, var_htable);
+	ck_mock_reset(malloc);
+	ck_assert_int_eq (retval, -1);
+
+	exp = ck_mock_add_expectation(malloc);
+	exp->fail = false;
+	exp = ck_mock_add_expectation(malloc);
+	exp->fail = false;
+	exp = ck_mock_add_expectation(malloc);
+	exp->fail = false;
+	exp = ck_mock_add_expectation(malloc);
+	exp->fail = false;
+	exp = ck_mock_add_expectation(malloc);
 	exp->fail = false;
 	exp = ck_mock_add_expectation(malloc);
 	exp->fail = true;
-	retval = amx_var_set_llist_copy(&variant, var_htable);
+	retval = amx_var_set_htable_copy(&variant, var_htable);
 	ck_mock_reset(malloc);
 	ck_assert_int_eq (retval, -1);
 
@@ -684,7 +689,6 @@ START_TEST (amx_var_set_llist_no_memory_check)
 }
 END_TEST
 #endif
-*/
 
 START_TEST (amx_var_get_htable_null_check)
 {
@@ -704,7 +708,7 @@ START_TEST (amx_var_get_htable_check)
 	ck_assert_ptr_ne(var_htable, NULL);
 	ck_assert_int_eq(amx_htable_size(var_htable), 1);
 	amx_htable_delete(&var_htable, amx_htable_var_delete);
-	ck_assert_ptr_eq((amx_llist_t *)amx_var_get_htable_da(&variant), NULL);
+	ck_assert_ptr_eq((amx_htable_t *)amx_var_get_htable_da(&variant), NULL);
 
 	ck_assert_int_eq(amx_htable_new(&var_htable, 10), 0);
 
@@ -768,11 +772,10 @@ Suite *amx_var_htable_suite(void)
 
 	tc = tcase_create ("amx_var_set_htable");
 	tcase_add_test (tc, amx_var_set_htable_null_check);
-/*
 #ifdef MOCK_MALLOC
-	tcase_add_test (tc, amx_var_set_llist_no_memory_check);
+	tcase_add_test (tc, amx_var_set_htable_no_memory_check);
 #endif
-*/
+
 	tcase_add_test (tc, amx_var_set_htable_check);
 	suite_add_tcase (s, tc);
 

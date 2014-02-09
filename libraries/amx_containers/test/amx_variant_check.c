@@ -150,6 +150,46 @@ START_TEST (amx_var_get_type_name_check)
 }
 END_TEST
 
+START_TEST (amx_var_get_htable_it_check)
+{
+	amx_var_t *var = NULL;
+	ck_assert_int_eq (amx_var_new(&var), 0);
+	ck_assert_ptr_eq (amx_var_get_htable_it(var), &var->hit);
+	ck_assert_ptr_eq (amx_var_get_htable_it(NULL), NULL);
+	amx_var_delete(&var);
+}
+END_TEST
+
+START_TEST (amx_var_get_llist_it_check)
+{
+	amx_var_t *var = NULL;
+	ck_assert_int_eq (amx_var_new(&var), 0);
+	ck_assert_ptr_eq (amx_var_get_llist_it(var), &var->lit);
+	ck_assert_ptr_eq (amx_var_get_llist_it(NULL), NULL);
+	amx_var_delete(&var);
+}
+END_TEST
+
+START_TEST (amx_var_from_htable_it_check)
+{
+	amx_var_t *var = NULL;
+	ck_assert_int_eq (amx_var_new(&var), 0);
+	ck_assert_ptr_eq (amx_var_from_htable_it(&var->hit), var);
+	ck_assert_ptr_eq (amx_var_from_htable_it(NULL), NULL);
+	amx_var_delete(&var);
+}
+END_TEST
+
+START_TEST (amx_var_from_llist_it_check)
+{
+	amx_var_t *var = NULL;
+	ck_assert_int_eq (amx_var_new(&var), 0);
+	ck_assert_ptr_eq (amx_var_from_llist_it(&var->lit), var);
+	ck_assert_ptr_eq (amx_var_from_llist_it(NULL), NULL);
+	amx_var_delete(&var);
+}
+END_TEST
+
 Suite *amx_var_suite(void)
 {
 	Suite *s = suite_create ("amx_variant");
@@ -174,6 +214,13 @@ Suite *amx_var_suite(void)
 	tc = tcase_create ("amx_var_get_type_name");
 	tcase_add_test (tc, amx_var_get_type_name_null_check);
 	tcase_add_test (tc, amx_var_get_type_name_check);
+	suite_add_tcase (s, tc);
+
+	tc = tcase_create ("amx_var_iterators");
+	tcase_add_test (tc, amx_var_get_llist_it_check);
+	tcase_add_test (tc, amx_var_get_htable_it_check);
+	tcase_add_test (tc, amx_var_from_llist_it_check);
+	tcase_add_test (tc, amx_var_from_htable_it_check);
 	suite_add_tcase (s, tc);
 
 	return s;
